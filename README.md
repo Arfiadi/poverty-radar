@@ -108,17 +108,6 @@ jupyter nbconvert --to notebook --execute notebooks/01_data_audit_and_understand
 python -c "import pandas as pd; df = pd.read_csv('data/interim/poverty_data_cleaned.csv'); assert len(df) == 514; print('Data Integrity: PASS')"
 ```
 
----
-
-## 🎨 Standar Visualisasi Data & Storytelling
-
-Platform ini menerapkan standar ketat komunikasi visual:
-1. **Larangan Radar Chart:** Radar/Spider chart dilarang keras karena mendistorsi perbandingan kuantitatif; digantikan dengan **Small Multiples Bar Charts** atau **Heatmap Matrix**.
-2. **Kebijakan Boxplot:** Tidak digunakan pada layar utama narasi publik; digantikan dengan **Jittered Strip Plot** yang dilengkapi penanda median titik riil 514 daerah.
-3. **Aksesibilitas Warna:** Wajib menggunakan palet ramah buta warna **Okabe-Ito**:
-   - `#0072B2` (Biru Tua): Layanan dasar & kondisi tangguh.
-   - `#D55E00` (Vermillion / Oranye): Kemiskinan tinggi & prioritas intervensi.
-   - `#999999` (Abu-abu Netral): Latar belakang dan elemen pembanding pasif.
 
 ---
 
