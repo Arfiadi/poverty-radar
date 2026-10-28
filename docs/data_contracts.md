@@ -1,0 +1,114 @@
+# PovertyRadar SDGs: Data Contracts & Schema Validation
+
+## DOKUMEN KONTRAK DATA, SKEMA VALIDASI, & INTEGRITAS PIPELINE
+**Versi:** 1.0  
+**Tanggal:** 28 Oktober 2026  
+**Mata Kuliah:** Presentasi Data dan Storytelling  
+**Tujuan Dokumen:** Menetapkan spesifikasi teknis, aturan tipe data, batas nilai sah (*value constraints*), serta invarian integritas yang harus dipenuhi oleh setiap tahap pemrosesan data (dari *Raw* ke *Interim* hingga *Processed*).
+
+---
+
+## 1. Arsitektur Pipeline & Kebijakan Hak Akses
+
+Data bergerak melalui 3 tahapan direktori dengan aturan ketat:
+
+```text
+data/raw/ (Read-Only)
+   │
+   ▼ [Sanitasi whitespace, normalisasi entitas, audit nol 3T, dropping label biner]
+data/interim/ (Internal Olahan)
+   │  └── poverty_data_cleaned.csv (514 rows, 16 cols, terisi anomaly score)
+   ▼ [Standardisasi fitur, K-Means clustering, kalkulasi matriks kerentanan 2x2]
+data/processed/ (Siap Pakai untuk Dashboard)
+      └── poverty_clusters.csv (514 rows, terisi cluster_id & vulnerability_quadrant)
+```
+
+### Kebijakan Hak Akses Berkas
+1. **`data/raw/` (STRICTLY READ-ONLY):**
+   * Berkas mentah `Klasifikasi Tingkat Kemiskinan di Indonesia.csv` tidak boleh dimodifikasi, ditimpa, atau dihapus oleh skrip apa pun.
+2. **`data/interim/` (Read-Write untuk Preprocessing):**
+   * Menampung data yang telah dibersihkan, diselaraskan tipe datanya, dan ditandai status anomalinya.
+3. **`data/processed/` (Read-Write untuk Modeling Output):**
+   * Menampung dataset final yang siap dibaca oleh aplikasi dashboard interaktif.
+
+---
+
+## 2. Invarian Integritas Sistem (System Invariants)
+
+Setiap tahapan eksekusi pipeline wajib memvalidasi invarian berikut:
+
+1. **Invarian Jumlah Baris:** Jumlah baris **wajib tepat 514 baris** (mewakili seluruh kabupaten/kota di 34 provinsi Indonesia tahun 2021). Tidak boleh ada baris yang hilang akibat filter atau penghapusan outlier.
+2. **Invarian Keunikan Entitas:** Kombinasi `provinsi` dan `kab_kota` harus memiliki 514 nilai unik (0 duplikasi entitas).
+3. **Invarian Kelengkapan (*Zero Missing*):** Jumlah nilai kosong (*null* / *NaN* / *None*) wajib sama dengan **0** di seluruh kolom.
+4. **Invarian Anti-Leakage:** Kolom biner bawaan `Klasifikasi Kemiskinan` (`poverty_class_target`) **dilarang muncul** pada `data/interim/` maupun `data/processed/`.
+
+---
+
+## 3. Kontrak Skema Berkas Terstandar (`data/interim/poverty_data_cleaned.csv`)
+
+| Nama Kolom | Tipe Data Pandas | Nilai Boleh Null? | Batas Nilai (*Constraints*) | Penjelasan & Aturan Bisnis |
+| :--- | :---: | :---: | :---: | :--- |
+| `provinsi` | `object` (str) | Tidak | 34 Provinsi Unik | Nama provinsi resmi BPS (uppercase). |
+| `kab_kota` | `object` (str) | Tidak | 514 Nama Unik | Nama kabupaten/kota bersih tanpa karakter asterisk. |
+| `tipe_wilayah` | `object` (str) | Tidak | `['Kabupaten', 'Kota']` | Klasifikasi unit administrasi (413 Kab, 101 Kota). |
+| `region_pulau` | `object` (str) | Tidak | 6 Kawasan Kepulauan | `Sumatera`, `Jawa`, `Bali & Nusa Tenggara`, `Kalimantan`, `Sulawesi`, `Maluku & Papua`. |
+| `poverty_rate_p0` | `float64` | Tidak | $0.0 \le x \le 100.0$ | Persentase penduduk miskin riil BPS 2021. |
+| `avg_school_years` | `float64` | Tidak | $0.0 \le x \le 20.0$ | Rata-rata lama sekolah (tahun). |
+| `expenditure_per_capita` | `int64` | Tidak | $x > 0$ | Pengeluaran riil per kapita per tahun (Ribu Rupiah). |
+| `human_dev_index` | `float64` | Tidak | $0.0 \le x \le 100.0$ | Indeks Pembangunan Manusia (IPM). |
+| `life_expectancy` | `float64` | Tidak | $40.0 \le x \le 90.0$ | Umur Harapan Hidup saat lahir (tahun). |
+| `sanitation_access_pct` | `float64` | Tidak | $0.0 \le x \le 100.0$ | Akses sanitasi layak (%) — *nilai 0.00% sah untuk Deiyai*. |
+| `clean_water_access_pct` | `float64` | Tidak | $0.0 \le x \le 100.0$ | Akses air minum layak (%) — *nilai 0.00% sah untuk Mamberamo Tengah*. |
+| `unemployment_rate_tpt` | `float64` | Tidak | $0.0 \le x \le 100.0$ | Tingkat Pengangguran Terbuka (%) — *nilai 0.00% sah untuk Nduga & Lanny Jaya*. |
+| `labor_participation_tpak`| `float64`| Tidak | $0.0 \le x \le 100.0$ | Tingkat Partisipasi Angkatan Kerja (%). |
+| `grdp_constant_million_idr`| `int64` | Tidak | $x > 0$ | PDRB konstan riil dalam skala **Juta Rupiah**. |
+| `is_multivariate_anomaly` | `bool` | Tidak | `True` / `False` | Hasil deteksi Isolation Forest (`True` sebanyak 26). |
+| `anomaly_score` | `float64` | Tidak | $-0.5 \le x \le 0.5$ | Skor keputusan kontinu dari Isolation Forest. |
+
+---
+
+## 4. Kontrak Skema Berkas Akhir (`data/processed/poverty_clusters.csv`)
+
+Berkas processed mewarisi seluruh kolom interim di atas ditambah atribut keluaran pemodelan:
+
+| Nama Kolom Tambahan | Tipe Data Pandas | Nilai Boleh Null? | Batas Nilai (*Constraints*) | Penjelasan & Aturan Bisnis |
+| :--- | :---: | :---: | :---: | :--- |
+| `cluster_id` | `int64` | Tidak | $0 \le x < k$ | ID klaster hasil K-Means ($k$ biasanya 4 atau 5). |
+| `cluster_name` | `object` (str) | Tidak | Daftar nama tipologi | Label profil substantif yang mudah dipahami publik. |
+| `vulnerability_score` | `float64` | Tidak | $0.0 \le x \le 1.0$ atau z-score | Skor komposit kerentanan fasilitas dasar & modal manusia. |
+| `vulnerability_quadrant`| `object` (str) | Tidak | 4 Nilai Kuadran | `Kuadran I`, `Kuadran II`, `Kuadran III`, `Kuadran IV`. |
+
+---
+
+## 5. Prosedur Uji Validasi Otomatis (Sanity Checks)
+
+Sebelum berkas olahan disimpan, skrip pemrosesan wajib menjalankan pengujian validasi assertions berikut:
+
+```python
+import pandas as pd
+
+def validate_interim_data(df: pd.DataFrame) -> None:
+    # 1. Row count validation
+    assert len(df) == 514, f"Expected 514 rows, got {len(df)}"
+    
+    # 2. Entity uniqueness
+    assert df.duplicated(subset=['provinsi', 'kab_kota']).sum() == 0, "Duplicate regions found!"
+    
+    # 3. Missing values check
+    assert df.isnull().sum().sum() == 0, "Null values detected in dataset!"
+    
+    # 4. Anti-leakage target check
+    assert 'poverty_class_target' not in df.columns, "Target leakage column found in interim data!"
+    
+    # 5. Numeric boundary validation
+    assert (df['poverty_rate_p0'] >= 0.0).all() and (df['poverty_rate_p0'] <= 100.0).all()
+    assert (df['sanitation_access_pct'] >= 0.0).all() and (df['sanitation_access_pct'] <= 100.0).all()
+    assert (df['clean_water_access_pct'] >= 0.0).all() and (df['clean_water_access_pct'] <= 100.0).all()
+    assert (df['grdp_constant_million_idr'] > 0).all()
+    
+    # 6. Anomaly tagging validation
+    assert df['is_multivariate_anomaly'].sum() == 26, "Expected exactly 26 anomalies"
+    
+    print("All Data Contract assertions passed successfully!")
+```
+
