@@ -141,5 +141,5 @@ Platform ini menerapkan standar ketat komunikasi visual:
 ---
 
 ## 👥 Tim Pengembang & Lisensi
-Dikembangkan untuk mata kuliah **Presentasi Data dan Storytelling** — Program Studi Sains Data / Informatika.  
+Dikembangkan untuk mata kuliah **Presentasi Data dan Storytelling** — Program Studi **Sains Data Terapan**, Departemen Teknik Informatika dan Komputer, **Politeknik Elektronika Negeri Surabaya (PENS)**.  
 Lisensi di bawah [MIT License](LICENSE).
