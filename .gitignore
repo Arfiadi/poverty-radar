@@ -5,9 +5,12 @@ env/
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
+.pytest_cache/
 
 # Jupyter Notebooks
 .ipynb_checkpoints/
+/notebooks/ydata_EDA.ipynb
 
 # OS Specific
 .DS_Store
@@ -18,4 +21,9 @@ desktop.ini
 .env
 .env.*
 !.env.example
+
+# Large outputs & binaries
+reports/*.html
+docs/*.pdf
+
 
