@@ -14,15 +14,11 @@
 **PovertyRadar SDGs** adalah platform analitik data dan *storytelling* interaktif yang memetakan variasi spasial dan profil struktural sosio-ekonomi 514 kabupaten/kota di Indonesia. Proyek ini menggunakan dataset publik dari repositori Kaggle: **[Klasifikasi Tingkat Kemiskinan di Indonesia](https://www.kaggle.com/datasets/ldausl/klasifikasi-tingkat-kemiskinan-di-indonesia)** yang diunggah oleh kontributor **ldausl**.
 
 > [!NOTE]
-> **Kepastian Verifikasi Data: Terbukti 100% Data Resmi BPS RI Tahun 2021**  
-> Meskipun file sumber di Kaggle tidak mencantumkan atribut tahun pada nama kolomnya, **telah diverifikasi secara ilmiah bahwa dataset ini merepresentasikan data resmi Badan Pusat Statistik (BPS) RI Tahun 2021**.  
-> 
-> Pembuktian dilakukan melalui uji pencocokan silang (*cross-referencing*) presisi tinggi terhadap rilis resmi publikasi BPS (*Indikator Kemiskinan dan Pembangunan Manusia 2021*):
-> * **Kota Surakarta (Jateng):** $P_0 = 9.40\%$, $\text{IPM} = 82.62$ $\rightarrow$ **Identik 100%** dengan rilis resmi BPS 2021.
-> * **Kabupaten Cilacap (Jateng):** $P_0 = 11.67\%$, $\text{IPM} = 70.42$ $\rightarrow$ **Identik 100%** dengan rilis resmi BPS 2021.
-> * **Kabupaten Banyumas (Jateng):** $P_0 = 13.66\%$, $\text{IPM} = 72.44$ $\rightarrow$ **Identik 100%** dengan rilis resmi BPS 2021.
-> * **Cakupan Spasial 34 Provinsi:** Dataset memuat 514 kabupaten/kota di bawah 34 provinsi, yang mencerminkan batas administrasi Indonesia sebelum pemekaran 4 provinsi baru di Papua pada akhir 2022.  
-> *Rincian audit metodologis selengkapnya dapat dibaca pada [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md#13-pembuktian--verifikasi-periode-tahun-data-bps-2021).*
+> **Hasil Verifikasi Kolom Data (BPS RI 2021):**
+> * **12 dari 13 kolom terbukti 100% data resmi BPS 2021:** Terverifikasi silang dengan publikasi Susenas Maret 2021, Sakernas Agustus 2021, IPM Metode Baru 2021, dan PDRB Pengeluaran ADHK Seri 2010 (514 kab/kota di 34 provinsi).
+> * **Kolom `Klasifikasi Kemiskinan` BUKAN data BPS:** Merupakan label biner buatan pengunggah Kaggle yang inkonsisten sehingga **resmi dibuang** dari pipeline analisis.
+> * **Koreksi Header Asli:** Data RLS merupakan capaian penduduk usia 25+ tahun (komponen IPM, bukan 15+), dan satuan riil PDRB adalah Juta Rupiah (bukan Rupiah satuan).
+> *Detail audit forensik per kolom: [`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) & [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md).*
 
 Proyek ini mengatasi kelemahan kebijakan penanggulangan kemiskinan yang bersifat seragam (*one-size-fits-all*). Dua daerah dengan persentase kemiskinan 15% dapat memiliki akar permasalahan yang bertolak belakang: yang satu miskin akibat keterisolasian infrastruktur air dan sanitasi, sementara yang lain miskin akibat pengangguran perkotaan. 
 

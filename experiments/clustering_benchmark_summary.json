@@ -1,0 +1,23 @@
+{
+  "total_models_evaluated": 160,
+  "total_valid_models": 123,
+  "top_model": {
+    "feature_set": "FS_7 (Without TPAK)",
+    "scaler": "RobustScaler",
+    "algorithm": "Agglomerative (complete)",
+    "k": 3,
+    "silhouette": 0.3129,
+    "davies_bouldin": 1.0979,
+    "calinski_harabasz": 197.84,
+    "min_cluster_size": 34,
+    "max_cluster_size": 388,
+    "cluster_sizes": "{2: 388, 1: 92, 0: 34}",
+    "stability_ari_10seeds": 1.0,
+    "is_degenerate": false,
+    "rank_sil": 1.0,
+    "rank_dbi": 5.0,
+    "rank_ch": 8.0,
+    "rank_stab": 29.0,
+    "composite_score": 7.449999999999999
+  }
+}
