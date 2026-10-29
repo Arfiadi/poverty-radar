@@ -10,7 +10,8 @@ import pandas as pd
 from poverty_radar.config import (
     RAW_DATA_PATH,
     CLEANED_DATA_PATH,
-    PROCESSED_DATA_PATH
+    PROCESSED_DATA_PATH,
+    PROCESSED_SUMMARY_PATH
 )
 
 COLUMN_RENAME_MAP = {
@@ -71,6 +72,21 @@ def load_processed_data(filepath: Optional[Path] = None) -> pd.DataFrame:
     df = pd.read_csv(path)
     if len(df) != 514:
         raise ValueError(f"Expected 514 rows in processed dataset, found {len(df)}")
+    
+    return df
+
+
+def load_cluster_summary(filepath: Optional[Path] = None) -> pd.DataFrame:
+    """
+    Load 4-cluster aggregate summary table from data/processed/.
+    """
+    path = filepath or PROCESSED_SUMMARY_PATH
+    if not path.exists():
+        raise FileNotFoundError(f"Cluster summary dataset not found at: {path}")
+
+    df = pd.read_csv(path)
+    if len(df) != 4:
+        raise ValueError(f"Expected 4 cluster rows in summary dataset, found {len(df)}")
     
     return df
 

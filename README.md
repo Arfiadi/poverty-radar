@@ -60,25 +60,49 @@ Berdasarkan audit komputasi menyeluruh pada [`docs/data_audit_and_understanding.
 
 ```text
 PovertyRadar/
+├── pyproject.toml             # Konfigurasi paket Python & test suite (pytest)
 ├── AGENTS.md                  # Kontrak kerja coding agent & aturan domain proyek
 ├── README.md                  # Halaman orientasi & dokumentasi utama repositori
 ├── dashboard_guide.md         # Pedoman visualisasi data & storytelling (Knaflic & Few)
 ├── data/
 │   ├── raw/                   # [READ-ONLY] Data mentah BPS 2021 dari Kaggle
 │   ├── interim/               # poverty_data_cleaned.csv (terstandar & ter-flag anomali)
-│   ├── processed/             # poverty_clusters.csv (hasil klaster & matriks 2x2)
+│   ├── processed/             # poverty_clusters.csv & poverty_cluster_summary.csv
 │   └── README.md              # Kamus data lengkap & catatan kualitas teknis
 ├── docs/
 │   ├── problem_framing_and_objectives.md  # Framing masalah, sasaran SDG 1, matriks 2x2
 │   ├── data_audit_and_understanding.md    # Audit statistik komprehensif 514 daerah
-│   ├── clustering_protocol.md             # Protokol unsupervised clustering & seleksi fitur
+│   ├── clustering_protocol.md             # Protokol unsupervised clustering & evaluasi empiris
+│   ├── clustering_rationale_and_findings.md # Rationale komprehensif benchmark 20+ model
 │   ├── data_contracts.md                  # Kontrak skema & validasi pipeline
 │   ├── development.md                     # Panduan lingkungan kerja (uv/python) & git
 │   ├── design.md                          # Arsitektur dashboard storytelling 5 babak
 │   ├── design_single_page.md              # Desain alternatif dashboard satu halaman
 │   └── ui_brief_mockup.md                 # Panduan wireframe ASCII untuk tim desain UI/UX
-└── notebooks/
-    └── 01_data_audit_and_understanding.ipynb # Notebook audit data, outlier, & anomali
+├── experiments/               # Skrip & log benchmark 20+ konfigurasi clustering
+├── notebooks/                 # Notebook eksplorasi interaktif (01, 02, 03)
+├── reports/
+│   └── figures/               # 9 Gambar visualisasi publikasi terstandarisasi
+├── src/
+│   └── poverty_radar/         # Paket modular (loader, preprocessor, models, plots, pipeline)
+└── tests/                     # Suite pengujian otomatis (data integrity, clustering, vulnerability)
+```
+
+---
+
+## ⚡ Quickstart & Reproduksibilitas
+
+Pipeline data dan seluruh visualisasi dapat dijalankan secara instan dan deterministik:
+
+```powershell
+# 1. Instalasi paket dalam mode editable
+python -m pip install -e .
+
+# 2. Jalankan seluruh unit & integration test
+python -m pytest tests -v
+
+# 3. Jalankan end-to-end pipeline (Data Mentah -> Interim -> Processed -> Visualisasi)
+python -m poverty_radar.pipeline
 ```
 
 ---

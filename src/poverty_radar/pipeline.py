@@ -12,11 +12,12 @@ from poverty_radar.config import (
     RAW_DATA_PATH,
     CLEANED_DATA_PATH,
     PROCESSED_DATA_PATH,
+    PROCESSED_SUMMARY_PATH,
     FIGURES_DIR
 )
 from poverty_radar.data.loader import load_raw_data
 from poverty_radar.data.preprocessor import clean_raw_data, get_feature_matrix
-from poverty_radar.models.clustering import RegionalClusterer
+from poverty_radar.models.clustering import RegionalClusterer, compute_cluster_summary
 from poverty_radar.models.vulnerability import VulnerabilityScorer
 from poverty_radar.visualization.plots import (
     plot_elbow_and_silhouette,
@@ -80,6 +81,11 @@ def run_pipeline(generate_figures: bool = True) -> pd.DataFrame:
     PROCESSED_DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     df_out.to_csv(PROCESSED_DATA_PATH, index=False)
     logger.info("Processed dataset successfully saved to: %s", PROCESSED_DATA_PATH)
+
+    # Compute and save cluster summary table for dashboard team
+    df_summary = compute_cluster_summary(df_final)
+    df_summary.to_csv(PROCESSED_SUMMARY_PATH, index=False)
+    logger.info("Cluster summary table successfully saved to: %s", PROCESSED_SUMMARY_PATH)
 
     if generate_figures:
         logger.info("Step 7: Generating publication figures in reports/figures/...")

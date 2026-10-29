@@ -22,6 +22,7 @@ FIGURES_DIR = REPORTS_DIR / "figures"
 RAW_DATA_PATH = DATA_RAW_DIR / "Klasifikasi Tingkat Kemiskinan di Indonesia.csv"
 CLEANED_DATA_PATH = DATA_INTERIM_DIR / "poverty_data_cleaned.csv"
 PROCESSED_DATA_PATH = DATA_PROCESSED_DIR / "poverty_clusters.csv"
+PROCESSED_SUMMARY_PATH = DATA_PROCESSED_DIR / "poverty_cluster_summary.csv"
 
 # Global reproducibility seed
 SEED = 42
@@ -68,9 +69,9 @@ MEDIAN_NATIONAL_V_STRUC = 0.272
 # 2x2 Matrix screening quadrant definitions
 QUADRANT_LABELS = {
     1: "Kuadran I (Prioritas Utama)",
-    2: "Kuadran II (Potensi Rentan Tersembunyi)",
-    3: "Kuadran III (Kantong Kemiskinan / Enklave)",
-    4: "Kuadran IV (Kondisi Tangguh)"
+    2: "Kuadran II (Kerentanan Tersembunyi)",
+    3: "Kuadran III (Kantong Kemiskinan Daya Beli)",
+    4: "Kuadran IV (Wilayah Terbina/Mapan)"
 }
 
 QUADRANT_PALETTE = {

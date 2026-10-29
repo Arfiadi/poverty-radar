@@ -95,3 +95,69 @@ class RegionalClusterer:
 
         return df_out
 
+
+def compute_cluster_summary(df_clustered: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute structured summary table for the 4 clusters:
+    region counts, median and mean values for key indicators, and demographic composition.
+    """
+    records = []
+    for cid, group in df_clustered.groupby(['cluster_id', 'cluster_name']):
+        cluster_id, cluster_name = cid
+        n = len(group)
+        pct = round(n / len(df_clustered) * 100, 2)
+
+        dom_island = group['region_pulau'].value_counts().index[0]
+        dom_island_n = group['region_pulau'].value_counts().values[0]
+
+        kab_n = int((group['tipe_wilayah'] == 'Kabupaten').sum())
+        kota_n = int((group['tipe_wilayah'] == 'Kota').sum())
+
+        rec = {
+            'cluster_id': cluster_id,
+            'cluster_name': cluster_name,
+            'total_regions': n,
+            'pct_of_national': pct,
+            'total_kabupaten': kab_n,
+            'total_kota': kota_n,
+            'dominant_region_pulau': f"{dom_island} ({dom_island_n})",
+
+            # P0
+            'poverty_rate_p0_mean': round(float(group['poverty_rate_p0'].mean()), 2),
+            'poverty_rate_p0_median': round(float(group['poverty_rate_p0'].median()), 2),
+            'poverty_rate_p0_min': round(float(group['poverty_rate_p0'].min()), 2),
+            'poverty_rate_p0_max': round(float(group['poverty_rate_p0'].max()), 2),
+
+            # V_struc
+            'vulnerability_score_mean': round(float(group['vulnerability_score'].mean()), 4),
+            'vulnerability_score_median': round(float(group['vulnerability_score'].median()), 4),
+
+            # HDI & Sub-indices
+            'human_dev_index_mean': round(float(group['human_dev_index'].mean()), 2),
+            'human_dev_index_median': round(float(group['human_dev_index'].median()), 2),
+            'expenditure_per_capita_mean': int(round(float(group['expenditure_per_capita'].mean()))),
+            'expenditure_per_capita_median': int(round(float(group['expenditure_per_capita'].median()))),
+            'avg_school_years_mean': round(float(group['avg_school_years'].mean()), 2),
+            'avg_school_years_median': round(float(group['avg_school_years'].median()), 2),
+            'life_expectancy_mean': round(float(group['life_expectancy'].mean()), 2),
+            'life_expectancy_median': round(float(group['life_expectancy'].median()), 2),
+
+            # Basic Infrastructure
+            'sanitation_access_pct_mean': round(float(group['sanitation_access_pct'].mean()), 2),
+            'sanitation_access_pct_median': round(float(group['sanitation_access_pct'].median()), 2),
+            'clean_water_access_pct_mean': round(float(group['clean_water_access_pct'].mean()), 2),
+            'clean_water_access_pct_median': round(float(group['clean_water_access_pct'].median()), 2),
+
+            # Employment
+            'unemployment_rate_tpt_mean': round(float(group['unemployment_rate_tpt'].mean()), 2),
+            'unemployment_rate_tpt_median': round(float(group['unemployment_rate_tpt'].median()), 2),
+            'labor_participation_tpak_mean': round(float(group['labor_participation_tpak'].mean()), 2),
+            'labor_participation_tpak_median': round(float(group['labor_participation_tpak'].median()), 2),
+
+            # GRDP
+            'grdp_constant_million_idr_median': int(round(float(group['grdp_constant_million_idr'].median())))
+        }
+        records.append(rec)
+
+    return pd.DataFrame(records)
+

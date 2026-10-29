@@ -10,6 +10,7 @@ Dokumentasi ini menjelaskan spesifikasi, struktur, kamus data, serta catatan kua
 | :--- | :--- |
 | **File Mentah** | `Klasifikasi Tingkat Kemiskinan di Indonesia.csv` (`data/raw/`) |
 | **File Olahan/Interim** | `poverty_data_cleaned.csv` (`data/interim/`) |
+| **File Olahan Final** | `poverty_clusters.csv` & `poverty_cluster_summary.csv` (`data/processed/`) |
 | **Sumber Data** | Publikasi Publik BPS RI via [Kaggle Dataset oleh ldausl](https://www.kaggle.com/datasets/ldausl/klasifikasi-tingkat-kemiskinan-di-indonesia) |
 | **Tahun / Periode Data** | 2021 (Kondisi 34 Provinsi) |
 | **Tingkat Agregasi** | Kabupaten/Kota (Wilayah Administratif Tingkat II) |
@@ -88,4 +89,84 @@ Berikut adalah rincian seluruh variabel yang terdapat di dalam dataset:
 7. **Deteksi Anomali Multivariat & Kebijakan Do Not Drop:**
    * Diterapkan algoritma *Isolation Forest* (`contamination=0.05`, `random_state=42`) pada seluruh indikator numerik, mendeteksi 26 daerah anomali multidimensi yang terbagi dalam dua kutub: daerah 3T terpencil (Nduga, Lanny Jaya, Mamberamo Tengah, dll.) dan pusat megapolitan (Jakarta Selatan, Bandung, dll.).
    * Seluruh 26 anomali **dipertahankan (Do Not Drop)** agar tidak menghilangkan representasi daerah paling rentan (SDG 1), dengan penambahan kolom flag `is_multivariate_anomaly` dan `anomaly_score`.
+
+---
+
+## 5. Kamus Data Berkas Akhir (`data/processed/poverty_clusters.csv`)
+
+Berkas processed merupakan dataset final 514 kabupaten/kota (21 kolom) yang di-generate secara otomatis oleh `poverty_radar.pipeline` untuk dikonsumsi oleh tim dashboard:
+
+| No | Nama Kolom | Tipe Data | Kategori / Rentang | Deskripsi & Aturan Bisnis |
+| :-: | :--- | :---: | :---: | :--- |
+| 1 | `provinsi` | String | 34 Provinsi | Nama provinsi resmi BPS. |
+| 2 | `kab_kota` | String | 514 Wilayah | Nama resmi kabupaten/kota (bersih tanpa tanda asterisk). |
+| 3 | `tipe_wilayah` | String | `Kabupaten`, `Kota` | Kategori wilayah administrasi (413 Kabupaten, 101 Kota). |
+| 4 | `region_pulau` | String | 6 Kawasan | `Sumatera`, `Jawa`, `Bali & Nusa Tenggara`, `Kalimantan`, `Sulawesi`, `Maluku & Papua`. |
+| 5 | `cluster_id` | Integer | `0, 1, 2, 3` | ID numerik hasil pemodelan K-Means ($k=4$). |
+| 6 | `cluster_name` | String | 4 Persona Resmi | Label persona terstandarisasi:<br>• `Klaster 1: Perkotaan Modern & Formal`<br>• `Klaster 2: Kabupaten Penyangga Mapan`<br>• `Klaster 3: Perdesaan Agraris Rentan`<br>• `Klaster 4: Wilayah 3T Deprivasi Akut` |
+| 7 | `vulnerability_score` | Float | $0.0210 \le x \le 0.9536$ | Indeks Kerentanan Struktural Relatif ($V_{struc}$): rerata terstandardisasi 4 defisit fasilitas dasar (sanitasi, air minum, RLS, UHH). |
+| 8 | `vulnerability_quadrant` | String | 4 Kuadran Kebijakan | Segmentasi kuadran kartesius ($P_0$ vs $V_{struc}$):<br>• `Kuadran I (Prioritas Utama)` ($P_0 \ge \text{med}, V_{struc} \ge \text{med}$)<br>• `Kuadran II (Kerentanan Tersembunyi)` ($P_0 < \text{med}, V_{struc} \ge \text{med}$)<br>• `Kuadran III (Kantong Kemiskinan Daya Beli)` ($P_0 \ge \text{med}, V_{struc} < \text{med}$)<br>• `Kuadran IV (Wilayah Terbina/Mapan)` ($P_0 < \text{med}, V_{struc} < \text{med}$) |
+| 9 | `poverty_rate_p0` | Float | $2.38\% \le x \le 41.66\%$ | Persentase kemiskinan moneter aktual BPS 2021. |
+| 10 | `avg_school_years` | Float | $1.42 \le x \le 12.83$ | Rata-rata lama sekolah penduduk usia 25+ (tahun). |
+| 11 | `expenditure_per_capita` | Integer | $3,976 \le x \le 23,888$ | Pengeluaran riil per kapita disesuaikan (Ribu Rp/orang/tahun). |
+| 12 | `human_dev_index` | Float | $32.84 \le x \le 87.18$ | Indeks Pembangunan Manusia (IPM). |
+| 13 | `life_expectancy` | Float | $55.43 \le x \le 77.73$ | Umur Harapan Hidup saat lahir (tahun). |
+| 14 | `sanitation_access_pct` | Float | $0.00\% \le x \le 99.97\%$ | Akses rumah tangga terhadap sanitasi layak (%). |
+| 15 | `clean_water_access_pct` | Float | $0.00\% \le x \le 100.00\%$ | Akses rumah tangga terhadap air minum layak (%). |
+| 16 | `unemployment_rate_tpt` | Float | $0.00\% \le x \le 13.37\%$ | Tingkat Pengangguran Terbuka (%). |
+| 17 | `labor_participation_tpak`| Float | $56.39\% \le x \le 97.93\%$ | Tingkat Partisipasi Angkatan Kerja (%). |
+| 18 | `grdp_constant_million_idr`| Integer | $147,485 \le x \le 460,081,046$ | PDRB riil ADHK dalam satuan Juta Rupiah. |
+| 19 | `log_pdrb` | Float | $11.89 \le x \le 19.95$ | Transformasi $\ln(1 + \text{PDRB})$ untuk mereduksi skewness. |
+| 20 | `is_multivariate_anomaly` | Boolean | `True` (26), `False` (488) | Flag wilayah anomali multidimensi (Isolation Forest). |
+| 21 | `anomaly_score` | Float | $-0.201 \le x \le 0.165$ | Skor keputusan kontinu Isolation Forest. |
+
+---
+
+## 6. Kamus Data Berkas Ringkasan Klaster (`data/processed/poverty_cluster_summary.csv`)
+
+Berkas ringkasan 4 baris yang menyajikan metrik agregat per klaster untuk mempermudah tim dashboard membuat kartu KPI dan visualisasi perbandingan profil tanpa perlu menghitung agregasi ulang di *front-end*:
+
+| Nama Kolom | Tipe Data | Deskripsi |
+| :--- | :---: | :--- |
+| `cluster_id` | Integer | ID klaster (0 s.d. 3). |
+| `cluster_name` | String | Nama persona klaster resmi. |
+| `total_regions` | Integer | Jumlah kabupaten/kota dalam klaster (78, 187, 216, 33). |
+| `pct_of_national` | Float | Persentase wilayah terhadap total nasional 514 daerah. |
+| `total_kabupaten` | Integer | Jumlah unit Kabupaten. |
+| `total_kota` | Integer | Jumlah unit Kota. |
+| `dominant_region_pulau` | String | Kawasan pulau dengan jumlah daerah terbanyak dalam klaster. |
+| `poverty_rate_p0_mean` / `median` / `min` / `max` | Float | Rerata, median, minimum, dan maksimum tingkat kemiskinan ($P_0$). |
+| `vulnerability_score_mean` / `median` | Float | Rerata dan median skor kerentanan struktural ($V_{struc}$). |
+| `human_dev_index_mean` / `median` | Float | Rerata dan median IPM. |
+| `expenditure_per_capita_mean` / `median` | Integer | Rerata dan median pengeluaran per kapita (Ribu Rp). |
+| `avg_school_years_mean` / `median` | Float | Rerata dan median RLS (tahun). |
+| `life_expectancy_mean` / `median` | Float | Rerata dan median UHH (tahun). |
+| `sanitation_access_pct_mean` / `median` | Float | Rerata dan median akses sanitasi layak (%). |
+| `clean_water_access_pct_mean` / `median` | Float | Rerata dan median akses air minum layak (%). |
+| `unemployment_rate_tpt_mean` / `median` | Float | Rerata dan median TPT (%). |
+| `labor_participation_tpak_mean` / `median` | Float | Rerata dan median TPAK (%). |
+| `grdp_constant_million_idr_median` | Integer | Median PDRB riil konstan (Juta Rp). |
+
+---
+
+## 7. Nilai Acuan Nasional (*Benchmark Reference Lines*) untuk Dashboard
+
+Gunakan angka referensi nasional berikut saat membuat kartu KPI makro dan garis potong visualisasi:
+
+* **Tingkat Kemiskinan ($P_0$):**
+  * *Rata-rata Nasional:* **12.32%**
+  * *Median Nasional (Garis Potong Kuadran):* **10.46%**
+  * *Titik Minimum:* **2.38%** (Kota Sawahlunto, Sumatera Barat)
+  * *Titik Maksimum:* **41.66%** (Kabupaten Intan Jaya, Papua)
+  * *Rasio Disparitas Ekstrem:* **17.5x**
+* **Indeks Kerentanan Struktural Relatif ($V_{struc}$):**
+  * *Median Nasional (Garis Potong Kuadran):* **0.2721**
+  * *Titik Minimum:* **0.0210** (Kota Yogyakarta)
+  * *Titik Maksimum:* **0.9536** (Kabupaten Nduga)
+* **Distribusi Kuadran 2x2:**
+  * *Kuadran I (Prioritas Utama):* **162 wilayah (31.5%)**
+  * *Kuadran II (Kerentanan Tersembunyi):* **95 wilayah (18.5%)**
+  * *Kuadran III (Kantong Kemiskinan Daya Beli):* **95 wilayah (18.5%)**
+  * *Kuadran IV (Wilayah Terbina/Mapan):* **162 wilayah (31.5%)**
+
 

@@ -32,25 +32,32 @@ Treat the current repository, its verified notebook outputs, configuration files
 
 ```text
 PovertyRadar/
+├── pyproject.toml            # Python package configuration and test runner settings
 ├── AGENTS.md                 # Agent working contract, domain rules, and verification standards
 ├── README.md                 # Project landing page, overview, quickstart, and reproducibility
 ├── dashboard_guide.md        # Core data visualization & storytelling guide (Knaflic & Few)
 ├── data/
 │   ├── raw/                  # Read-only raw BPS 2021 dataset from Kaggle
 │   ├── interim/              # Preprocessed data (poverty_data_cleaned.csv with anomaly tags)
-│   ├── processed/            # Final clustered and scored data (poverty_clusters.csv)
+│   ├── processed/            # Final clustered and scored data (poverty_clusters.csv, summary)
 │   └── README.md             # Data dictionary and technical audit notes
 ├── docs/
 │   ├── problem_framing_and_objectives.md  # Problem framing, research questions, scope, 2x2 matrix
 │   ├── data_audit_and_understanding.md    # Full statistical audit, outliers, anomalies, correlations
 │   ├── clustering_protocol.md             # Unsupervised clustering protocol, scaling, evaluation
+│   ├── clustering_rationale_and_findings.md # Rationale behind empirical benchmark of 20+ models
 │   ├── data_contracts.md                  # Data schema contracts and validation boundaries
 │   ├── development.md                     # Environment setup (Python 3.13, uv), workflows, and Git
 │   ├── design.md                          # Multi-page 5-act narrative dashboard architecture
 │   ├── design_single_page.md              # Alternative single-page dashboard architecture
 │   └── ui_brief_mockup.md                 # ASCII wireframes and visual styling brief for UI/UX
-└── notebooks/
-    └── 01_data_audit_and_understanding.ipynb # Verified data audit, outlier, and anomaly notebook
+├── experiments/              # Benchmark scripts and results tracking across clustering models
+├── notebooks/                # Verified reproducible exploration notebooks (01, 02, 03)
+├── reports/
+│   └── figures/              # 9 Official standardized publication visualization figures
+├── src/
+│   └── poverty_radar/        # Modular source package (loader, preprocessor, models, plots, pipeline)
+└── tests/                    # Automated pytest suite (data integrity, clustering, vulnerability)
 ```
 
 ---

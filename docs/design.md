@@ -196,9 +196,10 @@ PovertyRadar SDGs
      **Small Multiples Horizontal Bar Charts (Z-Score Standardized):**  
      Satu panel grafik batang horizontal untuk setiap klaster yang menampilkan deviasi rata-rata indikator (Pendidikan, Kesehatan, Sanitasi, Air, Pengeluaran, TPAK, TPT) terhadap rata-rata nasional (Z = 0).
   3. **Cluster Archetype Cards (Data-Driven Personas):**
-     * *Klaster 1: Perkotaan Maju & Berpendidikan Tinggi* (Z-Score positif di pendidikan & sanitasi).
-     * *Klaster 2: Pedesaan Agraris Tertinggal Pendidikan* (TPAK tinggi, RLS rendah).
-     * *Klaster 3: Wilayah 3T Tertinggal Ekstrem* (Sanitasi & air sangat minim).
+     * *Klaster 1: Perkotaan Modern & Formal (N=78):* Z-Score positif tinggi pada pengeluaran, RLS, dan sanitasi/air; kemiskinan sangat rendah ($P_0 < 6\%$).
+     * *Klaster 2: Kabupaten Penyangga Mapan (N=187):* Layanan dasar dan pengeluaran menengah di atas median nasional; kemiskinan di sekitar rata-rata nasional ($8\% - 12\%$).
+     * *Klaster 3: Perdesaan Agraris Rentan (N=216):* Partisipasi kerja tinggi (subsisten), sanitasi/air terbatas di bawah median; kemiskinan moderat-tinggi ($12\% - 18\%$).
+     * *Klaster 4: Wilayah 3T Deprivasi Akut (N=33):* Defisit kritis pada air minum, sanitasi, dan RLS; kemiskinan ekstrem ($P_0 > 30\%$).
   4. **Bottom Validation Chart (Jittered Strip Plot per Klaster):**  
      Jittered Strip Plot (Dot Density) sebaran kemiskinan aktual ($P_0$) pada masing-masing klaster dengan penanda garis Median per klaster, membuktikan secara visual bagaimana arketipe sosial-ekonomi yang berbeda menghasilkan konsentrasi kemiskinan yang berbeda tanpa kebingungan rumus kuartil.
 
@@ -211,13 +212,13 @@ PovertyRadar SDGs
   1. **Visual Utama (Matriks Kuadran 2x2):**  
      Scatter plot interaktif dengan:
      * Sumbu Y = Persentase Kemiskinan Aktual ($P_0$).
-     * Sumbu X = Indeks Kerentanan Struktural Relatif (Komposit tertimbang ketertinggalan WASH, RLS, UHH).
-     * Garis Potong = Dua garis referensi tegas pada Median Nasional sumbu X dan sumbu Y.
-  2. **Pelabelan Langsung 4 Kuadran:**
-     * **Kuadran I (Prioritas Kritis / Double Burden - Aksen Oranye `#D55E00`):** Kemiskinan Tinggi + Kerentanan Tinggi. Butuh intervensi infrastruktur dasar sekaligus jaring pengaman sosial darurat.
-     * **Kuadran II (Rentan Tersembunyi):** Kemiskinan Rendah tetapi Kerentanan Tinggi. Daerah rentan jatuh miskin jika terjadi syok ekonomi/bencana.
-     * **Kuadran III (Kantong Kemiskinan Spesifik):** Kemiskinan Tinggi padahal Infrastruktur Baik. Akar masalah pada penyerapan tenaga kerja dan upah.
-     * **Kuadran IV (Kondisi Kuat / Resilien):** Kemiskinan Rendah + Kerentanan Rendah.
+     * Sumbu X = Indeks Kerentanan Struktural Relatif ($V_{struc}$ komposit 4 defisit: sanitasi, air minum, pendidikan, kesehatan).
+     * Garis Potong = Dua garis referensi tegas pada Median Nasional sumbu X ($V_{struc} = 0.2721$) dan sumbu Y ($P_0 = 10.46\%$).
+  2. **Pelabelan Langsung 4 Kuadran Kebijakan:**
+     * **Kuadran I (Prioritas Utama - Aksen Oranye `#D55E00`, N=162):** Kemiskinan Tinggi + Kerentanan Tinggi ($P_0 \ge \text{med}, V_{struc} \ge \text{med}$). Aksi: Intervensi terpadu komprehensif, bantuan sosial darurat dibarengi percepatan infrastruktur fisik dasar.
+     * **Kuadran II (Kerentanan Tersembunyi - Aksen Kuning/Amber `#E69F00`, N=95):** Kemiskinan Rendah tetapi Kerentanan Tinggi ($P_0 < \text{med}, V_{struc} \ge \text{med}$). Aksi: Penguatan sarana dasar preventif guna mencegah kerentanan jatuh miskin saat terjadi syok ekonomi/bencana.
+     * **Kuadran III (Kantong Kemiskinan Daya Beli - Aksen Biru Muda `#56B4E9`, N=95):** Kemiskinan Tinggi padahal Sarana Dasar Memadai ($P_0 \ge \text{med}, V_{struc} < \text{med}$). Aksi: Stimulus ekonomi lokal, penciptaan lapangan kerja produktif, dan peningkatan daya beli warga.
+     * **Kuadran IV (Wilayah Terbina/Mapan - Aksen Biru Tua `#0072B2`, N=162):** Kemiskinan Rendah + Kerentanan Rendah ($P_0 < \text{med}, V_{struc} < \text{med}$). Aksi: Menjaga stabilitas ekonomi dan dijadikan percontohan (*benchmarking*) tata kelola daerah.
   3. **Side Inspector Panel:** Klik salah satu titik pada scatter plot untuk membuka kartu profil detail kabupaten (seluruh indikator, peringkat provinsi, dan kuadran aksi).
 
 ---

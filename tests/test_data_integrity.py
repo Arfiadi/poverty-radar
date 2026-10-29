@@ -33,3 +33,13 @@ def test_feature_ranges_and_types(processed_df):
     assert (processed_df['avg_school_years'] >= 1.0).all() and (processed_df['avg_school_years'] <= 20.0).all()
     assert (processed_df['life_expectancy'] >= 45.0).all() and (processed_df['life_expectancy'] <= 85.0).all()
 
+
+def test_cluster_summary_contract():
+    """Ensure cluster summary file exists, has 4 clusters, and exact region total of 514."""
+    from poverty_radar.data.loader import load_cluster_summary
+    df_sum = load_cluster_summary()
+    assert len(df_sum) == 4, f"Expected 4 cluster summary rows, found {len(df_sum)}"
+    assert df_sum['total_regions'].sum() == 514, "Sum of cluster regions must equal 514"
+    assert df_sum.isnull().sum().sum() == 0, "Summary table must have zero null values"
+    assert 'dominant_region_pulau' in df_sum.columns, "dominant_region_pulau missing from summary"
+

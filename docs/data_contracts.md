@@ -69,14 +69,20 @@ Setiap tahapan eksekusi pipeline wajib memvalidasi invarian berikut:
 
 ## 4. Kontrak Skema Berkas Akhir (`data/processed/poverty_clusters.csv`)
 
-Berkas processed mewarisi seluruh kolom interim di atas ditambah atribut keluaran pemodelan:
+Berkas processed mewarisi seluruh kolom interim di atas ditambah atribut keluaran pemodelan (total 21 kolom):
 
 | Nama Kolom Tambahan | Tipe Data Pandas | Nilai Boleh Null? | Batas Nilai (*Constraints*) | Penjelasan & Aturan Bisnis |
 | :--- | :---: | :---: | :---: | :--- |
-| `cluster_id` | `int64` | Tidak | $0 \le x < k$ | ID klaster hasil K-Means ($k$ biasanya 4 atau 5). |
-| `cluster_name` | `object` (str) | Tidak | Daftar nama tipologi | Label profil substantif yang mudah dipahami publik. |
-| `vulnerability_score` | `float64` | Tidak | $0.0 \le x \le 1.0$ atau z-score | Skor komposit kerentanan fasilitas dasar & modal manusia. |
-| `vulnerability_quadrant`| `object` (str) | Tidak | 4 Nilai Kuadran | `Kuadran I`, `Kuadran II`, `Kuadran III`, `Kuadran IV`. |
+| `cluster_id` | `int64` | Tidak | $0 \le x < 4$ | ID numerik hasil K-Means ($k=4$: 0, 1, 2, 3). |
+| `cluster_name` | `object` (str) | Tidak | 4 Nama Persona Resmi | `Klaster 1: Perkotaan Modern & Formal`, `Klaster 2: Kabupaten Penyangga Mapan`, `Klaster 3: Perdesaan Agraris Rentan`, `Klaster 4: Wilayah 3T Deprivasi Akut`. |
+| `vulnerability_score` | `float64` | Tidak | $0.0 \le x \le 1.0$ | Indeks Kerentanan Struktural Relatif ($V_{struc}$) komposit 4 defisit dasar. |
+| `vulnerability_quadrant`| `object` (str) | Tidak | 4 Nilai Kuadran Resmi | `Kuadran I (Prioritas Utama)`, `Kuadran II (Kerentanan Tersembunyi)`, `Kuadran III (Kantong Kemiskinan Daya Beli)`, `Kuadran IV (Wilayah Terbina/Mapan)`. |
+| `log_pdrb` | `float64` | Tidak | $x > 0$ | Transformasi $\ln(1 + \text{PDRB})$ untuk normalisasi sebaran PDRB riil. |
+
+### Kontrak Berkas Ringkasan Klaster (`data/processed/poverty_cluster_summary.csv`)
+* **Jumlah Baris:** Tepat 4 baris (mewakili 4 klaster).
+* **Kolom:** Memuat metrik agregat per klaster (`total_regions`, `pct_of_national`, `total_kabupaten`, `total_kota`, `dominant_region_pulau`, serta `mean` dan `median` untuk seluruh indikator numerik).
+* **Integritas:** Total penjumlahan `total_regions` wajib tepat 514 baris.
 
 ---
 

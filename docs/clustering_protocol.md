@@ -90,7 +90,7 @@ Setiap eksperimen klasterisasi wajib mendokumentasikan 4 dimensi evaluasi yang k
     $\text{Silhouette} = \mathbf{0.2028}$ dan $\text{DBI} = \mathbf{1.4522}$.
 * **Justifikasi Ilmiah & Bahaya Klaster Cacat (*Pathological Clustering*):**
   1. *Ilusi Metrik Tinggi pada Klaster Cacat:* Berdasarkan benchmark terhadap 20+ konfigurasi model (tercatat di log eksperimen), model yang mampu menghasilkan Silhouette $> 0.35$ dan DBI $< 1.20$ pada 7 dimensi asli hanyalah algoritma seperti *Agglomerative Average Linkage* ($\text{Silhouette} = 0.3943$, $\text{DBI} = 0.7691$). Namun, model tersebut menghasilkan partisi cacat di mana **492 daerah menumpuk di 1 klaster**, sedangkan 3 klaster lainnya hanya mengisolasi pencilan ekstrem (17 daerah, 4 daerah, dan 1 daerah). Model semacam ini **tidak memiliki nilai guna kebijakan publik**.
-  2. *Sifat Kontinum Pembangunan Sosio-Ekonomi:* Kabupaten/kota di Indonesia tidak terpisah menjadi pulau-pulau data buatan dengan jurang hampa. Pembangunan dari Daerah Transisi (187 daerah) menuju Perdesaan Agraris (216 daerah) adalah **kontinum bertahap**, sehingga titik-titik di batas antarklaster secara alami memiliki koefisien siluet di sekitar 0.
+  2. *Sifat Kontinum Pembangunan Sosio-Ekonomi:* Kabupaten/kota di Indonesia tidak terpisah menjadi pulau-pulau data buatan dengan jurang hampa. Pembangunan dari Kabupaten Penyangga (187 daerah) menuju Perdesaan Agraris (216 daerah) adalah **kontinum bertahap**, sehingga titik-titik di batas antarklaster secara alami memiliki koefisien siluet di sekitar 0.
   3. *Efek Dimensi (Curse of Dimensionality):* Penggunaan 7 indikator non-moneter riil mendistribusikan jarak Euclidean secara multidimensi, sehingga skor siluet pada rentang $0.18 - 0.25$ merupakan capaian realistis dan optimal untuk data agregat 514 wilayah.
 
 ### 5.2 Validasi Eksternal Tingkat Kemiskinan Moneter ($P_0$ Inference Test)
@@ -126,7 +126,7 @@ Setelah klasterisasi selesai dan tervalidasi:
    [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)
 2. Kolom tambahan yang wajib disertakan pada berkas luaran:
    * `cluster_id` (Integer: 0, 1, 2, ... k-1).
-   * `cluster_name` (String: Label profil substantif, misal: "Perkotaan Maju", "Agraris Subsisten").
+   * `cluster_name` (String: Label profil substantif resmi, misal: "Klaster 1: Perkotaan Modern & Formal", "Klaster 3: Perdesaan Agraris Rentan").
    * `vulnerability_score` (Float: Skor kerentanan struktural relatif).
    * `vulnerability_quadrant` (String: "Kuadran I", "Kuadran II", "Kuadran III", "Kuadran IV").
 3. Catat konfigurasi model, hyperparameter, dan metrik evaluasi ke dalam notebook atau log eksperimen.

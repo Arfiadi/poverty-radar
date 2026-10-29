@@ -117,9 +117,10 @@ Setiap kartu KPI wajib memuat:
      * Sumbu X = Skor Standar Deviasi (Z-Score dari -2 s.d. +2).
      * Sumbu Y = 6 Pilar Indikator (Pendidikan, Kesehatan, Sanitasi, Air, Pengeluaran, Ketenagakerjaan).
   3. *Kartu Narasi Arketipe (Data-Driven Personas):*
-     * **Klaster 1:** *Perkotaan Maju Mandiri* (Z-Score positif di pendidikan & sanitasi).
-     * **Klaster 2:** *Pedesaan Agraris Tertinggal Pendidikan* (TPAK tinggi, RLS rendah).
-     * **Klaster 3:** *Wilayah 3T Tertinggal Ekstrem* (Sanitasi & air sangat minim).
+     * **Klaster 1:** *Perkotaan Modern & Formal (N=78)* (Z-Score positif tinggi pada pengeluaran, RLS, sanitasi/air; kemiskinan sangat rendah < 6%).
+     * **Klaster 2:** *Kabupaten Penyangga Mapan (N=187)* (Layanan dasar dan pengeluaran menengah di atas median; kemiskinan di sekitar rata-rata nasional 8-12%).
+     * **Klaster 3:** *Perdesaan Agraris Rentan (N=216)* (Partisipasi kerja tinggi subsisten, sanitasi/air terbatas; kemiskinan moderat-tinggi 12-18%).
+     * **Klaster 4:** *Wilayah 3T Deprivasi Akut (N=33)* (Defisit kritis pada air minum, sanitasi, dan RLS; kemiskinan ekstrem > 30%).
   4. *Bawah:* Jittered Strip Plot (Dot Density Plot) sebaran kemiskinan aktual ($P_0$) pada masing-masing klaster dengan penanda garis Median per klaster (bebas dari kebingungan rumus kuartil/whisker boxplot).
 
 ---
@@ -131,10 +132,10 @@ Setiap kartu KPI wajib memuat:
   1. *Visual Utama (Matriks Kuadran 2x2):*
      * Scatter plot dua sumbu: Sumbu Y = Kemiskinan Aktual ($P_0$), Sumbu X = Indeks Kerentanan Struktural Relatif.
      * Dua garis referensi tegas berpotongan di median nasional masing-masing sumbu (membentuk 4 kuadran).
-     * **Kuadran I (Kanan Atas / Aksen Oranye `#D55E00`):** Diberi label tebal *"Prioritas Kritis (Double Burden)"*.
-     * **Kuadran II (Kanan Bawah):** *"Rentan Tersembunyi"*.
-     * **Kuadran III (Kiri Atas):** *"Kantong Kemiskinan Spesifik"*.
-     * **Kuadran IV (Kiri Bawah):** *"Kondisi Kuat / Resilien"*.
+     * **Kuadran I (Kanan Atas / Aksen Oranye `#D55E00`, N=162):** Diberi label tebal *"Prioritas Utama"* (Kemiskinan Tinggi + Kerentanan Tinggi).
+     * **Kuadran II (Kiri Atas / Aksen Kuning `#E69F00`, N=95):** *"Kerentanan Tersembunyi"* (Kemiskinan Rendah + Kerentanan Tinggi).
+     * **Kuadran III (Kanan Bawah / Aksen Biru Muda `#56B4E9`, N=95):** *"Kantong Kemiskinan Daya Beli"* (Kemiskinan Tinggi + Kerentanan Rendah).
+     * **Kuadran IV (Kiri Bawah / Aksen Biru Tua `#0072B2`, N=162):** *"Wilayah Terbina/Mapan"* (Kemiskinan Rendah + Kerentanan Rendah).
   2. *Panel Samping / Modal Card:* Kartu inspeksi detail kabupaten saat titik pada scatter plot diklik.
 
 ---

@@ -415,9 +415,9 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
 
     quad_palette = {
         'Kuadran I (Prioritas Utama)': '#D55E00',
-        'Kuadran II (Potensi Rentan Tersembunyi)': '#E69F00',
-        'Kuadran III (Kantong Kemiskinan / Enklave)': '#CC79A7',
-        'Kuadran IV (Kondisi Tangguh)': '#0072B2'
+        'Kuadran II (Kerentanan Tersembunyi)': '#E69F00',
+        'Kuadran III (Kantong Kemiskinan Daya Beli)': '#CC79A7',
+        'Kuadran IV (Wilayah Terbina/Mapan)': '#0072B2'
     }
 
     sns.scatterplot(
@@ -451,7 +451,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     box_q4 = dict(boxstyle='round,pad=0.5', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.3, alpha=0.95)
 
     ax.text(1.0, 1.01, 
-            'KUADRAN II: RENTAN TERSEMBUNYI\n'
+            'KUADRAN II: KERENTANAN TERSEMBUNYI\n'
             '• 95 Daerah (18.5%) | P0 < 10.5% | V_struc ≥ 0.27\n'
             '• Akar: Sanitasi & air minum rapuh\n'
             '• Aksi: Penguatan sarana dasar preventif\n'
@@ -468,14 +468,14 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
             fontsize=8.5, fontweight='bold', color='#B33000', bbox=box_q1, va='top')
 
     ax.text(1.0, 0.01, 
-            'KUADRAN IV: KONDISI TANGGUH\n'
+            'KUADRAN IV: WILAYAH TERBINA / MAPAN\n'
             '• 162 Daerah (31.5%) | P0 < 10.5% | V_struc < 0.27\n'
             '• Karakteristik: Infrastruktur & ekonomi kuat\n'
             '• Aksi: Rujukan pertumbuhan & inovasi regional',
             fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='bottom')
 
     ax.text(27.0, 0.01, 
-            'KUADRAN III: KANTONG KEMISKINAN (ENKLAVE)\n'
+            'KUADRAN III: KANTONG KEMISKINAN DAYA BELI\n'
             '• 95 Daerah (18.5%) | P0 ≥ 10.5% | V_struc < 0.27\n'
             '• Akar: Sarana dasar memadai, namun daya beli & kerja terbatas\n'
             '• Aksi: Padat karya tunai, stimulus UMKM, & bantuan daya beli',

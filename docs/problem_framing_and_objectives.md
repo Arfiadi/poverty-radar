@@ -233,18 +233,18 @@ Matriks skrining memadukan dua dimensi independen pada bidang kartesius:
 
 ### 5.3 Karakteristik & Arah Kebijakan Empat Kuadran
 
-1. **Kuadran I — Beban Ganda / Prioritas Utama (*High Poverty, High Vulnerability*):**
+1. **Kuadran I — Prioritas Utama (*High Poverty, High Vulnerability*):**
    * *Karakteristik:* Daerah mengalami kemiskinan ekonomi parah sekaligus ketertinggalan fasilitas dasar dan modal manusia yang kritis (mayoritas wilayah 3T di Papua, Papua Barat, dan NTT).
    * *Arah Kebijakan:* Intervensi terpadu komprehensif (bantuan sosial langsung dibarengi percepatan infrastruktur air/sanitasi dan fasilitas pendidikan).
 2. **Kuadran II — Kerentanan Tersembunyi (*Low Poverty, High Vulnerability*):**
    * *Karakteristik:* Angka kemiskinan saat ini relatif rendah, namun fondasi infrastruktur dasar dan pendidikannya sangat rapuh.
-   * *Arah Kebijakan:* Pembangunan infrastruktur preventif sebelum guncangan ekonomi eksternal menjatuhkan masyarakat ke bawah garis kemiskinan.
-3. **Kuadran III — Kantong Kemiskinan / Enklave (*High Poverty, Low Vulnerability*):**
-   * *Karakteristik:* Fasilitas dasar dan mutu modal manusia memadai, namun tingkat kemiskinan tetap tinggi.
+   * *Arah Kebijakan:* Pembangunan infrastruktur dasar preventif guna mencegah kerentanan jatuh miskin saat terjadi syok ekonomi atau bencana.
+3. **Kuadran III — Kantong Kemiskinan Daya Beli (*High Poverty, Low Vulnerability*):**
+   * *Karakteristik:* Fasilitas dasar dan mutu modal manusia memadai, namun tingkat kemiskinan tetap tinggi akibat keterbatasan daya beli dan pasar kerja formal.
    * *Arah Kebijakan:* Reformasi pasar tenaga kerja, peningkatan produktivitas industri lokal, dan penciptaan lapangan kerja formal bernilai tambah.
-4. **Kuadran IV — Fondasi Kuat (*Low Poverty, Low Vulnerability*):**
+4. **Kuadran IV — Wilayah Terbina/Mapan (*Low Poverty, Low Vulnerability*):**
    * *Karakteristik:* Kemiskinan rendah dan infrastruktur dasar kuat (mayoritas kota-kota besar di Jawa dan pusat ekonomi regional).
-   * *Arah Kebijakan:* Menjaga stabilitas ekonomi dan dijadikan model rujukan (*benchmarking*) bagi daerah lain.
+   * *Arah Kebijakan:* Menjaga stabilitas ekonomi dan dijadikan percontohan (*benchmarking*) tata kelola bagi daerah lain.
 
 ---
 

@@ -46,3 +46,13 @@ def test_clustering_reproducibility(cleaned_df):
 
     assert np.array_equal(labels1, labels2), "Cluster assignments must be 100% deterministic"
 
+
+def test_compute_cluster_summary_output(processed_df):
+    """Verify compute_cluster_summary generates proper schema and exact totals."""
+    from poverty_radar.models.clustering import compute_cluster_summary
+    df_summary = compute_cluster_summary(processed_df)
+    assert len(df_summary) == 4, f"Expected 4 clusters, got {len(df_summary)}"
+    assert df_summary['total_regions'].sum() == 514
+    assert set(df_summary['cluster_name']) == set(CLUSTER_LABELS.values())
+    assert df_summary['poverty_rate_p0_median'].iloc[0] < df_summary['poverty_rate_p0_median'].iloc[3]
+
