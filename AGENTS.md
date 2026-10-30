@@ -49,7 +49,6 @@ PovertyRadar/
 │   ├── data_contracts.md                  # Data schema contracts and validation boundaries
 │   ├── development.md                     # Environment setup (Python 3.13, uv), workflows, and Git
 │   ├── design.md                          # Multi-page 5-act narrative dashboard architecture
-│   ├── design_single_page.md              # Alternative single-page dashboard architecture
 │   └── ui_brief_mockup.md                 # ASCII wireframes and visual styling brief for UI/UX
 ├── experiments/              # Benchmark scripts and results tracking across clustering models
 ├── notebooks/                # Verified reproducible exploration notebooks (01, 02, 03)
@@ -71,7 +70,7 @@ Read referenced documents only when relevant to the current task:
 - `docs/data_audit_and_understanding.md`: Read when inspecting variable distributions, IQR outliers, 26 multivariate anomalies, employment paradox, or correlation matrices.
 - `data/README.md` & `docs/data_contracts.md`: Read when verifying column schemas, data types, boundaries, or adding new features to pipeline outputs.
 - `docs/clustering_protocol.md`: Read when designing, fitting, tuning, evaluating, or profiling unsupervised clustering models.
-- `docs/design.md` & `docs/design_single_page.md`: Read when building, styling, or updating dashboard layouts, navigation, and interactive charts.
+- `docs/design.md`: Read when building, styling, or updating dashboard layouts, navigation, and interactive charts.
 - `dashboard_guide.md` & `docs/ui_brief_mockup.md`: Read when designing visual components, choosing chart types, applying color palettes, or drafting wireframes.
 - `docs/development.md`: Read when setting up Python environments, configuring packages, or running verification workflows.
 

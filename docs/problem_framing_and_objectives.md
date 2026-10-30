@@ -37,8 +37,7 @@
    - 6.3 [Uji Interpretabilitas Substantif Kebijakan](#63-uji-interpretabilitas-substantif-kebijakan)
 7. [Arsitektur Dashboard Storytelling & Standar Visualisasi](#7-arsitektur-dashboard-storytelling--standar-visualisasi)
    - 7.1 [Struktur 5 Babak Naratif (Multi-Page Primary Architecture)](#71-struktur-5-babak-naratif-multi-page-primary-architecture)
-   - 7.2 [Opsi Alternatif Satu Halaman (Single-Page Tabs / Scrollytelling)](#72-opsi-alternatif-satu-halaman-single-page-tabs--scrollytelling)
-   - 7.3 [Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)](#73-pedoman-visualisasi-knaflic--few-larangan-radar-chart--kebijakan-boxplot)
+   - 7.2 [Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)](#72-pedoman-visualisasi-knaflic--few-larangan-radar-chart--kebijakan-boxplot)
 8. [Status Gerbang Keputusan Pra-Pemodelan (Decision Gates)](#8-status-gerbang-keputusan-pra-pemodelan-decision-gates)
 9. [Rujukan Resmi & Berkas Terkait](#9-rujukan-resmi--berkas-terkait)
 
@@ -301,10 +300,7 @@ graph LR
    * *Pertanyaan Kunci yang Dijawab:* Bagaimana temuan diperoleh dan apa yang tidak dapat disimpulkan?
    * Dokumentasi kamus data, verifikasi tahun BPS 2021, penanganan anomali 3T, visualisasi korelasi multikolinearitas, dan batasan interpretasi model.
 
-### 7.2 Opsi Alternatif Satu Halaman (Single-Page Tabs / Scrollytelling)
-Berdasarkan [`docs/design_single_page.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design_single_page.md), disediakan tata letak ringkas satu halaman web menggunakan komponen *Tabs* (`st.tabs`) atau *Scrollytelling* vertikal untuk keperluan demo atau presentasi berdurasi terbatas.
-
-### 7.3 Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)
+### 7.2 Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)
 
 Berdasarkan pedoman visualisasi data pada [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md):
 
@@ -372,6 +368,5 @@ Sesuai rujukan resmi *Problem Framing & Objektif Explanatory Dashboard*:
    * Notebook Audit & Preprocessing: [`notebooks/01_data_audit_and_understanding.ipynb`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/notebooks/01_data_audit_and_understanding.ipynb)
    * Dataset Interim Terstandar: [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv)
    * Desain Dashboard Storytelling 5 Babak: [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md)
-   * Desain Alternatif Single-Page: [`docs/design_single_page.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design_single_page.md)
    * Panduan Visualisasi Data: [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md)
 

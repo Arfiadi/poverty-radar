@@ -77,7 +77,6 @@ PovertyRadar/
 │   ├── data_contracts.md                  # Kontrak skema & validasi pipeline
 │   ├── development.md                     # Panduan lingkungan kerja (uv/python) & git
 │   ├── design.md                          # Arsitektur dashboard storytelling 5 babak
-│   ├── design_single_page.md              # Desain alternatif dashboard satu halaman
 │   └── ui_brief_mockup.md                 # Panduan wireframe ASCII untuk tim desain UI/UX
 ├── experiments/               # Skrip & log benchmark 20+ konfigurasi clustering
 ├── notebooks/                 # Notebook eksplorasi interaktif (01, 02, 03)
@@ -142,7 +141,6 @@ python -c "import pandas as pd; df = pd.read_csv('data/interim/poverty_data_clea
 | [`docs/data_contracts.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_contracts.md) | Kontrak skema data, batas nilai, dan fungsi validasi otomatis. |
 | [`docs/development.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/development.md) | Panduan setup lingkungan kerja lokal dan alur kerja Git. |
 | [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md) | Spesifikasi antarmuka dashboard storytelling 5 babak naratif. |
-| [`docs/design_single_page.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design_single_page.md) | Spesifikasi antarmuka alternatif satu halaman (Tabs / Scrollytelling). |
 | [`docs/ui_brief_mockup.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/ui_brief_mockup.md) | Wireframe ASCII dan panduan visual untuk desainer Figma/Canva. |
 | [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md) | Pedoman prinsip visualisasi data (Knaflic, Few, Desbarats). |
 | [`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) | Kamus data 13 variabel asli dan 4 variabel hasil rekayasa fitur. |
