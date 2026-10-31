@@ -46,7 +46,7 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 5.2), dpi=300)
     fig.suptitle('Penentuan Jumlah Klaster (k = 4): Evaluasi Inersia Elbow & Siluet',
-                 fontsize=12.5, fontweight='bold', y=0.97, ha='center')
+                 fontsize=12, fontweight='bold', y=0.98, ha='center')
 
     # Panel 1: Elbow
     ax1.plot(k_range, inertia_km, marker='o', markersize=7, color='#0072B2', linewidth=2.2)
@@ -58,7 +58,7 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.15', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.9))
     ax1.set_title('1. Evaluasi Inersia WCSS (Elbow)\nLaju penurunan melambat setelah k = 4',
-                  fontsize=10.5, fontweight='bold', loc='left', pad=10)
+                  fontsize=10, fontweight='bold', loc='left', pad=8)
     ax1.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold')
     ax1.set_ylabel('Inersia / WCSS', fontsize=10, fontweight='bold')
     ax1.set_xticks(k_range)
@@ -80,15 +80,14 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.12', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.9))
     ax2.set_title('2. Evaluasi Separasi (Silhouette Score)\nk = 4 menjaga keterwakilan tanpa penumpukan daerah',
-                  fontsize=10.5, fontweight='bold', loc='left', pad=10)
+                  fontsize=10, fontweight='bold', loc='left', pad=8)
     ax2.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold')
     ax2.set_ylabel('Rata-rata Silhouette Score', fontsize=10, fontweight='bold')
     ax2.set_xticks(k_range)
     ax2.set_ylim(0.16, 0.31)
     ax2.grid(True, linestyle=':', alpha=0.5)
 
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.85, wspace=0.22)
+    plt.subplots_adjust(top=0.78, bottom=0.12, left=0.08, right=0.97, wspace=0.22)
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     return fig
@@ -97,7 +96,7 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
 def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.Figure:
     """Figure 09 (Slide 10): Bar chart comparing K-Means vs Bisecting, GMM, Agglomerative at k=4."""
     set_chart_style()
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.0, 5.2), dpi=300)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 5.4), dpi=300)
 
     models = ['K-Means\n(Terpilih)', 'Bisecting\nK-Means', 'GMM\n(Mixture)', 'Agglomerative\n(Ward)']
     sil_scores = [0.203, 0.197, 0.183, 0.173]
@@ -111,15 +110,15 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
         val = sil_scores[i]
         if i == 0:
             ax1.text(bar.get_x() + bar.get_width()/2, val + 0.006, f"{val:.3f}\n(Tertinggi)", 
-                     ha='center', va='bottom', fontsize=10, fontweight='bold', color='#0072B2')
+                     ha='center', va='bottom', fontsize=9.5, fontweight='bold', color='#0072B2')
         else:
             ax1.text(bar.get_x() + bar.get_width()/2, val + 0.006, f"{val:.3f}", 
-                     ha='center', va='bottom', fontsize=9.5, color='#424242')
+                     ha='center', va='bottom', fontsize=9.0, color='#424242')
     ax1.set_xlim(-0.65, 3.65)
     ax1.set_ylim(0, 0.26)
-    ax1.set_ylabel('Silhouette Score', fontsize=10.5, fontweight='bold')
-    ax1.set_title('1. Separasi Antar-Klaster (Silhouette Score)\n(Semakin tinggi = pemisahan semakin baik)', 
-                  fontsize=10.5, fontweight='bold', pad=10, loc='left')
+    ax1.set_ylabel('Silhouette Score', fontsize=10, fontweight='bold')
+    ax1.set_title('1. Separasi Antar-Klaster (Silhouette Score)\n(Skor lebih tinggi = pemisahan lebih baik)', 
+                  fontsize=9.5, fontweight='bold', pad=8, loc='left')
     ax1.grid(axis='y', linestyle=':', alpha=0.6, zorder=0)
     ax1.grid(axis='x', visible=False)
     ax1.spines['top'].set_visible(False)
@@ -131,26 +130,25 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
         val = dbi_scores[i]
         if i == 0:
             ax2.text(bar.get_x() + bar.get_width()/2, val + 0.04, f"{val:.3f}\n(Terendah)", 
-                     ha='center', va='bottom', fontsize=10, fontweight='bold', color='#0072B2')
+                     ha='center', va='bottom', fontsize=9.5, fontweight='bold', color='#0072B2')
         else:
             ax2.text(bar.get_x() + bar.get_width()/2, val + 0.04, f"{val:.3f}", 
-                     ha='center', va='bottom', fontsize=9.5, color='#424242')
+                     ha='center', va='bottom', fontsize=9.0, color='#424242')
     ax2.set_xlim(-0.65, 3.65)
     ax2.set_ylim(0, 1.85)
-    ax2.set_ylabel('Davies-Bouldin Index (DBI)', fontsize=10.5, fontweight='bold')
-    ax2.set_title('2. Kepadatan Dalam Klaster (DBI)\n(Semakin rendah = klaster semakin kompak)', 
-                  fontsize=10.5, fontweight='bold', pad=10, loc='left')
+    ax2.set_ylabel('Davies-Bouldin Index (DBI)', fontsize=10, fontweight='bold')
+    ax2.set_title('2. Kepadatan Dalam Klaster (DBI)\n(Skor lebih rendah = klaster lebih kompak)', 
+                  fontsize=9.5, fontweight='bold', pad=8, loc='left')
     ax2.grid(axis='y', linestyle=':', alpha=0.6, zorder=0)
     ax2.grid(axis='x', visible=False)
     ax2.spines['top'].set_visible(False)
     ax2.spines['right'].set_visible(False)
 
     fig.suptitle('Perbandingan Evaluasi Algoritma Klastering pada k = 4\n'
-                 'K-Means mencatat Silhouette tertinggi (0.203) dan DBI terendah (1.452)', 
-                 fontsize=12, fontweight='bold', y=0.97, ha='center')
+                 'K-Means: Silhouette Tertinggi (0.203) & DBI Terendah (1.452)', 
+                 fontsize=11.5, fontweight='bold', y=0.98, ha='center')
 
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.85, wspace=0.24)
+    plt.subplots_adjust(top=0.76, bottom=0.12, left=0.08, right=0.96, wspace=0.25)
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     return fig
@@ -322,7 +320,7 @@ def plot_cluster_small_multiples(df: pd.DataFrame, X_scaled: np.ndarray, save_pa
     fig, axes = plt.subplots(2, 2, figsize=(11.5, 7.5), dpi=300, sharex=True)
     fig.suptitle('Dekomposisi Profil Klaster terhadap Median Nasional\n'
                  'Biru = Capaian di Atas Median | Oranye = Defisit Relatif',
-                 fontsize=12, fontweight='bold', y=0.96, ha='center')
+                 fontsize=11.5, fontweight='bold', y=0.98, ha='center')
 
     subtitles = {
         0: 'Modal Manusia & Daya Beli Tinggi, Kerja Formal Kompetitif',
@@ -353,10 +351,9 @@ def plot_cluster_small_multiples(df: pd.DataFrame, X_scaled: np.ndarray, save_pa
 
         counts = (df['cluster_id'] == cid).sum()
         ax.set_title(f"{CLUSTER_LABELS[cid]} (N={counts})\n{subtitles[cid]}",
-                     fontsize=9.5, fontweight='bold', pad=6, loc='center')
+                     fontsize=9.0, fontweight='bold', pad=6, loc='center')
 
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.86, bottom=0.08, hspace=0.38, wspace=0.25)
+    plt.subplots_adjust(top=0.82, bottom=0.08, left=0.08, right=0.97, hspace=0.38, wspace=0.25)
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     return fig
