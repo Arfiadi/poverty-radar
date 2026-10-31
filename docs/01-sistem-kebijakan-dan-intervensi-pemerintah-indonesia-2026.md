@@ -188,7 +188,8 @@ Antara akhir 2022 hingga beroperasi penuh pada tahun 2024–2026, peta administr
 ```
 
 ### 3.4. Implikasi Spasial terhadap Analisis PovertyRadar SDGs
-* **Jumlah Entitas Kabupaten/Kota Tetap 514:** Pemekaran 4 provinsi di Papua **tidak menambah jumlah kabupaten/kota**. Total nasional tetap 514 daerah (416 kabupaten dan 98 kota/kota administrasi) karena moratorium pemekaran tingkat dua masih diberlakukan.
+* **Jumlah Entitas Kabupaten/Kota Tetap 514:** Pemekaran 4 provinsi di Papua **tidak menambah jumlah kabupaten/kota**. Total nasional tetap 514 daerah karena moratorium pemekaran tingkat dua masih diberlakukan.  
+  *(Catatan Rekonsiliasi Klasifikasi Wilayah: Secara yuridis otonom perundang-undangan Kemendagri, Indonesia terdiri atas 416 kabupaten dan 98 kota. Namun dalam struktur publikasi dataset resmi BPS 2021 yang dianalisis pada platform ini, 514 daerah dikelompokkan menjadi 413 Kabupaten—mencakup 412 kabupaten otonom plus 1 kabupaten administrasi Kepulauan Seribu—dan 101 Kota—mencakup 96 kota otonom plus 5 kota administrasi di Provinsi DKI Jakarta).*
 * **Crosswalk Data Statistik Historis (BPS 2021 vs Konstelasi 2026):**
   Dataset utama PovertyRadar bersumber dari BPS 2021 yang merekam 34 provinsi. Seluruh unit kabupaten/kota 3T ekstrem di Papua (Klaster 4: Nduga, Lanny Jaya, Mamberamo Tengah, Yahukimo, Tolikara, Intan Jaya, Tambrauw) secara spasial tetap identik, namun dalam tata kelola anggaran 2026 telah berpindah ke yurisdiksi provinsi baru:
   * Nduga, Lanny Jaya, Yahukimo, Mamberamo Tengah $\rightarrow$ **Provinsi Papua Pegunungan (Kode BPS: 95)**.

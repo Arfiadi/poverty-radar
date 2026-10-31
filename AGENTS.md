@@ -33,13 +33,14 @@ Treat the current repository, its verified notebook outputs, configuration files
 ```text
 PovertyRadar/
 ├── pyproject.toml            # Python package configuration and test runner settings
+├── requirements.txt          # Universal dependencies lock for deployment & cloud
 ├── AGENTS.md                 # Agent working contract, domain rules, and verification standards
 ├── README.md                 # Project landing page, overview, quickstart, and reproducibility
 ├── dashboard_guide.md        # Core data visualization & storytelling guide (Knaflic & Few)
 ├── data/
 │   ├── raw/                  # Read-only raw BPS 2021 dataset from Kaggle
 │   ├── interim/              # Preprocessed data (poverty_data_cleaned.csv with anomaly tags)
-│   ├── processed/            # Final clustered and scored data (poverty_clusters.csv, summary)
+│   ├── processed/            # Final clustered and scored data (poverty_clusters.csv, summary, policy matrix)
 │   └── README.md             # Data dictionary and technical audit notes
 ├── docs/
 │   ├── problem_framing_and_objectives.md  # Problem framing, research questions, scope, 2x2 matrix
@@ -84,9 +85,9 @@ Read referenced documents only when relevant to the current task:
 
 Apply these non-negotiable rules for any data processing, feature engineering, or modeling tasks:
 
-1. **Target Leakage Prevention:**
-   - Drop `poverty_class_target` from all feature vectors.
-   - Do NOT include `poverty_rate_p0` in distance-based clustering feature sets. $P_0$ is reserved strictly for post-clustering evaluation and comparative profiling across clusters.
+1. **Target Leakage & Circular Reasoning Prevention:**
+   - Drop `poverty_class_target` from all feature vectors to prevent target leakage in supervised learning.
+   - Do NOT include `poverty_rate_p0` in distance-based clustering feature sets to prevent circular reasoning and tautological evaluation. $P_0$ is reserved strictly for post-clustering evaluation and comparative profiling across clusters.
 2. **Multicollinearity & Double-Counting Rule:**
    - Do NOT combine composite `human_dev_index` (HDI) with its constituent sub-indices (`expenditure_per_capita`, `avg_school_years`, `life_expectancy`) in distance-based clustering (e.g., K-Means).
    - HDI has high correlation with its components ($r > 0.86$); including both artificially inflates the human development weight by 2-3x over WASH and employment variables. Keep HDI as an external context benchmark.

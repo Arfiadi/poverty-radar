@@ -78,6 +78,27 @@ Berkas processed mewarisi seluruh kolom interim di atas ditambah atribut keluara
 | `vulnerability_quadrant`| `object` (str) | Tidak | 4 Nilai Kuadran Resmi | `Kuadran I (Prioritas Utama)`, `Kuadran II (Kerentanan Tersembunyi)`, `Kuadran III (Kantong Kemiskinan Daya Beli)`, `Kuadran IV (Wilayah Terbina/Mapan)`. |
 | `log_pdrb` | `float64` | Tidak | $x > 0$ | Transformasi $\ln(1 + \text{PDRB})$ untuk normalisasi sebaran PDRB riil. |
 
+### 4.1 Spesifikasi Komputasi Indeks Kerentanan Struktural Relatif ($V_{\text{struc}}$)
+
+Indeks Kerentanan Struktural Relatif ($V_{\text{struc}}$) merupakan instrumen skrining nonmoneter komposit berskala $[0, 1]$ yang merefleksikan keparahan defisit fasilitas dasar dan modal manusia di 514 kabupaten/kota:
+
+1. **Empat Dimensi Defisit Struktural:**
+   * **Defisit Sanitasi:** $\text{Def}_{\text{san}} = 100.0 - \text{sanitation\_access\_pct}$
+   * **Defisit Air Minum:** $\text{Def}_{\text{wat}} = 100.0 - \text{clean\_water\_access\_pct}$
+   * **Defisit Pendidikan:** $\text{Def}_{\text{edu}} = \max(\text{avg\_school\_years}) - \text{avg\_school\_years}$
+   * **Defisit Kesehatan:** $\text{Def}_{\text{hlt}} = \max(\text{life\_expectancy}) - \text{life\_expectancy}$
+
+2. **Normalisasi Min-Max:**
+   Setiap defisit dinormalisasi secara independen ke rentang $[0, 1]$ menggunakan `MinMaxScaler`:
+   $$\text{Def}_m^{\text{norm}} = \frac{\text{Def}_m - \min(\text{Def}_m)}{\max(\text{Def}_m) - \min(\text{Def}_m)}, \quad m \in \{\text{san, wat, edu, hlt}\}$$
+
+3. **Agregasi Bobot Setara (Equal-Weighted Mean 25%):**
+   $$V_{\text{struc}} = \frac{1}{4} \left( \text{Def}_{\text{san}}^{\text{norm}} + \text{Def}_{\text{wat}}^{\text{norm}} + \text{Def}_{\text{edu}}^{\text{norm}} + \text{Def}_{\text{hlt}}^{\text{norm}} \right)$$
+
+4. **Ambang Batas Median Nasional (Screening Cut-off):**
+   * $\text{Median}(V_{\text{struc}}) = \mathbf{0.2720}$ (pembulatan 4 desimal dari nilai eksak $0.27195$; atau $\mathbf{0.272}$ pada konfigurasi kode `src/poverty_radar/config.py`).
+   * Wilayah dengan $V_{\text{struc}} \ge 0.2720$ diklasifikasikan memiliki tingkat kerentanan fasilitas dasar tinggi (Kuadran I atau Kuadran II).
+
 ### Kontrak Berkas Ringkasan Klaster (`data/processed/poverty_cluster_summary.csv`)
 * **Jumlah Baris:** Tepat 4 baris (mewakili 4 klaster).
 * **Kolom:** Memuat metrik agregat per klaster (`total_regions`, `pct_of_national`, `total_kabupaten`, `total_kota`, `dominant_region_pulau`, serta `mean` dan `median` untuk seluruh indikator numerik).

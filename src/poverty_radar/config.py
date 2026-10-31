@@ -77,8 +77,8 @@ QUADRANT_LABELS = {
 
 QUADRANT_PALETTE = {
     "Kuadran I (Prioritas Utama)": "#D55E00",
-    "Kuadran II (Potensi Rentan Tersembunyi)": "#E69F00",
-    "Kuadran III (Kantong Kemiskinan / Enklave)": "#CC79A7",
-    "Kuadran IV (Kondisi Tangguh)": "#0072B2"
+    "Kuadran II (Kerentanan Tersembunyi)": "#E69F00",
+    "Kuadran III (Kantong Kemiskinan Daya Beli)": "#CC79A7",
+    "Kuadran IV (Wilayah Terbina/Mapan)": "#0072B2"
 }
 

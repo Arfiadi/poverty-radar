@@ -18,7 +18,8 @@ from poverty_radar.config import (
     CLUSTER_LABELS,
     FEATURE_COLS,
     SEED,
-    FIGURES_DIR
+    FIGURES_DIR,
+    QUADRANT_PALETTE
 )
 
 
@@ -413,19 +414,12 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     med_p0 = df['poverty_rate_p0'].median()
     med_v  = df['vulnerability_score'].median()
 
-    quad_palette = {
-        'Kuadran I (Prioritas Utama)': '#D55E00',
-        'Kuadran II (Kerentanan Tersembunyi)': '#E69F00',
-        'Kuadran III (Kantong Kemiskinan Daya Beli)': '#CC79A7',
-        'Kuadran IV (Wilayah Terbina/Mapan)': '#0072B2'
-    }
-
     sns.scatterplot(
         data=df,
         x='poverty_rate_p0',
         y='vulnerability_score',
         hue='vulnerability_quadrant',
-        palette=quad_palette,
+        palette=QUADRANT_PALETTE,
         alpha=0.75,
         s=55,
         edgecolor='white',

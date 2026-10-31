@@ -12,7 +12,7 @@
 Untuk memastikan pemodelan *unsupervised clustering* bebas bias, bebas multikolinearitas, dan memiliki daya diskriminasi optimal, empat variabel diperlakukan secara khusus:
 
 ### 1.1 Eliminasi Mutlak: `Klasifikasi Kemiskinan` (Label Biner Bawaan)
-* **Pencegahan Penalaran Melingkar (*Target Leakage*):** Proyek ini menolak klasifikasi terawasi (*supervised classification*). Memprediksi status kemiskinan dari indikator pengeluaran, kesehatan, dan pendidikan yang merupakan pembentuk garis kemiskinan adalah bentuk kebocoran target yang tidak menghasilkan kebaruan wawasan kebijakan.
+* **Pencegahan Kebocoran Target (*Target Leakage*):** Proyek ini menolak klasifikasi terawasi (*supervised classification*). Memprediksi status kemiskinan dari indikator pengeluaran, kesehatan, dan pendidikan yang merupakan pembentuk garis kemiskinan adalah bentuk kebocoran target (*target leakage*) yang tidak menghasilkan kebaruan wawasan kebijakan.
 * **Cacat Validitas Data Lapangan:** Kolom biner bawaan bukan indikator resmi BPS, melainkan hasil penyekatan *ad-hoc* yang terbukti memuat anomali pengkategorian di wilayah Indonesia Timur. Kolom ini **dihapus sepenuhnya (*dropped*)**.
 
 ### 1.2 Isolasi Komposit: `Indeks Pembangunan Manusia (IPM)`
@@ -28,7 +28,7 @@ Untuk memastikan pemodelan *unsupervised clustering* bebas bias, bebas multikoli
 * **Paradoks Kesejahteraan ($r = +0.462$ dengan Kemiskinan):** Di daerah miskin dan 3T, angka TPAK tinggi bukan tanda ekonomi sehat, melainkan keterpaksaan warga usia rentan/anak untuk bekerja di sektor pertanian subsisten demi bertahan hidup (*mandatory subsistence labor*). TPT dipilih karena memiliki daya pembeda tajam antara pasar kerja formal perkotaan (8–12%) vs subsisten perdesaan (1–3%).
 
 ### 1.4 Pengeluaran Persentase Kemiskinan (`poverty_rate_p0`) dari Fitur Klastering
-* **Mencegah Polarisasi Semu:** Berdasarkan uji empiris, memasukkan $P_0$ (Skenario A) menurunkan kualitas teknis (Silhouette 0.1961 vs 0.2028).
+* **Mencegah Penalaran Melingkar (*Circular Reasoning*):** Berdasarkan uji empiris, memasukkan $P_0$ (Skenario A) menurunkan kualitas teknis (Silhouette 0.1961 vs 0.2028) dan menciptakan tautologi di mana variabel kemiskinan dipakai untuk membentuk kelompok sekaligus membuktikan keabsahan kelompok.
 * **Membuka Deteksi Anomali 2x2:** Mengeluarkan $P_0$ dari klastering (Skenario B) memungkinkan sistem mendeteksi fenomena **Kantong Kemiskinan** (wilayah berfasilitas baik namun miskin) dan **Kerentanan Tersembunyi** (wilayah tampak tidak miskin padahal sanitasi buruk).
 
 ---
@@ -105,7 +105,7 @@ Meskipun $P_0$ dikeluarkan dari proses klastering, uji beda rata-rata membuktika
 * *Kesimpulan:* Klaster yang terbentuk secara murni dari 7 indikator struktural terbukti membedakan tingkat kemiskinan daerah dengan tingkat keyakinan $> 99.9\%$.
 
 ### 5.2 Rujukan Master Rekomendasi Kebijakan & Matriks Skrining 2x2
-PovertyRadar SDGs memadukan tingkat kemiskinan aktual ($P_0$, garis potong median nasional $10.46\%$) dengan Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$, median $0.2721$) ke dalam Matriks Skrining Kerentanan Relatif 2x2.
+PovertyRadar SDGs memadukan tingkat kemiskinan aktual ($P_0$, garis potong median nasional $10.46\%$) dengan Indeks Kerentanan Struktural Relatif ($V_{\text{struc}}$, median $0.2720$) ke dalam Matriks Skrining Kerentanan Relatif 2x2.
 
 > [!IMPORTANT]
 > **Dokumentasi Kebijakan Resmi & Rekomendasi Intervensi:**  

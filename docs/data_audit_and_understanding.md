@@ -159,7 +159,8 @@ Untuk mendeteksi observasi yang memiliki kombinasi nilai ekstrem secara simultan
 * `n_estimators = 200`
 * `contamination = 0.05` (menetapkan batas ambang 5% daerah paling menyimpang secara multidimensi, menghasilkan tepat 26 anomali)
 * `random_state = 42` (menjamin reproduksibilitas deterministik)
-* Fitur masukan: Seluruh 10 variabel sosial-ekonomi numerik terstandarisasi.
+* Fitur masukan: Seluruh 10 variabel sosial-ekonomi numerik terstandarisasi.  
+  *(Catatan Metodologis: Input deteksi anomali Isolation Forest sengaja menggunakan seluruh 10 variabel numerik untuk mendeteksi pencilan multidimensi di seluruh spektrum data. Hal ini berbeda dari vektor fitur K-Means yang dibatasi pada 7 fitur independen demi mencegah penalaran melingkar dan multikolinearitas).*
 
 ### 4.2 Dua Kutub Anomali Faktual (Daerah 3T vs. Megapolitan)
 

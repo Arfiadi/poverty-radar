@@ -7,15 +7,19 @@
 
 ---
 
-## 1. Landasan Metodologis & Larangan Target Leakage
+## 1. Landasan Metodologis Pemodelan Unsupervised
 
 Dalam proyek PovertyRadar SDGs, pemodelan klaster dirancang untuk mengidentifikasi **tipologi struktural sosio-ekonomi daerah secara murni tanpa supervisi (*unsupervised learning*)**.
 
 ### 1.1 Aturan Non-Supervisi & Pemisahan Variabel
-1. **Eliminasi Label Biner:** Kolom `poverty_class_target` (0/1) dari dataset mentah dilarang keras dimasukkan ke dalam model, baik sebagai fitur maupun target.
-2. **Eksklusi Persentase Kemiskinan ($P_0$):** Kolom `poverty_rate_p0` **dikeluarkan dari vektor fitur klastering**.
-   * *Justifikasi:* $P_0$ diposisikan murni sebagai variabel pembanding eksternal (*external benchmark*) pasca-klaster untuk melihat variasi kemiskinan antarkelompok tanpa menciptakan *circular reasoning*.
-3. **Pencegahan Multikolinearitas Komposit IPM:** Indikator `human_dev_index` (IPM) dikeluarkan dari vektor fitur pelatihan jarak Euclidean karena berkorelasi $> 0.86$ dengan komponen pembangunnya (RLS, UHH, pengeluaran). Memasukkan IPM akan melipatgandakan bobot dimensi manusia secara artifisial.
+1. **Eliminasi Label Biner (Pencegahan Target Leakage):** Kolom `poverty_class_target` (0/1) dari dataset mentah dilarang keras dimasukkan ke dalam model. Prediksi label biner bawaan ditolak karena memuat kebocoran target (*target leakage*) dan cacat mutu pelabelan di kawasan Indonesia Timur.
+2. **Eksklusi Persentase Kemiskinan ($P_0$, Pencegahan Penalaran Melingkar):** Kolom `poverty_rate_p0` **dikeluarkan dari vektor fitur klastering** agar menjadi variabel pembanding eksternal (*external benchmark*) independen pasca-klaster tanpa menciptakan tautologi (*circular reasoning*).
+3. **Pencegahan Multikolinearitas Komposit IPM:** Indikator `human_dev_index` (IPM) dikeluarkan dari fitur jarak Euclidean karena berkorelasi tinggi ($r > 0.86$) dengan komponen pembangunnya (RLS, UHH, pengeluaran), yang berisiko melipatgandakan bobot dimensi manusia secara artifisial (*double-counting*).
+
+> [!NOTE]
+> **Rujukan Bukti Audit Statistik:**  
+> Bukti empiris korelasi multikolinearitas IPM dan telaah 7 daerah anomali pelabelan Papua didokumentasikan lengkap pada:  
+> 👉 [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md).
 
 ---
 

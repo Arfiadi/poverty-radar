@@ -10,7 +10,7 @@ Dokumentasi ini menjelaskan spesifikasi, struktur, kamus data, serta catatan kua
 | :--- | :--- |
 | **File Mentah** | `Klasifikasi Tingkat Kemiskinan di Indonesia.csv` (`data/raw/`) |
 | **File Olahan/Interim** | `poverty_data_cleaned.csv` (`data/interim/`) |
-| **File Olahan Final** | `poverty_clusters.csv` & `poverty_cluster_summary.csv` (`data/processed/`) |
+| **File Olahan Final** | `poverty_clusters.csv`, `poverty_cluster_summary.csv`, & `policy_recommendations_matrix.csv` (`data/processed/`) |
 | **Sumber Data** | Publikasi Publik BPS RI via [Kaggle Dataset oleh ldausl](https://www.kaggle.com/datasets/ldausl/klasifikasi-tingkat-kemiskinan-di-indonesia) |
 | **Tahun / Periode Data** | 2021 (Kondisi 34 Provinsi) |
 | **Tingkat Agregasi** | Kabupaten/Kota (Wilayah Administratif Tingkat II) |

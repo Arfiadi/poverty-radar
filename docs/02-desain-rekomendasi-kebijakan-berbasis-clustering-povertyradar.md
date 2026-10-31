@@ -99,7 +99,7 @@ Sebagai dokumen translasi kebijakan publik berbasis bukti (*evidence-based polic
 
 ## 2. DEKONSTRUKSI & INTERPRETASI 4 KLASTER SOSIO-EKONOMI POVERTYRADAR
 
-Model K-Means membagi 514 kabupaten/kota menjadi 4 arketipe sosio-ekonomi yang memiliki daya pembeda tajam (*ANOVA F-stat = 155.94, p-value < 10^-70; Kruskal-Wallis H-test = 167.52*). Karakteristik empiris dan dekonstruksi substantif kebijakan diuraikan sebagai berikut:
+Model K-Means membagi 514 kabupaten/kota menjadi 4 arketipe sosio-ekonomi yang memiliki daya pembeda tajam (*ANOVA F-stat = 155.94, p-value < 10^-70; Kruskal-Wallis H-test = 167.52*). Pembuktian matematis k=4, dekonstruksi 322 daerah "The Giant Blob", dan matriks Z-score indikator didokumentasikan lengkap pada [`docs/clustering_rationale_and_findings.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_rationale_and_findings.md). Karakteristik empiris dan dekonstruksi substantif kebijakan diuraikan sebagai berikut:
 
 ```
 +----------------------------------------------------------------------------------------------------+
@@ -184,7 +184,8 @@ Model K-Means membagi 514 kabupaten/kota menjadi 4 arketipe sosio-ekonomi yang m
 
 Matriks Skrining Kerentanan Relatif 2x2 memadukan dua sumbu ortogonal independen:
 * **Sumbu X (Tingkat Kemiskinan Moneter Aktual $P_0$):** Garis batas ambang = **Median Nasional $10.46\%$**.
-* **Sumbu Y (Indeks Kerentanan Fasilitas Dasar $V_{\text{struc}}$):** Komposit tertimbang defisit sanitasi, air minum, RLS, dan UHH. Garis batas ambang = **Median Indeks $0.2720$**.
+* **Sumbu Y (Indeks Kerentanan Struktural Relatif $V_{\text{struc}}$):** Komposit berbobot setara (equal-weighted 25%) dari 4 defisit dasar terstandarisasi min-max (sanitasi, air minum, lama sekolah, dan umur harapan hidup). Garis batas ambang = **Median Indeks $0.2720$**.
+  $$V_{\text{struc}} = \frac{1}{4} \left( \text{Def}_{\text{san}}^{\text{norm}} + \text{Def}_{\text{wat}}^{\text{norm}} + \text{Def}_{\text{edu}}^{\text{norm}} + \text{Def}_{\text{hlt}}^{\text{norm}} \right)$$
 
 ```
                    Indeks Kerentanan Fasilitas Dasar (Tinggi / Defisit)

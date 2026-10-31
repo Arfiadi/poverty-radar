@@ -61,13 +61,14 @@ Berdasarkan audit komputasi menyeluruh pada [`docs/data_audit_and_understanding.
 ```text
 PovertyRadar/
 ├── pyproject.toml             # Konfigurasi paket Python & test suite (pytest)
+├── requirements.txt           # Dependensi universal untuk deployment cloud & lokal
 ├── AGENTS.md                  # Kontrak kerja coding agent & aturan domain proyek
 ├── README.md                  # Halaman orientasi & dokumentasi utama repositori
 ├── dashboard_guide.md         # Pedoman visualisasi data & storytelling (Knaflic & Few)
 ├── data/
 │   ├── raw/                   # [READ-ONLY] Data mentah BPS 2021 dari Kaggle
 │   ├── interim/               # poverty_data_cleaned.csv (terstandar & ter-flag anomali)
-│   ├── processed/             # poverty_clusters.csv & poverty_cluster_summary.csv
+│   ├── processed/             # poverty_clusters.csv, summary, & policy_recommendations_matrix.csv
 │   └── README.md              # Kamus data lengkap & catatan kualitas teknis
 ├── docs/
 │   ├── 01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md # Analisis kebijakan riil & fiskal RI 2026
@@ -139,8 +140,11 @@ python -c "import pandas as pd; df = pd.read_csv('data/interim/poverty_data_clea
 | [`AGENTS.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/AGENTS.md) | Kontrak kerja operasional untuk coding agent. |
 | [`docs/problem_framing_and_objectives.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/problem_framing_and_objectives.md) | Problem framing, perumusan objektif, dan arsitektur analitis. |
 | [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md) | Laporan audit statistik mendalam terhadap 514 kabupaten/kota. |
-| [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md) | Pedoman pemodelan klaster tanpa supervisi dan seleksi fitur. |
 | [`docs/data_contracts.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_contracts.md) | Kontrak skema data, batas nilai, dan fungsi validasi otomatis. |
+| [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md) | Pedoman pemodelan klaster tanpa supervisi dan seleksi fitur. |
+| [`docs/clustering_rationale_and_findings.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_rationale_and_findings.md) | Justifikasi empiris pemilihan k=4 vs k=3 dan pembuktian statistik ANOVA. |
+| [`docs/01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md) | Master referensi hukum tata kelola publik, UU 23/2014, dan arsitektur fiskal HKPD. |
+| [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md) | Master rekomendasi kebijakan operasional daerah, matriks 2x2, dan tangga bukti. |
 | [`docs/development.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/development.md) | Panduan setup lingkungan kerja lokal dan alur kerja Git. |
 | [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md) | Spesifikasi antarmuka dashboard storytelling 5 babak naratif. |
 | [`docs/ui_brief_mockup.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/ui_brief_mockup.md) | Wireframe ASCII dan panduan visual untuk desainer Figma/Canva. |

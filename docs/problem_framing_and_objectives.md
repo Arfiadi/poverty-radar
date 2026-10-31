@@ -25,7 +25,7 @@
 4. [Arsitektur Metodologi Analisis](#4-arsitektur-metodologi-analisis)
    - 4.1 [Diagram Alur Pipeline End-to-End](#41-diagram-alur-pipeline-end-to-end)
    - 4.2 [Matriks 7 Fitur Independen (Bebas Penalaran Melingkar)](#42-matriks-7-fitur-independen-bebas-penalaran-melingkar)
-   - 4.3 [Konseptualisasi Skrining Kerentanan Fasilitas Dasar (Matriks 2x2)](#43-konseptualisasi-skrining-kerentanan-fasilitas-dasar-matriks-2x2)
+   - 4.3 [Konseptualisasi Skrining Kerentanan Struktural Relatif (Matriks 2x2)](#43-konseptualisasi-skrining-kerentanan-struktural-relatif-matriks-2x2)
 5. [Gerbang Keputusan, Validasi, & Luaran Proyek](#5-gerbang-keputusan-validasi--luaran-proyek)
    - 5.1 [Status 6 Gerbang Keputusan Pra-Pemodelan (Decision Gates)](#51-status-6-gerbang-keputusan-pra-pemodelan-decision-gates)
    - 5.2 [Tiga Pilar Validasi Model Unsupervised](#52-tiga-pilar-validasi-model-unsupervised)
@@ -134,11 +134,11 @@ flowchart TD
 
     subgraph S3["3. Dual-Engine Analytical Modeling"]
         F3 --> M1["Engine A: Unsupervised Clustering<br/>• K-Means (k=4, RobustScaler, seed=42)<br/>• Fitur: RLS, UHH, Sanitasi, Air, Pengeluaran, TPT, Log-PDRB<br/>• Eksklusi: P0, IPM, TPAK"]
-        F3 --> M2["Engine B: Relative Vulnerability Screening<br/>• Matriks Kuadran 2x2 (Kartesius 1:1)<br/>• Sumbu X: Kemiskinan Aktual P0 (Median: 10.46%)<br/>• Sumbu Y: Kerentanan Fasilitas Dasar V_struc (Median: 0.2721)"]
+        F3 --> M2["Engine B: Relative Vulnerability Screening<br/>• Matriks Kuadran 2x2 (Kartesius 1:1)<br/>• Sumbu X: Kemiskinan Aktual P0 (Median: 10.46%)<br/>• Sumbu Y: Kerentanan Fasilitas Dasar V_struc (Median: 0.2720)"]
     end
 
     subgraph S4["4. Validasi & Deliverables"]
-        M1 --> E1["Evaluasi: Silhouette 0.2028, ARI 0.9873, ANOVA p < 0.001"]
+        M1 --> E1["Evaluasi: Silhouette 0.2028, ARI 0.9803, ANOVA p < 0.001"]
         M2 --> E2["Matriks Kebijakan: policy_recommendations_matrix.csv"]
         E1 & E2 --> OUT["Dashboard Interaktif PovertyRadar SDGs (5 Babak Naratif)"]
     end
@@ -158,10 +158,15 @@ Model klastering dilatih menggunakan **vektor 7 fitur terstandardisasi** yang me
 | **Pasar Kerja** | Pengangguran Terbuka | `unemployment_rate_tpt` | `RobustScaler` | Pembeda struktur pasar kerja formal vs subsisten (SDG 8). |
 | **Skala Ekonomi** | PDRB Riil 2010 | `grdp_constant_million_idr`| $\log(1+x)$ $\rightarrow$ `RobustScaler` | Skala kapasitas ekonomi makro daerah setelah normalisasi. |
 
-### 4.3 Konseptualisasi Skrining Kerentanan Fasilitas Dasar (Matriks 2x2)
+> [!NOTE]
+> **SOP Teknis & Spesifikasi Algoritma:**  
+> Rincian formula matematis `RobustScaler`, konfigurasi *hyperparameter* K-Means, dan kriteria gerbang evaluasi model diatur secara baku dalam:  
+> 👉 [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md).
+
+### 4.3 Konseptualisasi Skrining Kerentanan Struktural Relatif (Matriks 2x2)
 PovertyRadar SDGs memadukan dua dimensi independen ke dalam bidang Kartesius:
 * **Sumbu X:** Tingkat Kemiskinan Moneter Aktual ($P_0$ %, garis potong median nasional = $10.46\%$).
-* **Sumbu Y:** Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$, garis potong median nasional = $0.2721$).
+* **Sumbu Y:** Indeks Kerentanan Struktural Relatif ($V_{\text{struc}}$, garis potong median nasional = $0.2720$). Mengukur rata-rata berbobot setara (equal-weighted 25%) dari defisit sanitasi, air minum, lama sekolah, dan umur harapan hidup terstandarisasi min-max.
 
 ```text
                   Indeks Kerentanan Fasilitas Dasar (V_struc)
@@ -205,7 +210,7 @@ Seluruh gerbang keputusan integritas telah diaudit dan diselesaikan secara tunta
 ### 5.2 Tiga Pilar Validasi Model Unsupervised
 Kualitas pemodelan diuji melalui tiga instrumen objektif:
 1. **Separasi Matematis:** $\text{Silhouette} = 0.2028$ dan $\text{DBI} = 1.4522$ pada 7 fitur asli ($\text{Silhouette} = 0.3589$ pada proyeksi 2D PCA).
-2. **Ketahanan Multi-Seed:** Simulasi 20 inisialisasi *random seed* acak menghasilkan rata-rata **Adjusted Rand Index (ARI) = 0.9873** (stabilitas $98.7\%$).
+2. **Ketahanan Multi-Seed:** Simulasi 20 inisialisasi *random seed* acak menghasilkan rata-rata **Adjusted Rand Index (ARI) = 0.9803** (stabilitas $98.0\%$).
 3. **Validasi Inferensial Eksternal ($P_0$):** Uji beda rata-rata membuktikan pemisahan nilai $P_0$ yang sangat signifikan antarklaster via ANOVA ($F = 155.94, p < 0.001$) dan Kruskal-Wallis ($H = 167.52, p < 0.001$).
 
 ### 5.3 Luaran Utama & Kriteria Penerimaan Proyek (Acceptance Criteria)
@@ -237,7 +242,8 @@ docs/
 ├── 01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md --> Master tata kelola publik, UU 23/2014, fiskal HKPD
 ├── 02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md --> Master rekomendasi kebijakan & Tangga Bukti 4 Tingkat
 ├── design.md                          --> MASTER SPESIFIKASI DESAIN DASHBOARD (Storytelling, State, Guardrails, DoD)
-└── ui_brief_mockup.md                 --> LEMBAR WIREFRAME VISUAL (Diagram ASCII, Grid Dimensi px, Card Kit)
+├── ui_brief_mockup.md                 --> LEMBAR PANDUAN WIREFRAME VISUAL (Diagram Purwarupa ASCII & Layout Grid)
+└── development.md                     --> PANDUAN REKAYASA & ENVIRONMENT (Setup Python/uv, Uji Headless, Git)
 ```
 
 ### 6.2 Rujukan Resmi & Literatur Pustaka

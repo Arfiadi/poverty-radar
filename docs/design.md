@@ -252,7 +252,7 @@ PovertyRadar SDGs
 * **Pertanyaan Kunci:** *Apa karakteristik setiap kelompok daerah dan apa yang membedakannya?*
 * **Fokus Storytelling:** Membuktikan secara ilmiah bahwa konfigurasi defisit fasilitas dasar antardaerah berbeda-beda melalui *Unsupervised Clustering* murni (*Zero Target Leakage*).
 * **Komponen & Layout:**
-  1. *Header Diagnostik Model:* Ringkasan k=4, Silhouette Score empiris ($0.2028$), Davies-Bouldin ($1.4522$), dan stabilitas multi-seed ARI ($0.9873$).
+  1. *Header Diagnostik Model:* Ringkasan k=4, Silhouette Score empiris ($0.2028$), Davies-Bouldin ($1.4522$), dan stabilitas multi-seed ARI ($0.9803$).
   2. *Visual Utama (STRICTLY NO RADAR CHART):*
      * **Small Multiples Bar Charts (Z-Score):** Deviasi 7 indikator terhadap mean nasional.
      * **Heatmap Matrix Divergen:** Matriks 28 sel z-score indikator (Biru = Unggul, Oranye/Merah = Defisit).
@@ -271,14 +271,14 @@ PovertyRadar SDGs
 * **Komponen & Layout:**
   1. *Visual Utama (Matriks Kuadran 2x2, Aspek Rasio ~1:1):*
      * Sumbu X = Tingkat Kemiskinan Moneter Aktual ($P_0$ %).
-     * Sumbu Y = Indeks Kerentanan Fasilitas Dasar ($V_{struc}$).
-     * Garis referensi median nasional berpotongan di ($P_0 = 10.46\%, V_{struc} = 0.2721$).
+     * Sumbu Y = Indeks Kerentanan Struktural Relatif ($V_{struc}$).
+     * Garis referensi median nasional berpotongan di ($P_0 = 10.46\%, V_{struc} = 0.2720$).
      * **Kuadran I (Kanan Atas / Vermillion `#D55E00`, N=162):** *Prioritas Utama (Beban Ganda)*.
      * **Kuadran II (Kiri Atas / Warm Amber `#E69F00`, N=95):** *Kerentanan Tersembunyi*.
      * **Kuadran III (Kanan Bawah / Muted Blue `#56B4E9`, N=95):** *Kantong Kemiskinan Daya Beli*.
      * **Kuadran IV (Kiri Bawah / Navy Blue `#0072B2`, N=162):** *Wilayah Terbina / Mapan*.
   2. *Syarat Skor Komposit Nonmoneter ($V_{struc}$):*
-     * Wajib mendokumentasikan indikator yang dimasukkan (sanitasi, air minum, RLS terbalik), pembobotan terstandar, dan arah indikator (skor tinggi = kondisi lebih buruk/rentan).
+     * Wajib mendokumentasikan indikator yang dimasukkan (defisit sanitasi, air minum, RLS terbalik, dan UHH terbalik secara equal-weighted 25%), pembobotan terstandar, dan arah indikator (skor tinggi = kondisi lebih buruk/rentan).
      * *Fallback Mode:* Jika pengguna menginginkan transparansi indikator tunggal tanpa pembobotan komposit, sediakan opsi beralih ke indikator tunggal eksplisit pada Sumbu Y (misal: persentase rumah tangga tanpa sanitasi layak).
   3. *Tabel Daftar Skrining Interaktif:*
      * Menampilkan daftar kabupaten/kota yang tersinkronisasi saat kuadran diklik.
