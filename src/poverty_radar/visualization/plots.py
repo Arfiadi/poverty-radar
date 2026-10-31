@@ -452,32 +452,24 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     box_q3 = dict(boxstyle='round,pad=0.4', facecolor='#FAF0F5', edgecolor='#CC79A7', linewidth=1.2, alpha=0.95)
     box_q4 = dict(boxstyle='round,pad=0.4', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.2, alpha=0.95)
 
-    # Kuadran II: Top-Left (Whitespace x in [0.8, 9.5], y > 0.65)
-    ax.text(0.8, 1.02, 
-            'KUADRAN II: KERENTANAN TERSEMBUNYI\n'
-            '• 95 Daerah (18.5%) | P0 < 10.5% | V_struc ≥ 0.27\n'
-            '• Fokus: Penguatan sarana sanitasi & air preventif',
+    # Kuadran II: Top-Left (x in [0.8, 7.5], well left of median line 10.46)
+    ax.text(0.8, 1.01, 
+            'KUADRAN II\nKerentanan Tersembunyi\n95 Daerah (18.5%)',
             fontsize=8.5, fontweight='bold', color='#B84D00', bbox=box_q2, va='top')
 
-    # Kuadran I: Top-Center (Whitespace x in [12.0, 26], y > 0.62)
-    ax.text(12.0, 1.02, 
-            'KUADRAN I: PRIORITAS BEBAN GANDA\n'
-            '• 162 Daerah (31.5%) | P0 ≥ 10.5% | V_struc ≥ 0.27\n'
-            '• Fokus: Bantuan sosial terpadu + percepatan sarana fisik dasar',
+    # Kuadran I: Top-Center/Right (x in [14.0, 20.1], clear of median line 10.46 and Nduga 30.0)
+    ax.text(14.0, 1.01, 
+            'KUADRAN I\nPrioritas Beban Ganda\n162 Daerah (31.5%)',
             fontsize=8.5, fontweight='bold', color='#B33000', bbox=box_q1, va='top')
 
-    # Kuadran IV: Bottom-Left (Sub-band y in [-0.05, 0.0] clear of scatter dots)
+    # Kuadran IV: Bottom-Left (x in [0.8, 6.2], clear of data points)
     ax.text(0.8, -0.015, 
-            'KUADRAN IV: WILAYAH TERBINA / MAPAN\n'
-            '• 162 Daerah (31.5%) | P0 < 10.5% | V_struc < 0.27\n'
-            '• Karakteristik: Kebutuhan dasar tangguh | Rujukan tata kelola',
+            'KUADRAN IV\nWilayah Mapan\n162 Daerah (31.5%)',
             fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='top')
 
-    # Kuadran III: Bottom-Right (Empty whitespace x in [24.5, 43.0])
-    ax.text(24.5, -0.015, 
-            'KUADRAN III: KANTONG KEMISKINAN DAYA BELI\n'
-            '• 95 Daerah (18.5%) | P0 ≥ 10.5% | V_struc < 0.27\n'
-            '• Fokus: Padat karya produktif & stimulus UMKM',
+    # Kuadran III: Bottom-Right (x in [28.0, 33.0], clear of Sampang 18.0)
+    ax.text(28.0, -0.015, 
+            'KUADRAN III\nKantong Daya Beli\n95 Daerah (18.5%)',
             fontsize=8.5, fontweight='bold', color='#8A3B66', bbox=box_q3, va='top')
 
     benchmark_points = [
@@ -500,12 +492,12 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
         )
 
     ax.set_title('Matriks Skrining Kerentanan Relatif 2x2: Penapisan Portofolio Kebijakan\n'
-                 'Intervensi Darurat (I), Perlindungan Preventif (II), Stimulus Ekonomi (III), Mandiri (IV)',
+                 'Diferensiasi Beban Ganda (I), Kerentanan Tersembunyi (II), Stimulus Daya Beli (III), Wilayah Mapan (IV)',
                  fontsize=11.5, fontweight='bold', pad=12, loc='left')
     ax.set_xlabel('Tingkat Kemiskinan Aktual (P0 %)', fontsize=10, fontweight='bold')
     ax.set_ylabel('Indeks Kerentanan Struktural Relatif (V_struc)', fontsize=10, fontweight='bold')
     ax.set_xlim(0.0, 43.5)
-    ax.set_ylim(-0.06, 1.05)
+    ax.set_ylim(-0.08, 1.05)
     ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.grid(True, linestyle=':', alpha=0.35)
     ax.text(0.98, -0.08, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.', transform=ax.transAxes, fontsize=8, fontstyle='italic', color='#555555', ha='right')
