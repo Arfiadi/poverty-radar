@@ -84,6 +84,15 @@ Berkas processed mewarisi seluruh kolom interim di atas ditambah atribut keluara
 * **Kolom:** Memuat metrik agregat per klaster (`total_regions`, `pct_of_national`, `total_kabupaten`, `total_kota`, `dominant_region_pulau`, serta `mean` dan `median` untuk seluruh indikator numerik).
 * **Integritas:** Total penjumlahan `total_regions` wajib tepat 514 baris.
 
+### Kontrak Berkas Matriks Rekomendasi Kebijakan (`data/processed/policy_recommendations_matrix.csv`)
+* **Jumlah Baris:** Tepat 8 baris (4 baris kategori `cluster` + 4 baris kategori `quadrant`).
+* **Jumlah Kolom:** Tepat 13 kolom acuan kebijakan terstruktur:
+  `category_type`, `id`, `code`, `name`, `n_regions`, `pct_regions`, `poverty_range`, `deficit_profile`, `working_hypothesis`, `primary_policy_track`, `fiscal_instruments`, `lead_agencies`, `direct_evidence_required`.
+* **Integritas:**
+  - `category_type` hanya bernilai `cluster` atau `quadrant`.
+  - Zero null values (100% lengkap tanpa nilai kosong).
+  - Konsistensi jumlah daerah: $\sum n_{\text{regions}} (\text{cluster}) = 514$ dan $\sum n_{\text{regions}} (\text{quadrant}) = 514$.
+
 ---
 
 ## 5. Prosedur Uji Validasi Otomatis (Sanity Checks)
