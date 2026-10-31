@@ -194,7 +194,7 @@ def plot_multiseed_robustness(X_scaled: np.ndarray, baseline_labels: np.ndarray,
 def plot_pca_2d(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt.Figure:
     """Figure 03: 2D PCA spatial projection with clean annotations and bottom legend."""
     set_chart_style()
-    fig, ax = plt.subplots(figsize=(12, 7.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(13, 7.5), dpi=300)
 
     for cid in [0, 1, 2, 3]:
         sub = df[df['cluster_id'] == cid]
@@ -261,14 +261,14 @@ def plot_cluster_heatmap(df: pd.DataFrame, X_scaled: np.ndarray, save_path: Opti
     z_summary_display = z_summary.rename(columns={
         'avg_school_years': 'Lama Sekolah\n(RLS)',
         'life_expectancy': 'Harapan Hidup\n(UHH)',
-        'expenditure_per_capita': 'Pengeluaran\nRiil / Kapita',
+        'expenditure_per_capita': 'Pengeluaran Riil\nper Kapita',
         'sanitation_access_pct': 'Akses Sanitasi\nLayak',
-        'clean_water_access_pct': 'Akses Air\nMinum Layak',
+        'clean_water_access_pct': 'Akses Air Minum\nLayak',
         'unemployment_rate_tpt': 'Pengangguran\nTerbuka (TPT)',
-        'log_pdrb': 'Skala PDRB\n(Nilai Log1p)'
+        'log_pdrb': 'Skala PDRB\n(Log1p)'
     })
 
-    fig, ax = plt.subplots(figsize=(12.5, 5.8), dpi=300)
+    fig, ax = plt.subplots(figsize=(14.5, 6.2), dpi=300)
     sns.heatmap(
         z_summary_display,
         annot=True,
@@ -278,7 +278,7 @@ def plot_cluster_heatmap(df: pd.DataFrame, X_scaled: np.ndarray, save_path: Opti
         vmin=-2.6,
         vmax=1.6,
         cbar=True,
-        cbar_kws={'label': 'Z-Score Deviasi Relatif', 'shrink': 0.85},
+        cbar_kws={'label': 'Z-Score Deviasi Relatif terhadap Median', 'shrink': 0.85},
         linewidths=1.5,
         linecolor='white',
         annot_kws={'size': 11, 'weight': 'bold'},
@@ -287,10 +287,11 @@ def plot_cluster_heatmap(df: pd.DataFrame, X_scaled: np.ndarray, save_path: Opti
 
     ax.set_title('Profil Tipologi Klaster: Perbandingan Deviasi 7 Indikator Struktural terhadap Median Nasional\n'
                  'Nilai Z-Score relatif terhadap median nasional (Merah = Defisit Relatif di Bawah Median, Biru = Capaian Relatif di Atas Median)',
-                 fontsize=12.5, fontweight='bold', pad=18, loc='left')
+                 fontsize=12, fontweight='bold', pad=18, loc='left')
     ax.set_ylabel('')
-    plt.xticks(rotation=0, fontsize=10.5, fontweight='bold', ha='center')
-    plt.yticks(fontsize=10.5, fontweight='bold')
+    ax.tick_params(axis='x', pad=8)
+    plt.xticks(rotation=0, fontsize=9.5, fontweight='bold', ha='center')
+    plt.yticks(fontsize=10, fontweight='bold')
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -379,8 +380,11 @@ def plot_p0_stripplot(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt
     medians = df.groupby('cluster_id')['poverty_rate_p0'].median()
     for cid, med in medians.items():
         ax.hlines(y=med, xmin=cid - 0.35, xmax=cid + 0.35, color='black', linewidth=3, zorder=5)
-        ax.text(cid, med + 1.2, f'Median: {med:.1f}%', ha='center', fontsize=9.5, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='#CCCCCC', alpha=0.9))
+        # Offset Klaster 2 downward to avoid collision with the 10.46% national median dashed line
+        y_text = med - 2.0 if cid == 1 else med + 1.2
+        ax.text(cid, y_text, f'Median: {med:.1f}%', ha='center', fontsize=9.5, fontweight='bold',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='#CCCCCC', alpha=0.9),
+                zorder=6)
 
     med_nat = df['poverty_rate_p0'].median()
     ax.axhline(med_nat, color='#7F7F7F', linestyle='--', linewidth=1.5, zorder=2)
@@ -410,7 +414,7 @@ def plot_p0_stripplot(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt
 def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt.Figure:
     """Figure 06 (Slide 14): 2x2 Relative Structural Vulnerability Screening Matrix."""
     set_chart_style()
-    fig, ax = plt.subplots(figsize=(13, 8.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(14.0, 8.6), dpi=300)
 
     med_p0 = df['poverty_rate_p0'].median()
     med_v  = df['vulnerability_score'].median()
@@ -422,7 +426,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
         hue='vulnerability_quadrant',
         palette=QUADRANT_PALETTE,
         alpha=0.75,
-        s=55,
+        s=58,
         edgecolor='white',
         linewidth=0.6,
         legend=False,
@@ -436,56 +440,49 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
             fontsize=8.5, color='#333333', fontweight='bold', va='center',
             bbox=dict(boxstyle='square,pad=0.25', facecolor='white', edgecolor='#B0B0B0', alpha=0.9))
 
-    ax.text(43.2, med_v + 0.015, f'Median V_struc: {med_v:.3f} (Pemisah Kerentanan)', 
+    ax.text(43.5, med_v + 0.015, f'Median V_struc: {med_v:.3f} (Pemisah Kerentanan)', 
             fontsize=8.5, color='#333333', fontweight='bold', ha='right', va='bottom',
             bbox=dict(boxstyle='square,pad=0.25', facecolor='white', edgecolor='#B0B0B0', alpha=0.9))
 
-    box_q1 = dict(boxstyle='round,pad=0.5', facecolor='#FFF5EB', edgecolor='#D55E00', linewidth=1.3, alpha=0.95)
-    box_q2 = dict(boxstyle='round,pad=0.5', facecolor='#FFFDF0', edgecolor='#E69F00', linewidth=1.3, alpha=0.95)
-    box_q3 = dict(boxstyle='round,pad=0.5', facecolor='#FAF0F5', edgecolor='#CC79A7', linewidth=1.3, alpha=0.95)
-    box_q4 = dict(boxstyle='round,pad=0.5', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.3, alpha=0.95)
+    box_q1 = dict(boxstyle='round,pad=0.4', facecolor='#FFF5EB', edgecolor='#D55E00', linewidth=1.2, alpha=0.95)
+    box_q2 = dict(boxstyle='round,pad=0.4', facecolor='#FFFDF0', edgecolor='#E69F00', linewidth=1.2, alpha=0.95)
+    box_q3 = dict(boxstyle='round,pad=0.4', facecolor='#FAF0F5', edgecolor='#CC79A7', linewidth=1.2, alpha=0.95)
+    box_q4 = dict(boxstyle='round,pad=0.4', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.2, alpha=0.95)
 
-    # Kuadran II: Top-Left
-    ax.text(1.0, 1.01, 
+    # Kuadran II: Top-Left (Whitespace x in [0.8, 9.5], y > 0.65)
+    ax.text(0.8, 1.02, 
             'KUADRAN II: KERENTANAN TERSEMBUNYI\n'
             '• 95 Daerah (18.5%) | P0 < 10.5% | V_struc ≥ 0.27\n'
-            '• Fokus Defisit: Akses sanitasi & air minum layak terbatas\n'
-            '• Aksi: Penguatan sarana dasar preventif\n'
-            '  guna memitigasi risiko penurunan kesejahteraan',
+            '• Fokus: Penguatan sarana sanitasi & air preventif',
             fontsize=8.5, fontweight='bold', color='#B84D00', bbox=box_q2, va='top')
 
-    # Kuadran I: Top-Center
-    ax.text(12.0, 1.01, 
-            'KUADRAN I: PRIORITAS UTAMA (BEBAN GANDA)\n'
+    # Kuadran I: Top-Center (Whitespace x in [13.8, 27], y > 0.62)
+    ax.text(13.8, 1.02, 
+            'KUADRAN I: PRIORITAS BEBAN GANDA\n'
             '• 162 Daerah (31.5%) | P0 ≥ 10.5% | V_struc ≥ 0.27\n'
-            '• Fokus Defisit: Kemiskinan konsumsi disertai\n'
-            '  keterbatasan sarana dasar & modal manusia\n'
-            '• Aksi: Penanganan terpadu komprehensif\n'
-            '  (Bantalan sosial + percepatan sarana fisik)',
+            '• Fokus: Bantuan sosial terpadu + percepatan sarana fisik dasar',
             fontsize=8.5, fontweight='bold', color='#B33000', bbox=box_q1, va='top')
 
-    # Kuadran IV: Bottom-Left
-    ax.text(1.0, 0.01, 
+    # Kuadran IV: Bottom-Left (Sub-band y in [-0.07, 0.0] clear of scatter dots)
+    ax.text(0.8, -0.02, 
             'KUADRAN IV: WILAYAH TERBINA / MAPAN\n'
             '• 162 Daerah (31.5%) | P0 < 10.5% | V_struc < 0.27\n'
-            '• Karakteristik: Kebutuhan dasar dan ekonomi relatif kuat\n'
-            '• Aksi: Rujukan pembelajaran tata kelola & inovasi regional',
-            fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='bottom')
+            '• Karakteristik: Kebutuhan dasar tangguh | Rujukan tata kelola',
+            fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='top')
 
-    # Kuadran III: Bottom-Right
-    ax.text(27.0, 0.01, 
+    # Kuadran III: Bottom-Right (Empty whitespace x in [25.5, 43.5])
+    ax.text(25.5, -0.02, 
             'KUADRAN III: KANTONG KEMISKINAN DAYA BELI\n'
             '• 95 Daerah (18.5%) | P0 ≥ 10.5% | V_struc < 0.27\n'
-            '• Fokus Defisit: Sarana dasar memadai, namun daya beli & kesempatan kerja produktif terbatas\n'
-            '• Aksi: Padat karya produktif, stimulus UMKM, & penguatan daya beli',
-            fontsize=8.5, fontweight='bold', color='#8A3B66', bbox=box_q3, va='bottom')
+            '• Fokus: Padat karya produktif & stimulus UMKM',
+            fontsize=8.5, fontweight='bold', color='#8A3B66', bbox=box_q3, va='top')
 
     benchmark_points = [
-        ('Kab. Nduga', 37.18, 0.9557, (31.0, 0.95), '#D55E00'),
-        ('Kab. Intan Jaya', 41.66, 0.7600, (35.0, 0.63), '#D55E00'),
-        ('Kab. Sampang', 23.76, 0.2589, (18.5, 0.16), '#CC79A7'),
-        ('Kota Surabaya', 5.23, 0.1205, (1.8, 0.23), '#0072B2'),
-        ('Kab. Lebak', 10.29, 0.4418, (4.0, 0.53), '#E69F00'),
+        ('Kab. Nduga', 37.18, 0.9557, (30.0, 0.95), '#D55E00'),
+        ('Kab. Intan Jaya', 41.66, 0.7600, (34.5, 0.63), '#D55E00'),
+        ('Kab. Sampang', 23.76, 0.2589, (18.0, 0.18), '#CC79A7'),
+        ('Kota Surabaya', 5.23, 0.1205, (1.8, 0.24), '#0072B2'),
+        ('Kab. Lebak', 10.29, 0.4418, (3.5, 0.52), '#E69F00'),
     ]
     for name, px, py, (tx, ty), col in benchmark_points:
         ax.annotate(
@@ -504,10 +501,11 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
                  fontsize=12.5, fontweight='bold', pad=15, loc='left')
     ax.set_xlabel('Tingkat Kemiskinan Aktual (P0 %)', fontsize=10.5, fontweight='bold')
     ax.set_ylabel('Indeks Kerentanan Struktural Relatif (V_struc)', fontsize=10.5, fontweight='bold')
-    ax.set_xlim(0.2, 43.8)
-    ax.set_ylim(-0.02, 1.05)
+    ax.set_xlim(0.0, 44.0)
+    ax.set_ylim(-0.08, 1.05)
+    ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.grid(True, linestyle=':', alpha=0.35)
-    ax.text(0.98, -0.07, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.', transform=ax.transAxes, fontsize=8, fontstyle='italic', color='#555555', ha='right')
+    ax.text(0.98, -0.08, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.', transform=ax.transAxes, fontsize=8, fontstyle='italic', color='#555555', ha='right')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
