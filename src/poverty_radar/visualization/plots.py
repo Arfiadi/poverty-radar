@@ -52,13 +52,13 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
     ax1.plot(k_range, inertia_km, marker='o', markersize=7, color='#0072B2', linewidth=2.2)
     ax1.axvline(x=4, color='#D55E00', linestyle='--', linewidth=1.5, alpha=0.85)
     ax1.scatter([4], [inertia_km[2]], color='#D55E00', s=120, zorder=5, edgecolor='black', linewidth=1.2)
-    ax1.annotate('Titik Belok (k = 4)\nPenurunan inersia melandai',
+    ax1.annotate('Titik Belok (k = 4)\nReduksi inersia melambat ke < 10%',
                  xy=(4, inertia_km[2]), xytext=(4.3, 1380),
-                 fontsize=9, fontweight='bold', color='#D55E00',
+                 fontsize=8.5, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.15', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.9))
-    ax1.set_title('1. Evaluasi Inersia WCSS (Elbow)\nLaju penurunan melambat setelah k = 4',
-                  fontsize=10, fontweight='bold', loc='left', pad=8)
+    ax1.set_title('1. Evaluasi Inersia WCSS (Metode Elbow)\nPenurunan melambat: -13.5% (k=4) ke -8.9% (k=5)',
+                  fontsize=9.5, fontweight='bold', loc='left', pad=8)
     ax1.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold')
     ax1.set_ylabel('Inersia / WCSS', fontsize=10, fontweight='bold')
     ax1.set_xticks(k_range)
@@ -69,18 +69,18 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
     ax2.axvline(x=4, color='#D55E00', linestyle='--', linewidth=1.5, alpha=0.85)
     ax2.scatter([4], [sil_km[2]], color='#D55E00', s=120, zorder=5, edgecolor='black', linewidth=1.2)
     ax2.scatter([3], [sil_km[1]], color='#999999', s=80, zorder=4)
-    ax2.annotate('k = 3 (0.286): Partisi timpang\n(322 vs 158 vs 34)',
+    ax2.annotate('k = 3 (0.286): Partisi timpang\n62.6% daerah menumpuk (N=322)',
                  xy=(3, sil_km[1]), xytext=(2.2, 0.22),
                  fontsize=8, fontweight='bold', color='#555555',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.15', color='#777777', lw=1.0),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#F5F5F5', edgecolor='#CCCCCC', alpha=0.9))
-    ax2.annotate('k = 4 (0.203): Kompromi optimal\nMemisahkan 33 daerah 3T',
+    ax2.annotate('k = 4 (0.203): Mengurai mayoritas\nKab. Mapan (187) vs Agraris (216)',
                  xy=(4, sil_km[2]), xytext=(4.3, 0.235),
                  fontsize=8, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.12', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.9))
-    ax2.set_title('2. Evaluasi Separasi (Silhouette Score)\nk = 4 menjaga keterwakilan tanpa penumpukan daerah',
-                  fontsize=10, fontweight='bold', loc='left', pad=8)
+    ax2.set_title('2. Evaluasi Separasi (Silhouette Score)\nk = 4 menjaga keterwakilan tanpa penumpukan 62% daerah',
+                  fontsize=9.5, fontweight='bold', loc='left', pad=8)
     ax2.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold')
     ax2.set_ylabel('Rata-rata Silhouette Score', fontsize=10, fontweight='bold')
     ax2.set_xticks(k_range)
