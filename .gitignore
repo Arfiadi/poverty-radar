@@ -7,34 +7,54 @@ __pycache__/
 *$py.class
 *.egg-info/
 .pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# Jupyter Notebooks
+# IDE & Editor Configurations
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebooks & Temporary Checkpoints
 .ipynb_checkpoints/
+*-checkpoint.ipynb
 /notebooks/ydata_EDA.ipynb
+test_*_out.ipynb
 
 # OS Specific
 .DS_Store
 Thumbs.db
+ehthumbs.db
 desktop.ini
 ~$*.docx
 
-# Environment variables
+# Environment Variables & Secrets
 .env
 .env.*
 !.env.example
+kaggle.json
+*.pem
+*.key
 
-# Large outputs & binaries
+# Large Outputs & Binaries
 reports/*.html
 docs/*.pdf
 
-
-
-# Experiment tracking & build residues
+# Experiment Tracking & Build Residues
 catboost_info/
 mlruns/
 wandb/
 
+# Temporary Directories & Scratch Files
 scripts/
 scratch/
+tmp/
+temp/
+*.tmp
+*.bak
 
+# Heavy External Datasets (Raw non-canonical downloads)
 data/raw/bps_2023/
