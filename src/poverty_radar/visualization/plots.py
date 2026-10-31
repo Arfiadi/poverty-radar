@@ -45,14 +45,14 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
         sil_km.append(silhouette_score(X_scaled, km.labels_))
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6.2), dpi=300)
-    fig.suptitle('Penentuan Jumlah Klaster Optimal (k = 4): Titik Kompromi Elbow & Keseimbangan Wilayah',
+    fig.suptitle('Penentuan Jumlah Klaster (k = 4): Evaluasi Titik Belok Inersia & Keseimbangan Partisi',
                  fontsize=14, fontweight='bold', x=0.04, y=0.98, ha='left')
 
     # Panel 1: Elbow
     ax1.plot(k_range, inertia_km, marker='o', markersize=8, color='#0072B2', linewidth=2.5)
     ax1.axvline(x=4, color='#D55E00', linestyle='--', linewidth=1.5, alpha=0.85)
     ax1.scatter([4], [inertia_km[2]], color='#D55E00', s=140, zorder=5, edgecolor='black', linewidth=1.2)
-    ax1.annotate('Titik Belok Optimal (k = 4)\nPenurunan varians melandai tegas',
+    ax1.annotate('Titik Belok Elbow (k = 4)\nLaju penurunan inersia mulai melandai',
                  xy=(4, inertia_km[2]), xytext=(4.3, 1380),
                  fontsize=9.5, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.15', color='#D55E00', lw=1.2),
@@ -74,12 +74,12 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
                  fontsize=8.5, fontweight='bold', color='#555555',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.15', color='#777777', lw=1.0),
                  bbox=dict(boxstyle='round,pad=0.3', facecolor='#F5F5F5', edgecolor='#CCCCCC', alpha=0.9))
-    ax2.annotate('k = 4 (0.203): Kompromi Terbaik\nMemisahkan 3T ekstrem (33 daerah)\nsecara mandiri & seimbang',
+    ax2.annotate('k = 4 (0.203): Kompromi Elbow & Separasi\nMemisahkan 33 daerah 3T ekstrem\nsecara mandiri & berimbang',
                  xy=(4, sil_km[2]), xytext=(4.3, 0.235),
                  fontsize=8.5, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.12', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.3', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.9))
-    ax2.set_title('2. Evaluasi Separasi Siluet (Silhouette Score)\nk = 4 menjaga keseimbangan antara separasi dan keterwakilan wilayah',
+    ax2.set_title('2. Evaluasi Separasi Siluet (Silhouette Score)\nk = 4 menjaga keterwakilan kelompok tanpa penumpukan 62% daerah',
                   fontsize=11.5, fontweight='bold', loc='left', pad=12)
     ax2.set_xlabel('Jumlah Klaster (k)', fontsize=10.5, fontweight='bold')
     ax2.set_ylabel('Rata-rata Silhouette Score', fontsize=10.5, fontweight='bold')
@@ -109,7 +109,7 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     for i, bar in enumerate(bars1):
         val = sil_scores[i]
         if i == 0:
-            ax1.text(bar.get_x() + bar.get_width()/2, val + 0.008, f"{val:.3f}\n(Terbaik)", 
+            ax1.text(bar.get_x() + bar.get_width()/2, val + 0.008, f"{val:.3f}\n(Tertinggi)", 
                      ha='center', va='bottom', fontsize=12, fontweight='bold', color='#0072B2')
         else:
             ax1.text(bar.get_x() + bar.get_width()/2, val + 0.008, f"{val:.3f}", 
@@ -129,7 +129,7 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     for i, bar in enumerate(bars2):
         val = dbi_scores[i]
         if i == 0:
-            ax2.text(bar.get_x() + bar.get_width()/2, val + 0.045, f"{val:.3f}\n(Terbaik)", 
+            ax2.text(bar.get_x() + bar.get_width()/2, val + 0.045, f"{val:.3f}\n(Terendah)", 
                      ha='center', va='bottom', fontsize=12, fontweight='bold', color='#0072B2')
         else:
             ax2.text(bar.get_x() + bar.get_width()/2, val + 0.045, f"{val:.3f}", 
@@ -144,9 +144,9 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     ax2.spines['top'].set_visible(False)
     ax2.spines['right'].set_visible(False)
 
-    fig.text(0.06, 0.96, 'Perbandingan Algoritma pada k = 4: K-Means Unggul dalam Separasi dan Kepadatan', 
+    fig.text(0.06, 0.96, 'Perbandingan Algoritma pada k = 4: K-Means Menunjukkan Separasi dan Kepadatan Relatif Unggul', 
              fontsize=15, fontweight='bold', ha='left')
-    fig.text(0.06, 0.90, 'K-Means mencatat separasi terbaik (Silhouette 0.203) sekaligus klaster paling padat (DBI 1.452) di antara 4 algoritma yang diuji', 
+    fig.text(0.06, 0.90, 'K-Means mencatat nilai Silhouette tertinggi (0.203) dan DBI terendah (1.452) di antara 4 algoritma yang diuji', 
              fontsize=12, color='#333333', ha='left')
 
     plt.subplots_adjust(top=0.78, bottom=0.14, left=0.06, right=0.98, wspace=0.24)
@@ -171,12 +171,12 @@ def plot_multiseed_robustness(X_scaled: np.ndarray, baseline_labels: np.ndarray,
     ax.axhline(0.85, color='#D55E00', linestyle='--', linewidth=1.5, zorder=2, label='Batas Minimum Kriteria (0.85)')
     ax.axhline(mean_ari, color='#009E73', linestyle='-', linewidth=2, zorder=2, label=f'Rata-rata Konsistensi: {mean_ari*100:.3f}%')
 
-    ax.annotate(f'Konsistensi Partisi = {mean_ari*100:.2f}%\nKlaster terbukti stabil & objektif',
+    ax.annotate(f'Konsistensi Partisi = {mean_ari*100:.2f}%\nStabilitas tinggi melampaui kriteria minimum 0.85',
                 xy=(13, ari_scores[12]), xytext=(13.2, 0.95),
                 fontsize=9.5, fontweight='bold', color='#0072B2',
                 bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='#0072B2', alpha=0.95))
 
-    ax.set_title('Uji Ketahanan Multi-Seed: Konsistensi Klaster Mencapai 98.0% di 20 Iterasi Acak\nHasil pengelompokan terbukti bukan kebetulan matematis inisialisasi awal',
+    ax.set_title('Uji Ketahanan Multi-Seed: Konsistensi Klaster Mencapai 98.0% di 20 Iterasi Acak\nSimulasi 20 inisialisasi acak menunjukkan partisi stabil dan minim sensitivitas inisialisasi',
                  fontsize=12, fontweight='bold', loc='left', pad=12)
     ax.set_xlabel('Iterasi Random Seed (1 s.d. 20)', fontsize=10.5, fontweight='bold')
     ax.set_ylabel('Adjusted Rand Index (ARI)', fontsize=10.5, fontweight='bold')
@@ -234,7 +234,7 @@ def plot_pca_2d(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt.Figur
                 xy=(0.15, 2.3), fontsize=10, fontweight='bold', color='#222222', ha='left',
                 bbox=dict(boxstyle='square,pad=0.25', facecolor='#F5F5F5', edgecolor='none', alpha=0.9))
 
-    ax.set_title('Pemetaan 2D Sosio-Ekonomi: 4 Tipologi Daerah Terpisah Tegas pada Ruang Pembangunan\n'
+    ax.set_title('Pemetaan 2D Sosio-Ekonomi: Proyeksi 4 Tipologi Daerah pada Ruang Fitur Reduksi Dimensi\n'
                  'PC1 merefleksikan modal manusia & fasilitas dasar (47.9%), PC2 merefleksikan skala ekonomi & pasar kerja (21.5%)',
                  fontsize=12, fontweight='bold', pad=15, loc='left', color='#111111')
     ax.set_xlabel('Komponen Utama 1 (PC1: Modal Manusia & Akses Fasilitas Dasar)', fontsize=11, fontweight='bold', labelpad=8)
@@ -285,8 +285,8 @@ def plot_cluster_heatmap(df: pd.DataFrame, X_scaled: np.ndarray, save_path: Opti
         ax=ax
     )
 
-    ax.set_title('Profil Tipologi Klaster: Jurang Fasilitas Dasar Memisahkan Wilayah 3T dari Daerah Lain\n'
-                 'Nilai Z-Score relatif terhadap median nasional (Warna Merah = Defisit Kritis, Biru = Capaian Unggul)',
+    ax.set_title('Profil Tipologi Klaster: Perbandingan Deviasi 7 Indikator Struktural terhadap Median Nasional\n'
+                 'Nilai Z-Score relatif terhadap median nasional (Merah = Defisit Relatif di Bawah Median, Biru = Capaian Relatif di Atas Median)',
                  fontsize=12.5, fontweight='bold', pad=18, loc='left')
     ax.set_ylabel('')
     plt.xticks(rotation=0, fontsize=10.5, fontweight='bold', ha='center')
@@ -388,7 +388,7 @@ def plot_p0_stripplot(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt
             color='#555555', fontsize=9.5, fontweight='bold', ha='right')
 
     ax.set_title('Validasi Eksternal: Distribusi Kemiskinan Aktual (P0)\n'
-                 'Klaster memisahkan kemiskinan secara alami tanpa variabel P0 (ANOVA F = 155.9, p < 0.001)',
+                 'Perbedaan distribusi kemiskinan antarklaster terkonfirmasi secara bivariat (ANOVA F = 155.9, p < 0.001)',
                  fontsize=12, fontweight='bold', pad=15, loc='left')
     ax.set_xlabel('Tipologi Klaster Sosio-Ekonomi', fontsize=10.5, fontweight='bold', labelpad=8)
     ax.set_ylabel('Persentase Penduduk Miskin (P0 %)', fontsize=10.5, fontweight='bold')
@@ -400,6 +400,7 @@ def plot_p0_stripplot(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt
         'Klaster 4 (N=33)\nWilayah 3T Deprivasi Akut'
     ], fontsize=9.0)
     ax.grid(axis='y', linestyle=':', alpha=0.5)
+    ax.text(0.01, -0.16, '*Catatan: Mengindikasikan asosiasi statistik antarklaster, bukan hubungan sebab-akibat.', transform=ax.transAxes, fontsize=8, fontstyle='italic', color='#555555')
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -506,6 +507,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     ax.set_xlim(0.2, 43.8)
     ax.set_ylim(-0.02, 1.05)
     ax.grid(True, linestyle=':', alpha=0.35)
+    ax.text(0.98, -0.07, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.', transform=ax.transAxes, fontsize=8, fontstyle='italic', color='#555555', ha='right')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
