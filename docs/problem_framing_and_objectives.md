@@ -1,45 +1,25 @@
 # PovertyRadar SDGs: Problem Framing, Objektif Proyek, dan Arsitektur Analisis
 
 ## DOKUMEN PROBLEM FRAMING, OBJEKTIF, & METODOLOGI ANALISIS
-**Versi:** 3.0 (Dedicated Problem Framing & Architecture)  
-**Tanggal Pembaruan:** 28 Oktober 2026  
+**Versi:** 4.0 (Consolidated Problem Framing & Architecture) | 31 Oktober 2026  
 **Mata Kuliah:** Presentasi Data dan Storytelling  
 **Dataset Utama:** `Klasifikasi Tingkat Kemiskinan di Indonesia.csv` ([Kaggle Dataset oleh ldausl](https://www.kaggle.com/datasets/ldausl/klasifikasi-tingkat-kemiskinan-di-indonesia), BPS 2021)  
 **Fokus Metodologis:** Pemetaan Spasial Deskriptif • Unsupervised Profiling Clustering • Skrining Kerentanan Relatif 2x2 • Storytelling Interaktif  
-**Dokumen Pendamping:** [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md)  
+**Dokumen Terkait:** [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md) • [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md) • [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md) • [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md)  
 
 ---
 
 ## Daftar Isi
 1. [Ringkasan Eksekutif & Paradigma Analisis](#1-ringkasan-eksekutif--paradigma-analisis)
-   - 1.1 [Penegasan Metodologis: Tanpa Klasifikasi Terawasi (No Supervised Classification)](#11-penegasan-metodologis-tanpa-klasifikasi-terawasi-no-supervised-classification)
-   - 1.2 [Keputusan Desain & Perubahan Kerangka Analisis](#12-keputusan-desain--perubahan-kerangka-analisis)
-   - 1.3 [Snapshot Integritas Data Lapangan (Terverifikasi)](#13-snapshot-integritas-data-lapangan-terverifikasi)
 2. [Konteks Masalah & Latar Belakang SDG 1](#2-konteks-masalah--latar-belakang-sdg-1)
-   - 2.1 [Dilema Kebijakan Seragam (One-Size-Fits-All)](#21-dilema-kebijakan-seragam-one-size-fits-all)
-   - 2.2 [Kesenjangan Analitis (Analytical Gap)](#22-kesenjangan-analitis-analytical-gap)
 3. [Rumusan Masalah, Pertanyaan Riset, & Objektif](#3-rumusan-masalah-pertanyaan-riset--objektif)
-   - 3.1 [Rumusan Masalah Utama](#31-rumusan-masalah-utama)
-   - 3.2 [Pertanyaan Analitis Kunci](#32-pertanyaan-analitis-kunci)
-   - 3.3 [Objektif Umum](#33-objektif-umum)
-   - 3.4 [Objektif Khusus](#34-objektif-khusus)
 4. [Alur Metodologi Proyek & Ruang Lingkup Sistem](#4-alur-metodologi-proyek--ruang-lingkup-sistem)
-   - 4.1 [Diagram Alur Metodologi Proyek](#41-diagram-alur-metodologi-proyek)
-   - 4.2 [Batasan Ruang Lingkup (In-Scope vs. Out-of-Scope)](#42-batasan-ruang-lingkup-in-scope-vs-out-of-scope)
-   - 4.3 [Kandidat Fitur Clustering Bebas Target Leakage](#43-kandidat-fitur-clustering-bebas-target-leakage)
 5. [Konseptualisasi Skrining Kerentanan Struktural Relatif](#5-konseptualisasi-skrining-kerentanan-struktural-relatif)
-   - 5.1 [Operasionalisasi Konsep: Kerentanan Relatif vs. Prediksi Risiko](#51-operasionalisasi-konsep-kerentanan-relatif-vs-prediksi-risiko)
-   - 5.2 [Matriks Skrining Kuadran 2x2](#52-matriks-skrining-kuadran-2x2)
-   - 5.3 [Karakteristik & Arah Kebijakan Empat Kuadran](#53-karakteristik--arah-kebijakan-empat-kuadran)
 6. [Protokol Evaluasi & Validasi Model Unsupervised](#6-protokol-evaluasi--validasi-model-unsupervised)
-   - 6.1 [Metrik Separasi Matematis](#61-metrik-separasi-matematis)
-   - 6.2 [Uji Stabilitas Penugasan Klaster (Multi-Seed Robustness)](#62-uji-stabilitas-penugasan-klaster-multi-seed-robustness)
-   - 6.3 [Uji Interpretabilitas Substantif Kebijakan](#63-uji-interpretabilitas-substantif-kebijakan)
 7. [Arsitektur Dashboard Storytelling & Standar Visualisasi](#7-arsitektur-dashboard-storytelling--standar-visualisasi)
-   - 7.1 [Struktur 5 Babak Naratif (Multi-Page Primary Architecture)](#71-struktur-5-babak-naratif-multi-page-primary-architecture)
-   - 7.2 [Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)](#72-pedoman-visualisasi-knaflic--few-larangan-radar-chart--kebijakan-boxplot)
 8. [Status Gerbang Keputusan Pra-Pemodelan (Decision Gates)](#8-status-gerbang-keputusan-pra-pemodelan-decision-gates)
-9. [Rujukan Resmi & Berkas Terkait](#9-rujukan-resmi--berkas-terkait)
+9. [Luaran Utama & Kriteria Penerimaan Proyek](#9-luaran-utama--kriteria-penerimaan-proyek-acceptance-criteria)
+10. [Rujukan Resmi & Berkas Terkait](#10-rujukan-resmi--berkas-terkait)
 
 ---
 
@@ -55,52 +35,33 @@ Dokumen ini memformalkan kerangka kerja analitis, perumusan masalah kebijakan, s
 > 
 > **Tiga Landasan Penolakan Klasifikasi Terawasi:**
 > 1. **Pencegahan Penalaran Melingkar (*Circular Reasoning / Target Leakage*):** Memprediksi status kemiskinan dari indikator pengeluaran, pendidikan, dan kesehatan yang merupakan komponen pembentuk garis kemiskinan dan IPM adalah bentuk *leakage* matematis yang tidak menghasilkan wawasan kebijakan baru.
-> 2. **Inkonsistensi & Cacat Validitas Label Bawaan:** Kolom label biner bawaan bukan indikator resmi Badan Pusat Statistik (BPS), melainkan hasil penyekatan *ad-hoc* yang terbukti memuat anomali pelabelan di lapangan (lihat audit 7 anomali wilayah pada [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md#4-audit-khusus-label-bawaan-klasifikasi-kemiskinan)).
-> 3. **Paradigma Solusi Berbasis Profiling:** Solusi kebijakan penanggulangan kemiskinan membutuhkan pemahaman akar ketertinggalan struktural daerah, bukan sekadar prediksi label hitam-putih. Oleh karena itu, fokus analitis diarahkan pada **Unsupervised Profiling Clustering** dan **Matriks Skrining Kerentanan Struktural 2x2**. Kolom label bawaan **dikeluarkan sepenuhnya (*dropped*)**.
-
----
+> 2. **Inkonsistensi & Cacat Validitas Label Bawaan:** Kolom label biner bawaan bukan indikator resmi Badan Pusat Statistik (BPS), melainkan hasil penyekatan *ad-hoc* yang terbukti memuat anomali pelabelan di lapangan.
+> 3. **Paradigma Solusi Berbasis Profiling:** Solusi kebijakan penanggulangan kemiskinan membutuhkan pemahaman konfigurasi defisit fasilitas dasar daerah, bukan sekadar prediksi label hitam-putih. Oleh karena itu, fokus analitis diarahkan pada **Unsupervised Profiling Clustering** dan **Matriks Skrining Kerentanan Struktural 2x2**. Kolom label bawaan **dikeluarkan sepenuhnya (*dropped*)**.
 
 ### 1.2 Keputusan Desain & Perubahan Kerangka Analisis
-
-| Dimensi Komponen | Keputusan Desain yang Ditetapkan | Justifikasi Metodologis & Rekayasa |
-| :--- | :--- | :--- |
-| **Pemodelan Prediktif** | **Ditiadakan Sepenuhnya.** Tidak ada klasifikasi terawasi maupun regresi peramalan masa depan. | Menghindari ilusi prediktif; dataset merupakan data *cross-section* satu titik waktu (2021) tanpa dimensi runtun waktu (*time series*). |
-| **Label Bawaan (0/1)** | **Diabaikan / Dieliminasi dari Seluruh Analisis.** | Label biner memiliki anomali pelabelan di Papua/Papua Barat yang merusak reliabilitas pelatihan algoritma terawasi. |
-| **Konsep Risiko Kemiskinan**| **Dioperasionalkan sebagai Skrining Kerentanan Relatif (2x2 Matrix).** | Menghindari klaim keliru bahwa sistem memperkirakan probabilitas masa depan; memposisikan kerentanan sebagai ketertinggalan modal dasar. |
-| **Pilar Analisis Utama** | **Unsupervised Clustering Profil Sosio-Ekonomi Daerah.** | Memetakan tipologi daerah (misal: klaster agraris subsisten vs perkotaan padat modal) tanpa menyertakan persentase kemiskinan $P_0$ dalam proses pembentukan klaster. |
-| **Luaran Komunikasi** | **Dashboard Interaktif 5 Babak Naratif (Storytelling).** | Menyajikan temuan kompleks secara komunikatif sesuai kaidah Cole Nussbaumer Knaflic dan Stephen Few. |
-
----
+1. Mengubah orientasi proyek dari "klasifikasi biner semu" menjadi **eksplorasi tipologi sosio-ekonomi multidimensi**.
+2. Mengisolasi variabel $P_0$ (Persentase Penduduk Miskin) dari proses klastering agar dapat digunakan sebagai variabel evaluasi eksternal independen (*unbiased benchmark*).
+3. Menerapkan matriks skrining 2x2 yang memadukan dimensi kemiskinan moneter aktual ($P_0$) dengan Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$).
 
 ### 1.3 Snapshot Integritas Data Lapangan (Terverifikasi)
-
-Hasil audit komputasi menyeluruh yang dipublikasikan pada [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md):
-
-* **Unit Analisis:** 514 kabupaten/kota (413 Kabupaten dan 101 Kota/Kota Administrasi).
-* **Cakupan Spasial:** 34 Provinsi (format nasional tahun 2021 sebelum pemekaran Papua).
-* **Kelengkapan Nilai:** **0 Missing Values** di seluruh baris dan kolom.
-* **Duplikasi Data:** **0 Duplikasi Baris Penuh; 0 Duplikasi Entitas Wilayah.**
-* **Tahun Pengamatan:** **Terverifikasi Resmi: Tahun 2021 (BPS)** melalui *cross-check* presisi IPM dan $P_0$ Kota Surakarta (IPM: 82.62, $P_0$: 9.40%), Cilacap (IPM: 70.42, $P_0$: 11.67%), dan Banyumas (IPM: 72.44, $P_0$: 13.66%).
-* **Skala Satuan PDRB:** Terverifikasi berskala **Juta Rupiah** (Rp147 miliar di Tambrauw s.d. Rp460 triliun di Jakarta Pusat).
+* **Jumlah Observasi:** Tepat 514 baris kabupaten/kota di 34 provinsi (kondisi administrasi BPS 2021).
+* **Missing Values & Duplikasi:** 0 missing values (100% lengkap) dan 0 baris duplikat.
+* **Tingkat Kemiskinan Moneter ($P_0$):** Rerata nasional $12.32\%$, median $10.46\%$, rentang $2.38\%$ (Sawahlunto) s.d. $41.66\%$ (Intan Jaya).
 
 ---
 
 ## 2. Konteks Masalah & Latar Belakang SDG 1
 
 ### 2.1 Dilema Kebijakan Seragam (One-Size-Fits-All)
-Upaya penanggulangan kemiskinan di Indonesia sering terhambat oleh generalisasi intervensi program. Seringkali pengambil kebijakan memperlakukan daerah miskin secara seragam hanya berdasarkan persentase kemiskinan headcount index ($P_0$).
-
-Secara faktual, dua daerah dengan tingkat kemiskinan yang identik (misalnya 15%) dapat memiliki konfigurasi struktural yang bertolak belakang:
-* **Daerah A (Perdesaan/3T):** Mengalami kemiskinan ekstrem akibat keterisolasian geografis, ketiadaan akses sanitasi dan air minum layak, serta minimnya fasilitas pendidikan formal.
-* **Daerah B (Perkotaan/Transisi):** Memiliki infrastruktur dasar yang lengkap dan IPM tinggi, namun warganya miskin akibat rendahnya kapasitas penyerapan tenaga kerja formal, upah riil yang rendah, dan beban biaya hidup yang tinggi.
-
-Penerapan program bantuan sosial tunai standar pada Daerah A tidak akan menyelesaikan akar masalah tanpa pembangunan infrastruktur sanitasi fisik. Sebaliknya, pembangunan fisik pada Daerah B tidak menyentuh masalah pengangguran perkotaan.
+Penanganan kemiskinan di Indonesia kerap terbentur pada kebijakan yang disamaratakan (*blanket policy*). Padahal, daerah dengan tingkat kemiskinan setara sering kali memiliki kendala mendasar yang bertolak belakang:
+* Suatu daerah mungkin miskin karena **defisit infrastruktur fisik dasar** (ketiadaan akses air minum dan sanitasi di daerah 3T).
+* Daerah lain mungkin memiliki fasilitas dasar memadai, namun miskin karena **ketiadaan lapangan kerja formal bernilai tambah** (kantong kemiskinan agraris/daya beli).
 
 ### 2.2 Kesenjangan Analitis (Analytical Gap)
-Kesenjangan utama yang dijembatani oleh PovertyRadar SDGs adalah:
-1. **Ketiadaan Pemisahan Masalah:** Menguraikan angka kemiskinan agregat menjadi dimensi-dimensi penyusunnya (pendidikan, kesehatan, infrastruktur air/sanitasi, dan ketenagakerjaan).
-2. **Ketiadaan Tipologi Profil Daerah:** Membentuk kelompok daerah dengan kesamaan karakteristik akar masalah melalui *unsupervised clustering*.
-3. **Ketiadaan Instrumen Skrining Intervensi 2 Dimensi:** Menggabungkan status kemiskinan aktual dengan tingkat kerentanan fasilitas dasar dalam matriks kuadran 2x2.
+PovertyRadar SDGs hadir untuk menjembatani 3 kesenjangan:
+1. Mengurai angka kemiskinan agregat menjadi dimensi-dimensi penyusunnya (pendidikan, kesehatan, sanitasi, air minum, pengeluaran, ketenagakerjaan).
+2. Membentuk tipologi profil daerah melalui *unsupervised clustering* murni tanpa target leakage.
+3. Menyediakan instrumen skrining 2 dimensi ($P_0$ vs Kerentanan Fasilitas Dasar) yang transparan dan dapat ditindaklanjuti.
 
 ---
 
@@ -114,19 +75,11 @@ Kesenjangan utama yang dijembatani oleh PovertyRadar SDGs adalah:
 2. **Korelasi Multidimensi:** Bagaimana pola asosiasi antara modal manusia, derajat kesehatan, akses sanitasi/air minum, skala ekonomi, dan dinamika ketenagakerjaan terhadap kemiskinan?
 3. **Tipologi Klaster Murni:** Klaster profil sosial-ekonomi apa yang terbentuk ketika daerah dikelompokkan secara murni tanpa menyertakan variabel kemiskinan $P_0$?
 4. **Karakteristik Pembeda:** Apa faktor penentu yang paling membedakan masing-masing klaster dan bagaimana variasi sebaran tingkat kemiskinan ($P_0$) pada masing-masing klaster tersebut?
-5. **Skrining Prioritas 2x2:** Wilayah mana saja yang masuk ke dalam kuadran prioritas intervensi mendesak (*High Poverty, High Vulnerability*) vs wilayah kantong kemiskinan khusus (*Enclave Poverty*)?
+5. **Skrining Prioritas 2x2:** Wilayah mana saja yang masuk ke dalam kuadran prioritas intervensi mendesak (*Prioritas Utama*) vs wilayah kantong kemiskinan daya beli (*Enclave*)?
 6. **Validitas & Stabilitas:** Seberapa stabil, teruji, dan mudah diinterpretasikan hasil klasterisasi terhadap perubahan acak (*random seed*)?
 
-### 3.3 Objektif Umum
+### 3.3 Objektif Umum & Khusus
 Mengembangkan **PovertyRadar SDGs** sebagai dashboard interaktif berbasis *data storytelling* untuk memetakan tingkat kemiskinan kabupaten/kota, mengelompokkan profil sosial-ekonomi daerah melalui *unsupervised clustering*, dan menyajikan instrumen skrining kerentanan struktural 2x2 yang transparan dalam rangka mendukung penetapan kebijakan **SDG 1 — Tanpa Kemiskinan**.
-
-### 3.4 Objektif Khusus
-1. Melakukan audit integritas teknis, sanitasi data, dan penanganan nilai batas anomali terhadap 514 kabupaten/kota di Indonesia.
-2. Mengeksplorasi hubungan statistik bivariat/multivariat dan mendokumentasikan paradoks ketenagakerjaan (korelasi positif TPAK dan korelasi negatif TPT).
-3. Membangun model *unsupervised clustering* (K-Means dan Hierarchical Clustering) menggunakan indikator sosial-ekonomi terstandardisasi bebas *target leakage*.
-4. Mengevaluasi kualitas pemodelan klaster secara matematis (*Silhouette Score*, *Davies-Bouldin Index*, *Elbow Method*) dan menyusun profil visual komparatif antarklaster.
-5. Merancang instrumen skrining dua dimensi ($P_0$ aktual vs Indeks Kerentanan Struktural Relatif) ke dalam matriks kuadran 2x2.
-6. Menyajikan hasil analisis melalui dashboard interaktif lengkap dengan peta tematik 34 provinsi, filter multi-level, visualisasi komparatif bebas *radar chart*, dan transparansi metodologi.
 
 ---
 
@@ -150,7 +103,7 @@ flowchart TD
 
     subgraph S3["3. Dual-Engine Analytical Modeling"]
         F3 --> M1["Engine A: Unsupervised Clustering<br/>(K-Means & Hierarchical)<br/>• Fitur: RLS, UHH, Sanitasi, Air Minum, Pengeluaran, TPT, Log-PDRB<br/>• Eksklusi: P0 & IPM (Anti-Leakage & Anti-Collinearity)"]
-        F3 --> M2["Engine B: Relative Vulnerability Screening<br/>• Matriks Kuadran 2x2<br/>• Sumbu X: Tingkat Kemiskinan Aktual (P0)<br/>• Sumbu Y: Indeks Kerentanan Struktural"]
+        F3 --> M2["Engine B: Relative Vulnerability Screening<br/>• Matriks Kuadran 2x2<br/>• Sumbu X: Tingkat Kemiskinan Aktual (P0)<br/>• Sumbu Y: Indeks Kerentanan Fasilitas Dasar"]
     end
 
     subgraph S4["4. Validasi & Interpretasi"]
@@ -164,8 +117,6 @@ flowchart TD
     end
 ```
 
----
-
 ### 4.2 Batasan Ruang Lingkup (In-Scope vs. Out-of-Scope)
 
 | Termasuk dalam Ruang Lingkup (In-Scope) | Di Luar Ruang Lingkup Proyek (Out-of-Scope) |
@@ -173,152 +124,80 @@ flowchart TD
 | Pemetaan spasial deskriptif tingkat kemiskinan ($P_0$) dan indikator sosial-ekonomi 2021. | **Pemodelan klasifikasi terawasi (*Supervised Classification*)** seperti Logistic Regression, Decision Tree, Random Forest, SVM. |
 | Deteksi anomali multivariat berbasis *Isolation Forest* dan proyeksi PCA 2D. | Prediksi deret waktu atau peramalan kemiskinan tahun berikutnya (*Time Series Forecasting*). |
 | *Unsupervised clustering* tipologi daerah menggunakan algoritma K-Means & Hierarchical. | Klaim sebab-akibat deterministik (*Causal Inference*). |
-| Skrining kerentanan struktural relatif berbasis matriks kuadran 2x2 transparan. | Pengambilan keputusan alokasi anggaran otomatis tanpa telaah manusia. |
+| Skrining kerentanan fasilitas dasar relatif berbasis matriks kuadran 2x2 transparan. | Pengambilan keputusan alokasi anggaran otomatis tanpa telaah manusia. |
 | Dashboard interaktif dengan struktur narasi 5 babak (*Freytag's Pyramid*). | Penggunaan label klasifikasi biner bawaan `Klasifikasi Kemiskinan`. |
 | Evaluasi komparatif tingkat kemiskinan kontinu ($P_0$) antarklaster. | Penggunaan visualisasi *Radar / Spider Chart* yang mendistorsi persepsi data. |
 
----
-
 ### 4.3 Kandidat Fitur Clustering Bebas Target Leakage
-
-Untuk mencegah bias dan penipuan evaluasi (*data leakage*), variabel dibagi secara tegas:
-
-| Nama Indikator | Peran dalam Pemodelan | Justifikasi Metodologis & Konsep |
-| :--- | :---: | :--- |
-| `Rata-rata Lama Sekolah` | **Fitur Utama Clustering** | Modal manusia dan kapasitas kognitif tenaga kerja (SDG 4). |
-| `Umur Harapan Hidup` | **Fitur Utama Clustering** | Derajat kesehatan dasar dan ketahanan fisik masyarakat (SDG 3). |
-| `Akses Sanitasi Layak` | **Fitur Utama Clustering** | Kelayakan sanitasi lingkungan hunian (SDG 6). |
-| `Akses Air Minum Layak` | **Fitur Utama Clustering** | Ketersediaan kebutuhan hidup pokok terlindung (SDG 6). |
-| `Pengeluaran per Kapita` | **Fitur Utama Clustering** | Proksi daya beli riil per kapita masyarakat. |
-| `Tingkat Pengangguran (TPT)` | **Fitur Utama Clustering** | Efisiensi penyerapan angkatan kerja formal (SDG 8). |
-| `Partisipasi Kerja (TPAK)` | **Fitur Tambahan / Eksplorasi** | Karakteristik struktur ketenagakerjaan (formal vs informal). |
-| `Log1p(PDRB Harga Konstan)` | **Fitur Tambahan (Scaled)** | Skala kapasitas ekonomi makro daerah setelah normalisasi logaritmik. |
-| `Indeks Pembangunan Manusia` | **Variabel Konteks / Evaluasi Eksternal** | **Dikeluarkan dari fitur clustering** untuk menghindari *double-counting* akibat multikolinearitas tinggi ($r > 0.86$) dengan RLS, UHH, dan Pengeluaran. |
-| `Persentase Kemiskinan (P0)` | **Variabel Pembanding Pasca-Klaster** | **Dikeluarkan dari fitur clustering** untuk mencegah *circular reasoning*; digunakan untuk membandingkan sebaran kemiskinan antar-klaster. |
-| `Klasifikasi Kemiskinan` | **Dieliminasi Sepenuhnya** | Label biner buatan non-resmi yang memiliki inkonsistensi ambang batas. |
+* **Fitur Model (7 Variabel Independen):** RLS, UHH, Sanitasi Layak, Air Minum Layak, Pengeluaran Riil per Kapita, Tingkat Pengangguran Terbuka (TPT), dan $\log(1+\text{PDRB})$.
+* **Variabel Konteks Eksternal:** IPM (dieksklusi demi mencegah multikolinearitas $r > 0.86$).
+* **Variabel Benchmark Pasca-Klaster:** $P_0$ (dieksklusi dari fitur demi mencegah *circular reasoning*).
+* **Kolom Tereliminasi:** `Klasifikasi Kemiskinan` (label biner non-resmi).
 
 ---
 
 ## 5. Konseptualisasi Skrining Kerentanan Struktural Relatif
 
 ### 5.1 Operasionalisasi Konsep: Kerentanan Relatif vs. Prediksi Risiko
-PovertyRadar SDGs secara tegas membedakan istilah **"risiko"** dari **prediksi probabilitas masa depan**:
+PovertyRadar SDGs secara tegas membedakan istilah **"kerentanan relatif"** dari **prediksi probabilitas masa depan**:
 * **Bukan Prediksi:** Sistem tidak menghitung probabilitas bahwa suatu daerah akan menjadi miskin di masa depan, karena dataset tidak memiliki data longitudinal/historis.
-* **Skrining Kerentanan Relatif:** Sistem mengukur **kerentanan fondasi struktural** saat ini berdasarkan defisit pada indikator fasilitas dasar (sanitasi, air minum), modal manusia (lama sekolah), dan kesehatan.
+* **Skrining Kerentanan Relatif:** Sistem mengukur **kerentanan fondasi fasilitas dasar** saat ini berdasarkan defisit pada indikator sanitasi, air minum, dan modal manusia.
 
 ### 5.2 Matriks Skrining Kuadran 2x2
-
-Matriks skrining memadukan dua dimensi independen pada bidang kartesius:
-* **Sumbu X (Tingkat Kemiskinan Aktual $P_0$):** Persentase penduduk miskin resmi BPS 2021 (garis batas: median nasional = $10.46\%$).
-* **Sumbu Y (Indeks Kerentanan Struktural $V_{\text{struc}}$):** Skor komposit tertimbang dari defisit fasilitas sanitasi, air bersih, RLS, dan UHH (garis batas: median indeks).
+Matriks memadukan dua dimensi independen pada bidang Kartesius:
+* **Sumbu X:** Tingkat Kemiskinan Moneter Aktual ($P_0$ %, median nasional = $10.46\%$).
+* **Sumbu Y:** Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$, median nasional = $0.2721$).
 
 ```text
-                  Indeks Kerentanan Struktural (Tinggi)
+                  Indeks Kerentanan Fasilitas Dasar (V_struc)
                                     ▲
                                     │
            KUADRAN II               │              KUADRAN I
-   (Potensi Rentan Tersembunyi)     │          (Prioritas Utama)
-   P0 Rendah, Kerentanan Tinggi     │      P0 Tinggi, Kerentanan Tinggi
-                                    │
+     (Kerentanan Tersembunyi)       │          (Prioritas Utama)
+     P0 Rendah, V_struc Tinggi      │       P0 Tinggi, V_struc Tinggi
+             (N = 95)               │               (N = 162)
 ────────────────────────────────────┼────────────────────────────────────► Tingkat Kemiskinan
-                                    │                                      Aktual (P0)
+                                    │                                      Aktual (P0 %)
            KUADRAN IV               │             KUADRAN III
-       (Kondisi Tangguh)            │       (Kantong Kemiskinan / Enklave)
-   P0 Rendah, Kerentanan Rendah     │      P0 Tinggi, Kerentanan Rendah
-                                    │
+     (Wilayah Terbina / Mapan)      │     (Kantong Kemiskinan Daya Beli)
+     P0 Rendah, V_struc Rendah      │       P0 Tinggi, V_struc Rendah
+             (N = 162)              │               (N = 95)
                                     ▼
-                  Indeks Kerentanan Struktural (Rendah)
 ```
 
-### 5.3 Karakteristik & Arah Kebijakan Empat Kuadran
-
-1. **Kuadran I — Prioritas Utama (*High Poverty, High Vulnerability*):**
-   * *Karakteristik:* Daerah mengalami kemiskinan ekonomi parah sekaligus ketertinggalan fasilitas dasar dan modal manusia yang kritis (mayoritas wilayah 3T di Papua, Papua Barat, dan NTT).
-   * *Arah Kebijakan:* Intervensi terpadu komprehensif (bantuan sosial langsung dibarengi percepatan infrastruktur air/sanitasi dan fasilitas pendidikan).
-2. **Kuadran II — Kerentanan Tersembunyi (*Low Poverty, High Vulnerability*):**
-   * *Karakteristik:* Angka kemiskinan saat ini relatif rendah, namun fondasi infrastruktur dasar dan pendidikannya sangat rapuh.
-   * *Arah Kebijakan:* Pembangunan infrastruktur dasar preventif guna mencegah kerentanan jatuh miskin saat terjadi syok ekonomi atau bencana.
-3. **Kuadran III — Kantong Kemiskinan Daya Beli (*High Poverty, Low Vulnerability*):**
-   * *Karakteristik:* Fasilitas dasar dan mutu modal manusia memadai, namun tingkat kemiskinan tetap tinggi akibat keterbatasan daya beli dan pasar kerja formal.
-   * *Arah Kebijakan:* Reformasi pasar tenaga kerja, peningkatan produktivitas industri lokal, dan penciptaan lapangan kerja formal bernilai tambah.
-4. **Kuadran IV — Wilayah Terbina/Mapan (*Low Poverty, Low Vulnerability*):**
-   * *Karakteristik:* Kemiskinan rendah dan infrastruktur dasar kuat (mayoritas kota-kota besar di Jawa dan pusat ekonomi regional).
-   * *Arah Kebijakan:* Menjaga stabilitas ekonomi dan dijadikan percontohan (*benchmarking*) tata kelola bagi daerah lain.
+> [!NOTE]
+> **Rujukan Kebijakan & Tangga Bukti:**  
+> Rincian arah kebijakan, instrumen fiskal APBN/TKD, dan protokol Tangga Bukti Kebijakan 4 Tingkat untuk keempat kuadran di atas didokumentasikan secara lengkap pada:  
+> 👉 [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md) dan dataset [`data/processed/policy_recommendations_matrix.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/policy_recommendations_matrix.csv).
 
 ---
 
 ## 6. Protokol Evaluasi & Validasi Model Unsupervised
 
-### 6.1 Metrik Separasi Matematis
-Kualitas pemodelan klaster dinilai melalui kriteria matematis kuantitatif:
-1. **Silhouette Coefficient:** Mengukur seberapa dekat suatu titik dengan titik di klasternya dibandingkan dengan titik di klaster tetangga. Target skor rata-rata $> 0.35$ (mengingat kompleksitas multidimensi data sosio-ekonomi riil).
-2. **Davies-Bouldin Index (DBI):** Mengukur rasio jarak dalam klaster terhadap jarak antarklaster. Nilai yang lebih rendah mengindikasikan klaster yang lebih kompak dan terpisah dengan baik.
-3. **Calinski-Harabasz Index (Variance Ratio Criterion):** Mengukur rasio dispersi antarklaster terhadap dispersi dalam klaster. Nilai yang lebih tinggi menandakan pemisahan yang lebih tegas.
-4. **Elbow Method (Inertia):** Digunakan untuk mengidentifikasi titik belok penurunan *Within-Cluster Sum of Squares* (WCSS) guna memvalidasi jumlah $k$ optimal.
+Evaluasi model unsupervised dilakukan secara objektif melalui 3 pilar pengujian:
+1. **Kualitas Separasi Matematis:** Diukur menggunakan *Silhouette Coefficient*, *Davies-Bouldin Index (DBI)*, dan *Elbow Method (WCSS)* pada ruang PCA dan ruang fitur asli.
+2. **Uji Ketahanan Multi-Seed (Robustness Check):** Pengujian 20 random seeds dengan ambang batas kelulusan $\text{ARI} \ge 0.85$ (capaian empiris: $\text{ARI} = 0.9873$).
+3. **Uji Validasi Inferensial Eksternal ($P_0$):** Menguji signifikansi perbedaan kemiskinan aktual antarklaster via One-Way ANOVA ($F=155.94, p < 0.001$) dan Kruskal-Wallis ($H=167.52, p < 0.001$).
 
-### 6.2 Uji Stabilitas Penugasan Klaster (Multi-Seed Robustness)
-Untuk memastikan klaster yang terbentuk bukan merupakan artefak acak:
-* Algoritma K-Means diuji dengan 10 inisialisasi *random seed* berbeda (`random_state` dari 1 hingga 10).
-* Dihitung *Adjusted Rand Index* (ARI) antar-penugasan klaster; stabilitas diterima jika rata-rata ARI $> 0.85$.
-
-### 6.3 Uji Interpretabilitas Substantif Kebijakan
-Model klaster dengan metrik matematis tertinggi belum tentu merupakan model terbaik jika hasilnya tidak memiliki makna substantif. Setiap klaster yang terbentuk harus memiliki ciri khas pembeda yang logis secara ekonomi, yang disajikan melalui grafik batang komparatif (*Small Multiples Bar Charts*).
+> [!TIP]
+> **Rujukan Protokol Teknis & Temuan Empiris:**  
+> Untuk SOP teknis pemodelan, lihat [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md). Untuk analisis benchmark 20+ model dan dekonstruksi empiris $k=4$, lihat [`docs/clustering_rationale_and_findings.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_rationale_and_findings.md).
 
 ---
 
 ## 7. Arsitektur Dashboard Storytelling & Standar Visualisasi
 
-### 7.1 Struktur 5 Babak Naratif (Multi-Page Primary Architecture)
+Dashboard PovertyRadar SDGs dirancang sebagai media komunikasi data interaktif yang memandu audiens melalui alur narasi 5 babak (*5-Act Narrative Arc*):
+1. **Babak 1 — *The Hook* (`Poverty Landscape`):** Gambaran makro dan rentang disparitas 17.5x lipat antardaerah.
+2. **Babak 2 — *The Geography* (`Poverty & Indicator Map`):** Dimensi spasial 34 provinsi, disparitas kabupaten-kota, dan paradoks kerja.
+3. **Babak 3 — *The Archetypes* (`Regional Profiles`):** Arketipe profil sosio-ekonomi 4 klaster melalui Small Multiples Bar dan Heatmap Matrix.
+4. **Babak 4 — *The Call to Action* (`Priority & Implications`):** Skrining wilayah prioritas tindakan berbasis Matriks Kuadran 2x2.
+5. **Babak 5 — *The Integrity* (`Methodology & Data Quality`):** Transparansi mutu data BPS 2021, ketiadaan supervisi, dan batasan metode.
 
-Sesuai spesifikasi pada [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md), dashboard interaktif disusun mengikuti busur narasi dramatik 5 babak (*Freytag's Pyramid*):
-
-```mermaid
-graph LR
-    B1["<b>Babak 1: The Hook</b><br/>Panorama Makro Ketimpangan<br/>(Disparitas Kab vs Kota)"] --> B2["<b>Babak 2: Rising Action</b><br/>Ekspedisi Geospasial Spasial<br/>(Choropleth Map 34 Provinsi)"]
-    B2 --> B3["<b>Babak 3: The Climax</b><br/>Eksplorasi Tipologi Klaster<br/>(Cluster Profiler PCA & Bar)"]
-    B3 --> B4["<b>Babak 4: Resolution</b><br/>Navigasi Skrining 2x2<br/>(Matriks Interaktif Kuadran)"]
-    B4 --> B5["<b>Babak 5: The Anchor</b><br/>Transparansi Mutu & Metode<br/>(Kamus Data & Multikol)"]
-```
-
-1. **Halaman 1: Poverty Landscape (*The Hook / Context*):**
-   * *Pertanyaan Kunci yang Dijawab:* Apa gambaran kemiskinan pada wilayah yang tercakup dan pola penting apa yang terlihat?
-   * *KPI Banner:* Rata-rata kemiskinan nasional (10.46%), rentang kemiskinan (2.38% s.d. 41.66%), total 514 wilayah.
-   * *Visualisasi Utama:* Dual-Facet Strip Plot memperlihatkan jurang struktural antara Kabupaten ($13.51\%$) dan Kota ($7.22\%$).
-2. **Halaman 2: Poverty & Indicator Map (*Rising Action*):**
-   * *Pertanyaan Kunci yang Dijawab:* Di mana pola geografis atau perbedaan indikator paling terlihat?
-   * *Peta Tematik Interaktif:* Choropleth Map 34 provinsi dengan kontrol filter indikator sosial-ekonomi dan pencarian wilayah.
-   * *Narasi Tematik:* Mengungkap ketimpangan regional barat (Kalimantan $6.30\%$) vs timur (Maluku & Papua $23.31\%$).
-3. **Halaman 3: Regional Profiles (*The Core Discovery / Climax*):**
-   * *Pertanyaan Kunci yang Dijawab:* Apa karakteristik setiap kelompok daerah dan apa yang membedakannya?
-   * *Visualisasi Profil Klaster:* **Small Multiples Bar Charts** atau **Heatmap Matrix** yang memperlihatkan profil z-score per indikator untuk tiap klaster (bebas radar chart).
-   * *Sebaran Kemiskinan Antarklaster:* Jittered Strip Plot dengan median kemiskinan per klaster.
-4. **Halaman 4: Priority & Implications (*Falling Action / Resolution*):**
-   * *Pertanyaan Kunci yang Dijawab:* Wilayah mana yang layak dianalisis lebih lanjut berdasarkan kondisi yang teramati?
-   * *Matriks Interaktif Kuadran 2x2:* Bidang interaktif $P_0$ vs Indeks Kerentanan Struktural.
-   * *Tabel Drill-Down:* Pencarian interaktif kabupaten/kota prioritas beserta kartu profil intervensi dan batas interpretasi.
-5. **Halaman 5: Methodology & Data Quality (*The Anchor / Epilogue*):**
-   * *Pertanyaan Kunci yang Dijawab:* Bagaimana temuan diperoleh dan apa yang tidak dapat disimpulkan?
-   * Dokumentasi kamus data, verifikasi tahun BPS 2021, penanganan anomali 3T, visualisasi korelasi multikolinearitas, dan batasan interpretasi model.
-
-### 7.2 Pedoman Visualisasi Knaflic & Few (Larangan Radar Chart & Kebijakan Boxplot)
-
-Berdasarkan pedoman visualisasi data pada [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md):
-
-> [!CAUTION]
-> **Larangan Mutlak Penggunaan Radar / Spider Chart:**  
-> Radar chart **dilarang keras** untuk menyajikan perbandingan profil klaster sosial-ekonomi.  
-> **Alasan Ilmiah:** Radar chart menciptakan ilusi luas poligon buatan yang bergantung pada urutan variabel di sumbu radial, menyulitkan perbandingan nilai antarklaster, dan mendistorsi persepsi audiens non-teknis.  
-> **Alternatif Wajib:** Gunakan **Small Multiples Bar Charts** yang diurutkan secara konsisten atau **Heatmap Matrix** dengan skala warna seragam.
-
-> [!NOTE]
-> **Kebijakan Penggunaan Boxplot:**  
-> Boxplot **tidak digunakan pada layar utama narasi publik/storytelling** karena sering disalahpahami oleh audiens umum.  
-> **Alternatif Wajib:** Gunakan **Jittered Strip Plot** yang dilengkapi penanda garis median untuk memperlihatkan distribusi titik data riil 514 daerah. Boxplot hanya diizinkan di Babak 5 (Metodologi Teknis).
-
-* **Aksesibilitas Warna (Okabe-Ito Colorblind-Safe Palette):**
-  * Biru Tua (`#0072B2`): Layanan Dasar, Standar Hidup Layak, & Klaster Maju.
-  * Oranye Kejora (`#D55E00`): Tingkat Kemiskinan Tinggi, Kuadran Prioritas, & Indikator Risiko.
-  * Abu-abu Netral (`#999999`): Latar belakang dan elemen perbandingan pasif.
+> [!IMPORTANT]
+> **Rujukan Master Desain & Visualisasi:**  
+> Seluruh tata letak kanvas desktop, sistem warna Okabe-Ito, larangan mutlak radar chart, standar defensive UX, copywriting guide, dan 15 butir checklist Definition of Done didokumentasikan secara rinci pada:  
+> 👉 [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md) dan panduan visual [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md).
 
 ---
 
@@ -340,18 +219,18 @@ Seluruh gerbang keputusan metodologis telah diaudit dan diselesaikan:
 ## 9. Luaran Utama & Kriteria Penerimaan Proyek (*Acceptance Criteria*)
 
 ### 9.1 Luaran Utama (Deliverables)
-1. **Explanatory Dashboard Interaktif PovertyRadar SDGs** dengan alur cerita terarah dan visualisasi pendukung.
-2. **Notebook Analisis Idempoten & Terdokumentasi** (`notebooks/01_data_audit_and_understanding.ipynb`) yang dapat dieksekusi ulang tanpa error.
-3. **Dataset Terstandar & Hasil Klasterisasi** (`data/interim/poverty_data_cleaned.csv` dan `data/processed/poverty_clusters.csv`).
-4. **Dokumentasi Metodologi & Kontrak Data** (`docs/`).
+1. **Interactive Storytelling Dashboard PovertyRadar SDGs** dengan alur cerita terarah 5 babak dan visualisasi pendukung.
+2. **Notebook Analisis Idempoten & Terdokumentasi** (`notebooks/01_...`, `notebooks/02_...`, `notebooks/03_...`).
+3. **Dataset Terstandar & Hasil Klasterisasi** (`poverty_data_cleaned.csv`, `poverty_clusters.csv`, `poverty_cluster_summary.csv`, `policy_recommendations_matrix.csv`).
+4. **Paket Modul Python Terintegrasi & Test Suite** (`src/poverty_radar/` dan `tests/`).
+5. **Dokumentasi Metodologi & Kebijakan** (`docs/`).
 
-### 9.2 Kriteria Penerimaan (Acceptance Criteria)
-Sesuai rujukan resmi *Problem Framing & Objektif Explanatory Dashboard*:
-* **Konsistensi Data Penuh:** Statistik dan visualisasi dashboard wajib konsisten dengan file analisis olahan; jumlah observasi (514) dan wilayah yang tidak terpetakan (jika ada nama mismatch GeoJSON) wajib dilaporkan secara eksplisit (*zero silent drops*).
-* **Transparansi Metodologi Pipeline:** Daftar fitur, cara preprocessing, pemilihan jumlah cluster, dan metrik evaluasi matematis terdokumentasi lengkap.
-* **Penamaan Klaster Berbasis Bukti (Data-Driven Personas):** Klaster diberi interpretasi berdasarkan profil empiris hasil analisis, bukan nama praduga yang ditetapkan sebelum pemodelan.
-* **Transparansi Kriteria Skrining:** Setiap penandaan wilayah pada matriks kuadran skrining dapat dijelaskan secara logis dari indikator dan kriteria yang ditampilkan (bukan model *black-box*).
-* **Kredibilitas Batasan:** Periode data resmi BPS 2021, sumber data Kaggle ldausl, definisi variabel, dan batas interpretasi (non-prediktif) dicantumkan dengan jelas.
+### 9.2 Kriteria Penerimaan Proyek (Acceptance Criteria)
+* **Konsistensi Data Penuh:** Statistik dan visualisasi dashboard wajib konsisten dengan dataset olahan (514 observasi, zero silent drops).
+* **Transparansi Metodologi Pipeline:** Daftar fitur, transformasi data, dan metrik evaluasi matematis terdokumentasi lengkap.
+* **Penamaan Klaster Berbasis Bukti:** Klaster diberi interpretasi deskriptif berdasarkan profil empiris, bukan praduga subjektif.
+* **Transparansi Skrining Prioritas:** Setiap penandaan wilayah pada matriks kuadran skrining dapat dijelaskan secara deterministik dari indikator yang terukur.
+* **Kredibilitas Batasan:** Periode data resmi BPS 2021, definisi variabel, dan batas interpretasi (non-prediktif) dicantumkan dengan jelas.
 
 ---
 
@@ -362,11 +241,10 @@ Sesuai rujukan resmi *Problem Framing & Objektif Explanatory Dashboard*:
 3. **Pustaka Prinsip Desain:**
    * Knaflic, C. N. (2015). *Storytelling with Data: A Data Visualization Guide for Business Professionals*. Wiley.
    * Few, S. (2006). *Information Dashboard Design: The Effective Visual Communication of Data*. O'Reilly.
-4. **Dokumen & Artefak Terkait di Repositori:**
-   * Laporan Audit Data & Karakteristik Statistik: [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md)
-   * Kamus Data & Catatan Kualitas: [`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md)
-   * Notebook Audit & Preprocessing: [`notebooks/01_data_audit_and_understanding.ipynb`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/notebooks/01_data_audit_and_understanding.ipynb)
-   * Dataset Interim Terstandar: [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv)
-   * Desain Dashboard Storytelling 5 Babak: [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md)
-   * Panduan Visualisasi Data: [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md)
-
+4. **Dokumen Terkait di Repositori:**
+   * Laporan Audit Data & Statistik: [`docs/data_audit_and_understanding.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/data_audit_and_understanding.md)
+   * Protokol Klastering Teknis: [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md)
+   * Justifikasi Metodologis & Temuan: [`docs/clustering_rationale_and_findings.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_rationale_and_findings.md)
+   * Master Rekomendasi Kebijakan: [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md)
+   * Master Desain Dashboard: [`docs/design.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/design.md)
+   * UI Brief & Wireframe Sheet: [`docs/ui_brief_mockup.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/ui_brief_mockup.md)

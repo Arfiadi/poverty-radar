@@ -3,7 +3,7 @@
 **Dokumen Rujukan Teknis & Kebijakan**  
 **Penulis:** Tim Analis Data PovertyRadar SDGs  
 **Dataset Utama:** BPS 2021 (514 Kabupaten/Kota di 34 Provinsi)  
-**Dokumen Terkait:** [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md) • [`docs/problem_framing_and_objectives.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/problem_framing_and_objectives.md)
+**Dokumen Terkait:** [`docs/clustering_protocol.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/clustering_protocol.md) • [`docs/problem_framing_and_objectives.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/problem_framing_and_objectives.md) • [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md)
 
 ---
 
@@ -17,7 +17,7 @@ Untuk memastikan pemodelan *unsupervised clustering* bebas bias, bebas multikoli
 
 ### 1.2 Isolasi Komposit: `Indeks Pembangunan Manusia (IPM)`
 * **Pencegahan Multikolinearitas Ekstrem ($r > 0.86$):** IPM berkorelasi sangat tinggi dengan variabel pembangunnya: Rata-rata Lama Sekolah ($r = +0.81$), Umur Harapan Hidup ($r = +0.82$), dan Pengeluaran Riil per Kapita ($r = +0.88$). Memasukkan IPM bersama komponen pembangunnya akan melipatgandakan bobot dimensi manusia secara artifisial (*double-counting*) pada penghitungan jarak Euclidean.
-* **Menghilangkan Efek Topeng (*Masking Effect*):** Dua daerah bisa memiliki skor IPM identik (misal: 68.0), namun Daerah A unggul kesehatan tetapi miskin daya beli, sedangkan Daerah B kaya daya beli tetapi sanitasi buruk. Menggunakan variabel pembangun terurai membongkar akar masalah ini secara transparan.
+* **Menghilangkan Efek Topeng (*Masking Effect*):** Dua daerah bisa memiliki skor IPM identik (misal: 68.0), namun Daerah A unggul kesehatan tetapi miskin daya beli, sedangkan Daerah B kaya daya beli tetapi sanitasi buruk. Menggunakan variabel pembangun terurai membongkar konfigurasi defisit ini secara transparan.
 * **Fungsi IPM:** IPM dikeluarkan dari fitur klastering dan ditempatkan sebagai **tolok ukur validasi eksternal (*external benchmark*)** pasca-klaster.
 
 ### 1.3 Isolasi Redundansi Pasar Kerja: `Tingkat Partisipasi Angkatan Kerja (TPAK)`
@@ -85,7 +85,7 @@ Meskipun nilai seluruh variabel bergerak menurun dari Klaster 1 ke 4, faktor pen
 
 ## 4. Penamaan Profil Klaster Berbasis Bukti (*Evidence-Based Personas*)
 
-Penamaan dirancang agar deskriptif, mencerminkan akar masalah empiris, dan langsung dapat ditindaklanjuti dalam dokumen kebijakan:
+Penamaan dirancang agar deskriptif, mencerminkan fokus defisit empiris, dan langsung dapat ditindaklanjuti dalam dokumen kebijakan:
 
 | Klaster | Nama Persona Terpilih | Komposisi Geografis Riil | Nilai Rata-rata Lapangan (Karakteristik Kunci) |
 | :---: | :--- | :--- | :--- |
@@ -96,26 +96,27 @@ Penamaan dirancang agar deskriptif, mencerminkan akar masalah empiris, dan langs
 
 ---
 
-## 5. Analisis Lanjutan & Implikasi Kebijakan SDG 1
+## 5. Validasi Eksternal & Integrasi dengan Skrining Kebijakan
 
-### 5.1 Skrining Kerentanan Relatif (Matriks Kuadran 2x2)
-PovertyRadar SDGs memadukan tingkat kemiskinan aktual ($P_0$, garis potong median nasional $10.46\%$) dengan **Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$)**:
-* **Kuadran I — Prioritas Utama ($P_0$ Tinggi, Kerentanan Tinggi, N=162):** Mayoritas anggota Klaster 4 dan sebagian Klaster 3. Membutuhkan intervensi terpadu komprehensif: stimulan bantuan sosial darurat dibarengi percepatan pembangunan fisik air dan sanitasi secara masif.
-* **Kuadran II — Kerentanan Tersembunyi ($P_0$ Rendah, Kerentanan Tinggi, N=95):** Wilayah seperti Tanah Datar dan Indragiri Hilir. Kemiskinan saat ini tampak rendah namun sanitasinya buruk (<55%). Memerlukan intervensi sanitasi preventif guna mencegah kerentanan jatuh miskin saat terjadi syok ekonomi atau bencana.
-* **Kuadran III — Kantong Kemiskinan Daya Beli ($P_0$ Tinggi, Kerentanan Rendah, N=95):** Wilayah seperti Biak Numfor, Sampang, dan Wonosobo. Fasilitas dasar dan pendidikan relatif memadai namun kemiskinannya tinggi. Solusi terarah: stimulus ekonomi lokal, penciptaan lapangan kerja formal, dan penguatan daya beli warga.
-* **Kuadran IV — Wilayah Terbina/Mapan ($P_0$ Rendah, Kerentanan Rendah, N=162):** Mayoritas anggota Klaster 1 dan Klaster 2. Berperan menjaga stabilitas ekonomi dan menjadi model percontohan (*benchmarking*) tata kelola bagi daerah lain.
-
-### 5.2 Validasi Signifikansi Statistik Eksternal
+### 5.1 Validasi Signifikansi Statistik Eksternal ($P_0$ Inference Test)
 Meskipun $P_0$ dikeluarkan dari proses klastering, uji beda rata-rata membuktikan penugasan klaster berhasil memisahkan tingkat kemiskinan secara sangat signifikan:
-* **ANOVA F-Statistic:** $F = 155.94$ ($p\text{-value} = 1.03 \times 10^{-71}$).
-* **Kruskal-Wallis Non-Parametric H-Test:** $H = 167.52$ ($p\text{-value} = 4.36 \times 10^{-36}$).
+* **ANOVA F-Statistic:** $F = \mathbf{155.94}$ ($p\text{-value} = 1.03 \times 10^{-71} < 0.001$).
+* **Kruskal-Wallis Non-Parametric H-Test:** $H = \mathbf{167.52}$ ($p\text{-value} = 4.36 \times 10^{-36} < 0.001$).
 * *Kesimpulan:* Klaster yang terbentuk secara murni dari 7 indikator struktural terbukti membedakan tingkat kemiskinan daerah dengan tingkat keyakinan $> 99.9\%$.
+
+### 5.2 Rujukan Master Rekomendasi Kebijakan & Matriks Skrining 2x2
+PovertyRadar SDGs memadukan tingkat kemiskinan aktual ($P_0$, garis potong median nasional $10.46\%$) dengan Indeks Kerentanan Fasilitas Dasar ($V_{\text{struc}}$, median $0.2721$) ke dalam Matriks Skrining Kerentanan Relatif 2x2.
+
+> [!IMPORTANT]
+> **Dokumentasi Kebijakan Resmi & Rekomendasi Intervensi:**  
+> Untuk dekonstruksi mendalam matriks kuadran 2x2, panduan alokasi APBN/TKD, instansi pengampu (KemenPUPR, Kemendikdasmen, Kemenkes, Kemensos), dan protokol Tangga Bukti Kebijakan 4 Tingkat (*Four-Tier Policy Evidence Ladder*), lihat dokumen master otoritatif pada:  
+> 👉 [`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md).
 
 ### 5.3 Ringkasan Aset Visual Terverifikasi
 Seluruh visualisasi pendukung telah diaudit dan disimpan dalam resolusi publikasi 300 DPI:
 
 | Berkas Gambar Visual | Lokasi Penyimpanan | Fokus Narasi |
 | :--- | :--- | :--- |
-| **Heatmap Matrix Divergen** | [`reports/figures/04_cluster_characteristics_heatmap.png`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/reports/figures/04_cluster_characteristics_heatmap.png) | Matriks perbandingan 28 Z-score antar-indikator (Biru = Unggul, Merah = Defisit). |
+| **Heatmap Matrix Divergen** | [`reports/figures/04_cluster_characteristics_heatmap.png`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/reports/figures/04_cluster_characteristics_heatmap.png) | Matriks perbandingan 28 Z-score antar-indikator (Biru = Unggul, Vermillion = Defisit). |
 | **Small Multiples 2x2 Bar** | [`reports/figures/04_cluster_profiles_small_multiples.png`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/reports/figures/04_cluster_profiles_small_multiples.png) | Kartu profil persona klaster mandiri berorientasi panjang batang (*bar length*). |
 | **Matriks Kuadran 2x2** | [`reports/figures/06_relative_vulnerability_matrix_2x2.png`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/reports/figures/06_relative_vulnerability_matrix_2x2.png) | Pemetaan sebaran 514 daerah pada 4 kuadran prioritas skrining intervensi. |

@@ -1,10 +1,9 @@
 # PovertyRadar SDGs: Data Contracts & Schema Validation
 
 ## DOKUMEN KONTRAK DATA, SKEMA VALIDASI, & INTEGRITAS PIPELINE
-**Versi:** 1.0  
-**Tanggal:** 28 Oktober 2026  
-**Mata Kuliah:** Presentasi Data dan Storytelling  
-**Tujuan Dokumen:** Menetapkan spesifikasi teknis, aturan tipe data, batas nilai sah (*value constraints*), serta invarian integritas yang harus dipenuhi oleh setiap tahap pemrosesan data (dari *Raw* ke *Interim* hingga *Processed*).
+**Versi:** 2.0 (Synchronized Technical Contract) | 31 Oktober 2026  
+**Dokumen Pendamping Semantik:** [`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) *(Kamus Data Semantik Bisnis, Definisi Indikator, & Catatan Lapangan)*  
+**Tujuan Dokumen:** Menetapkan spesifikasi teknis, aturan tipe data, batas nilai sah (*value constraints*), serta invarian integritas yang harus dipenuhi oleh setiap tahap pemrosesan data (dari *Raw* ke *Interim* hingga *Processed*). Untuk definisi operasional dan catatan kualitas indikator BPS, rujuk berkas `data/README.md`.
 
 ---
 
