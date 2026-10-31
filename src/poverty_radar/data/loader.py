@@ -11,7 +11,8 @@ from poverty_radar.config import (
     RAW_DATA_PATH,
     CLEANED_DATA_PATH,
     PROCESSED_DATA_PATH,
-    PROCESSED_SUMMARY_PATH
+    PROCESSED_SUMMARY_PATH,
+    PROCESSED_POLICY_MATRIX_PATH
 )
 
 COLUMN_RENAME_MAP = {
@@ -89,4 +90,20 @@ def load_cluster_summary(filepath: Optional[Path] = None) -> pd.DataFrame:
         raise ValueError(f"Expected 4 cluster rows in summary dataset, found {len(df)}")
     
     return df
+
+
+def load_policy_recommendations(filepath: Optional[Path] = None) -> pd.DataFrame:
+    """
+    Load 8-row policy recommendations matrix (4 clusters + 4 quadrants) from data/processed/.
+    """
+    path = filepath or PROCESSED_POLICY_MATRIX_PATH
+    if not path.exists():
+        raise FileNotFoundError(f"Policy recommendations matrix not found at: {path}")
+
+    df = pd.read_csv(path)
+    if len(df) != 8:
+        raise ValueError(f"Expected 8 rows (4 clusters + 4 quadrants), found {len(df)}")
+
+    return df
+
 

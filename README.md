@@ -70,6 +70,8 @@ PovertyRadar/
 │   ├── processed/             # poverty_clusters.csv & poverty_cluster_summary.csv
 │   └── README.md              # Kamus data lengkap & catatan kualitas teknis
 ├── docs/
+│   ├── 01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md # Analisis kebijakan riil & fiskal RI 2026
+│   ├── 02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md # Desain rekomendasi kebijakan berbasis klaster
 │   ├── problem_framing_and_objectives.md  # Framing masalah, sasaran SDG 1, matriks 2x2
 │   ├── data_audit_and_understanding.md    # Audit statistik komprehensif 514 daerah
 │   ├── clustering_protocol.md             # Protokol unsupervised clustering & evaluasi empiris

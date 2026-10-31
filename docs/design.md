@@ -18,7 +18,7 @@ Berdasarkan taksonomi Nick Desbarats, dashboard ini diklasifikasikan sebagai **C
 * **Disiplin Kontrol Interaktif:** Filter dan navigasi hanya disediakan jika melayani pertanyaan analitis spesifik audiens (*task-driven interactivity*); tidak ada filter atau tombol hiasan yang mubazir.
 
 ### 1.2 Premis Utama Cerita (*Core Premise*)
-> *"Dua daerah dengan tingkat kemiskinan yang sama belum tentu memiliki akar permasalahan yang sama. Kebijakan 'satu ukuran untuk semua' (one-size-fits-all) terbukti gagal mengentaskan kemiskinan secara berkelanjutan. PovertyRadar SDGs mengurai arketipe struktural sosial-ekonomi daerah agar intervensi tepat sasaran."*
+> *"Dua daerah dengan tingkat kemiskinan moneter ($P_0$) yang sama belum tentu memiliki konfigurasi defisit sosial-ekonomi yang serupa. Kebijakan seragam ('one-size-fits-all') tidak memadai untuk mengurai disparitas struktural. PovertyRadar SDGs mengurai arketipe profil sosial-ekonomi daerah agar skrining intervensi lebih kontekstual dan berbasis bukti empiris."*
 
 ### 1.3 Alur Narasi 5 Babak (*5-Act Narrative Arc*)
 
@@ -57,6 +57,19 @@ Sesuai temuan Stephen Few mengenai pola pemindaian mata (*F-Pattern* dan *Z-Patt
 * **Grid Konsisten:** Seluruh kartu visualisasi menggunakan grid terstruktur dengan batas kontainer sejajar (*aligned edges*). Tidak ada penyebaran metrik secara acak demi "keseimbangan semu".
 
 ### 2.2 Aturan 3 Detik – 30 Detik – 3 Menit
+### 2.3 Spesifikasi Layout Kanvas & Standar State UI (Mengadopsi PovertyRadar SDGs Design Spec)
+* **Ukuran Kanvas Acuan Desktop:** `1440 × 900 px` (aspek rasio ~16:10) dengan layout *fluid* (konten dapat di-scroll vertikal, tidak boleh dikunci kaku seperti poster). Diuji pada resolusi laptop `1366 × 768 px` agar konten tidak terpotong.
+* **Posisi Navigasi:** Sidebar vertikal tetap (*sticky*) di sisi kiri layar dengan lebar `224–240 px`. Area konten utama di sisi kanan dengan padding `24–32 px`.
+* **Sistem Grid:** Grid 12 kolom dengan *gutter* `16–24 px`. KPI strip terdiri dari 4 kartu sama lebar pada desktop, menyesuaikan menjadi 2 kolom pada layar menengah.
+* **Aturan Runtime-Calculated Metrik (Zero Hardcoded Snapshot):**
+  Angka KPI (misal 514 observasi, median P0 10.46%, rentang 2.38%–41.66%) **wajib dihitung secara dinamis saat runtime** dari dataset aktif di memori, bukan teks statis yang diketik permanen di kode UI.
+* **Desain State Wajib (Defensive UX):**
+  1. *Loading State:* Skeleton loader halus tanpa layout shift mendadak.
+  2. *Empty Result State:* Pesan ramah ketika filter menghasilkan 0 baris, dilengkapi tombol `Reset filters`.
+  3. *Geospatial Incomplete Fallback:* Jika layer poligon GeoJSON belum tervalidasi atau tidak lengkap, tampilkan visualisasi alternatif *Ranking Bar Chart* secara elegan dengan label status coverage terbuka.
+  4. *Screening Fallback:* Jika asumsi pembobotan skor komposit $V_{struc}$ dipertanyakan, sediakan mode pemilihan satu indikator non-moneter eksplisit (misal akses sanitasi layak) pada sumbu Y.
+  5. *Small Sample Warning:* Peringatan konteks jika filter menghasilkan subset < 10 observasi.
+
 * **3 Detik:** Audiens menangkap pesan inti melalui *Headline Hero Banner* dan *KPI Cards* beranotasi di sudut kiri atas.
 * **30 Detik:** Audiens memahami pola komparatif melalui grafik utama beranotasi garis referensi (*Reference Line*) dan teks *Callout*.
 * **3 Menit:** Audiens yang ingin mendalami dapat berinteraksi dengan filter multi-level dan membaca tabel rincian detail per kabupaten.

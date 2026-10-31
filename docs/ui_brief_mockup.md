@@ -19,8 +19,8 @@
 ### 2. Spesifikasi Kanvas & Layout Global
 * **Target Resolusi:** Desktop Web Viewport standar (**1440 × 900 px** atau **1920 × 1080 px**).
 * **Struktur Navigasi:**
-  * **Sidebar Kiri (Lebar: ~260 px):** Memuat Logo PovertyRadar SDGs, status dataset (BPS 2021), 5 menu navigasi halaman utama, dan link dokumentasi.
-  * **Kanvas Konten Kanan (Lebar: ~1180 px):** Area visualisasi dengan margin konsisten (padding 32px), mengikuti layout grid 12 kolom sejajar.
+  * **Sidebar Kiri Vertikal Sticky (Lebar: 224–240 px):** Memuat Logo PovertyRadar SDGs, status dataset (BPS 2021), 5 menu navigasi halaman utama, dan link dokumentasi.
+  * **Kanvas Konten Kanan (Lebar Fluid, Grid 12 Kolom):** Area visualisasi dengan margin konsisten (padding 32px), mengikuti layout grid 12 kolom sejajar.
 * **Hierarki Pola Baca:** Mengadopsi **F-Pattern & Top-Left Anchor**. Angka KPI paling penting dan kesimpulan narasi utama selalu ditempatkan di **sudut kiri atas (*Top-Left*)**.
 
 ---

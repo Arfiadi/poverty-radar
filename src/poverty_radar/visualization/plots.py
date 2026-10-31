@@ -450,35 +450,39 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     box_q3 = dict(boxstyle='round,pad=0.5', facecolor='#FAF0F5', edgecolor='#CC79A7', linewidth=1.3, alpha=0.95)
     box_q4 = dict(boxstyle='round,pad=0.5', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.3, alpha=0.95)
 
+    # Kuadran II: Top-Left
     ax.text(1.0, 1.01, 
             'KUADRAN II: KERENTANAN TERSEMBUNYI\n'
             '• 95 Daerah (18.5%) | P0 < 10.5% | V_struc ≥ 0.27\n'
-            '• Akar: Sanitasi & air minum rapuh\n'
+            '• Fokus Defisit: Akses sanitasi & air minum layak terbatas\n'
             '• Aksi: Penguatan sarana dasar preventif\n'
-            '  guna mencegah kerentanan jatuh miskin',
+            '  guna memitigasi risiko penurunan kesejahteraan',
             fontsize=8.5, fontweight='bold', color='#B84D00', bbox=box_q2, va='top')
 
+    # Kuadran I: Top-Center
     ax.text(12.0, 1.01, 
             'KUADRAN I: PRIORITAS UTAMA (BEBAN GANDA)\n'
             '• 162 Daerah (31.5%) | P0 ≥ 10.5% | V_struc ≥ 0.27\n'
-            '• Akar: Kemiskinan struktural +\n'
-            '  krisis parah infrastruktur & SDM\n'
-            '• Aksi: Rehabilitasi darurat terpadu\n'
-            '  (Bansos tunai + sarana fisik)',
+            '• Fokus Defisit: Kemiskinan konsumsi disertai\n'
+            '  keterbatasan sarana dasar & modal manusia\n'
+            '• Aksi: Penanganan terpadu komprehensif\n'
+            '  (Bantalan sosial + percepatan sarana fisik)',
             fontsize=8.5, fontweight='bold', color='#B33000', bbox=box_q1, va='top')
 
+    # Kuadran IV: Bottom-Left
     ax.text(1.0, 0.01, 
             'KUADRAN IV: WILAYAH TERBINA / MAPAN\n'
             '• 162 Daerah (31.5%) | P0 < 10.5% | V_struc < 0.27\n'
-            '• Karakteristik: Infrastruktur & ekonomi kuat\n'
-            '• Aksi: Rujukan pertumbuhan & inovasi regional',
+            '• Karakteristik: Kebutuhan dasar dan ekonomi relatif kuat\n'
+            '• Aksi: Rujukan pembelajaran tata kelola & inovasi regional',
             fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='bottom')
 
+    # Kuadran III: Bottom-Right
     ax.text(27.0, 0.01, 
             'KUADRAN III: KANTONG KEMISKINAN DAYA BELI\n'
             '• 95 Daerah (18.5%) | P0 ≥ 10.5% | V_struc < 0.27\n'
-            '• Akar: Sarana dasar memadai, namun daya beli & kerja terbatas\n'
-            '• Aksi: Padat karya tunai, stimulus UMKM, & bantuan daya beli',
+            '• Fokus Defisit: Sarana dasar memadai, namun daya beli & kesempatan kerja produktif terbatas\n'
+            '• Aksi: Padat karya produktif, stimulus UMKM, & penguatan daya beli',
             fontsize=8.5, fontweight='bold', color='#8A3B66', bbox=box_q3, va='bottom')
 
     benchmark_points = [
@@ -500,7 +504,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
             arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.15', color='#444444', lw=1.0)
         )
 
-    ax.set_title('Matriks Skrining Kerentanan 2x2: Menyaring Intervensi Berdasarkan Akar Kebutuhan Riil\n'
+    ax.set_title('Matriks Skrining Kerentanan Relatif 2x2: Menyaring Portofolio Kebijakan Berdasarkan Profil Defisit Daerah\n'
                  'Diferensiasi intervensi darurat (Kuadran I), perlindungan preventif (Kuadran II), dan stimulus ekonomi (Kuadran III)',
                  fontsize=12.5, fontweight='bold', pad=15, loc='left')
     ax.set_xlabel('Tingkat Kemiskinan Aktual (P0 %)', fontsize=10.5, fontweight='bold')

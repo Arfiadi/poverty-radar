@@ -18,6 +18,15 @@ Dokumentasi ini menjelaskan spesifikasi, struktur, kamus data, serta catatan kua
 | **Jumlah Kolom** | 13 kolom (file mentah) / 16 kolom (file interim) |
 | **Format File** | Comma-Separated Values (CSV), UTF-8 encoding |
 
+### Aset Tambahan: Dataset Mandiri BPS 2023 (Standalone Companion)
+
+Selain data baseline 2021 di atas, repositori ini memuat aset data mandiri hasil ekstraksi resmi BPS RI 2023:
+* **File Mentah:** 5 publikasi resmi PDF di `data/raw/bps_2023/` (katalog lengkap: [README.md](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/raw/bps_2023/README.md)).
+* **Harmonisasi Wilayah:** `crosswalk_wilayah_34_38_provinsi.csv` (`data/interim/`) memetakan 34 provinsi baseline ke 38 provinsi pasca-pemekaran DOB Papua.
+* **Dataset Standalone 2023:** `poverty_data_2023_standalone.csv` (`data/interim/`), mencakup 514 kabupaten/kota (21 kolom, 0 missing values).
+
+> **Catatan Batasan:** Aset data 2023 bersifat mandiri untuk perbandingan/referensi masa depan dan tidak mengubah baseline 2021 maupun model clustering utama proyek PovertyRadar.
+
 ---
 
 ## 2. Cakupan Wilayah
@@ -146,6 +155,28 @@ Berkas ringkasan 4 baris yang menyajikan metrik agregat per klaster untuk memper
 | `unemployment_rate_tpt_mean` / `median` | Float | Rerata dan median TPT (%). |
 | `labor_participation_tpak_mean` / `median` | Float | Rerata dan median TPAK (%). |
 | `grdp_constant_million_idr_median` | Integer | Median PDRB riil konstan (Juta Rp). |
+
+---
+
+### File Matriks Rekomendasi Kebijakan (`data/processed/policy_recommendations_matrix.csv`)
+
+File tabel acuan terstruktur (8 baris × 13 kolom) yang memuat rekomendasi kebijakan terperinci untuk 4 Klaster Sosio-Ekonomi dan 4 Kuadran Skrining Kerentanan Relatif yang diekstraksi dari Dokumen Master Kebijakan (`docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`).
+
+| Kolom | Tipe Data | Deskripsi |
+| :--- | :---: | :--- |
+| `category_type` | String | Tipe kategori (`cluster` atau `quadrant`). |
+| `id` | String | Identifier unik (`cluster_0` s.d. `cluster_3`, `quadrant_1` s.d. `quadrant_4`). |
+| `code` | String | Kode singkatan (`K1` s.d. `K4`, `Q1` s.d. `Q4`). |
+| `name` | String | Nama resmi tampilan klaster / kuadran. |
+| `n_regions` | Integer | Jumlah kabupaten/kota anggota ($N$). |
+| `pct_regions` | Float | Persentase terhadap total nasional (%). |
+| `poverty_range` | String | Rentang dan karakteristik tingkat kemiskinan moneter ($P_0$). |
+| `deficit_profile` | String | Profil defisit struktural empiris teramati. |
+| `working_hypothesis` | String | Hipotesis mekanisme kerja sosio-ekonomi yang perlu diverifikasi lapangan. |
+| `primary_policy_track` | String | Jalur intervensi kebijakan utama. |
+| `fiscal_instruments` | String | Rekomendasi instrumen fiskal & sumber pendanaan (DAK, DAU, Dana Desa, Otsus). |
+| `lead_agencies` | String | Instansi penanggung jawab teknis (OPD / Kementerian). |
+| `direct_evidence_required` | String | Syarat verifikasi bukti empiris langsung sebelum penetapan belanja anggaran. |
 
 ---
 

@@ -47,6 +47,8 @@ PovertyRadar/
 │   ├── clustering_protocol.md             # Unsupervised clustering protocol, scaling, evaluation
 │   ├── clustering_rationale_and_findings.md # Rationale behind empirical benchmark of 20+ models
 │   ├── data_contracts.md                  # Data schema contracts and validation boundaries
+│   ├── 01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md # Master sistem perencanaan & fiskal RI
+│   ├── 02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md # Master rekomendasi kebijakan & skrining
 │   ├── development.md                     # Environment setup (Python 3.13, uv), workflows, and Git
 │   ├── design.md                          # Multi-page 5-act narrative dashboard architecture
 │   └── ui_brief_mockup.md                 # ASCII wireframes and visual styling brief for UI/UX
@@ -70,6 +72,8 @@ Read referenced documents only when relevant to the current task:
 - `docs/data_audit_and_understanding.md`: Read when inspecting variable distributions, IQR outliers, 26 multivariate anomalies, employment paradox, or correlation matrices.
 - `data/README.md` & `docs/data_contracts.md`: Read when verifying column schemas, data types, boundaries, or adding new features to pipeline outputs.
 - `docs/clustering_protocol.md`: Read when designing, fitting, tuning, evaluating, or profiling unsupervised clustering models.
+- `docs/01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md`: Read when studying baseline national policy mechanisms, fiscal architecture, social assistance, and official regional disparity.
+- `docs/02-desain-rekomendasi-kebijakan-berbasis-clustering-povertyradar.md`: Read when designing cluster-based policy interventions, 2x2 matrix operationalization, or Four-Tier Evidence Ladder.
 - `docs/design.md`: Read when building, styling, or updating dashboard layouts, navigation, and interactive charts.
 - `dashboard_guide.md` & `docs/ui_brief_mockup.md`: Read when designing visual components, choosing chart types, applying color palettes, or drafting wireframes.
 - `docs/development.md`: Read when setting up Python environments, configuring packages, or running verification workflows.

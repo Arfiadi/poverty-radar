@@ -43,3 +43,20 @@ def test_cluster_summary_contract():
     assert df_sum.isnull().sum().sum() == 0, "Summary table must have zero null values"
     assert 'dominant_region_pulau' in df_sum.columns, "dominant_region_pulau missing from summary"
 
+
+def test_policy_recommendations_contract():
+    """Ensure policy recommendations matrix exists, has 8 rows (4 clusters + 4 quadrants), and required columns."""
+    from poverty_radar.data.loader import load_policy_recommendations
+    df_policy = load_policy_recommendations()
+    assert len(df_policy) == 8, f"Expected 8 policy recommendation rows, found {len(df_policy)}"
+    assert set(df_policy['category_type'].unique()) == {'cluster', 'quadrant'}, "Invalid category types"
+    required_cols = [
+        'category_type', 'id', 'code', 'name', 'n_regions', 'pct_regions',
+        'poverty_range', 'deficit_profile', 'working_hypothesis',
+        'primary_policy_track', 'fiscal_instruments', 'lead_agencies', 'direct_evidence_required'
+    ]
+    for col in required_cols:
+        assert col in df_policy.columns, f"Missing required column: {col}"
+    assert df_policy.isnull().sum().sum() == 0, "Policy matrix must have zero null values"
+
+

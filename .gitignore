@@ -28,5 +28,12 @@ docs/*.pdf
 
 
 
+# Experiment tracking & build residues
+catboost_info/
+mlruns/
+wandb/
+
 scripts/
 scratch/
+
+data/raw/bps_2023/

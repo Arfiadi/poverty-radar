@@ -23,6 +23,7 @@ RAW_DATA_PATH = DATA_RAW_DIR / "Klasifikasi Tingkat Kemiskinan di Indonesia.csv"
 CLEANED_DATA_PATH = DATA_INTERIM_DIR / "poverty_data_cleaned.csv"
 PROCESSED_DATA_PATH = DATA_PROCESSED_DIR / "poverty_clusters.csv"
 PROCESSED_SUMMARY_PATH = DATA_PROCESSED_DIR / "poverty_cluster_summary.csv"
+PROCESSED_POLICY_MATRIX_PATH = DATA_PROCESSED_DIR / "policy_recommendations_matrix.csv"
 
 # Global reproducibility seed
 SEED = 42
