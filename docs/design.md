@@ -23,7 +23,7 @@ Berdasarkan taksonomi Nick Desbarats, dashboard ini diklasifikasikan sebagai **C
 > [!NOTE]
 > **Janji & Batasan Produk:**  
 > • **Janji Produk:** Membantu analis kebijakan, perencana pembangunan daerah, dan akademisi menyusun hipotesis eksplorasi yang berbasis integrasi data multidimensi, bukan intuisi semata.  
-> • **Batasan Produk:** Bukan pengganti verifikasi faktual lapangan, tidak menghasilkan keputusan intervensi/bantuan secara otomatis, dan tidak memprediksi tren masa depan tanpa tersedianya data longitudinal multi-tahun.
+> • **Batasan Produk:** Bukan pengganti verifikasi faktual lapangan, ini bukan membuktikan penyebab kemiskinan (bukan instrumen pembuktian kausalitas), tidak menghasilkan keputusan intervensi/bantuan secara otomatis, dan tidak memprediksi tren masa depan tanpa tersedianya data longitudinal multi-tahun.
 
 ### 1.3 Alur Narasi 5 Babak (*5-Act Narrative Arc*)
 

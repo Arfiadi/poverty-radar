@@ -20,11 +20,11 @@
    - 2.3 [Objektif Umum & Khusus](#23-objektif-umum--khusus)
 3. [Paradigma Metodologi & Batasan Integritas Data](#3-paradigma-metodologi--batasan-integritas-data)
    - 3.1 [Penolakan Tegas Klasifikasi Terawasi (No Supervised Classification)](#31-penolakan-tegas-klasifikasi-terawasi-no-supervised-classification)
-   - 3.2 [Isolasi Variabel & Pencegahan Target Leakage (P0 & IPM)](#32-isolasi-variabel--pencegahan-target-leakage-p0--ipm)
+   - 3.2 [Isolasi Variabel & Pencegahan Penalaran Melingkar (P0 & IPM)](#32-isolasi-variabel--pencegahan-penalaran-melingkar-p0--ipm)
    - 3.3 [Batasan Ruang Lingkup Sistem (In-Scope vs. Out-of-Scope)](#33-batasan-ruang-lingkup-sistem-in-scope-vs-out-of-scope)
 4. [Arsitektur Metodologi Analisis](#4-arsitektur-metodologi-analisis)
    - 4.1 [Diagram Alur Pipeline End-to-End](#41-diagram-alur-pipeline-end-to-end)
-   - 4.2 [Matriks 7 Fitur Independen Bebas Leakage](#42-matriks-7-fitur-independen-bebas-leakage)
+   - 4.2 [Matriks 7 Fitur Independen (Bebas Penalaran Melingkar)](#42-matriks-7-fitur-independen-bebas-penalaran-melingkar)
    - 4.3 [Konseptualisasi Skrining Kerentanan Fasilitas Dasar (Matriks 2x2)](#43-konseptualisasi-skrining-kerentanan-fasilitas-dasar-matriks-2x2)
 5. [Gerbang Keputusan, Validasi, & Luaran Proyek](#5-gerbang-keputusan-validasi--luaran-proyek)
    - 5.1 [Status 6 Gerbang Keputusan Pra-Pemodelan (Decision Gates)](#51-status-6-gerbang-keputusan-pra-pemodelan-decision-gates)
@@ -45,11 +45,11 @@ Penanggulangan kemiskinan di Indonesia sering kali terkendala oleh pendekatan ba
 
 Pendekatan seragam—misalnya sekadar menyalurkan bantuan sosial tunai tanpa intervensi sanitasi di Daerah A, atau membangun MCK di Daerah B yang membutuhkan lapangan kerja—menghasilkan inefisiensi anggaran dan gagal mengurai akar disparitas.
 
-### 1.2 Tiga Kesenjangan Analitis (Analytical Gaps)
-PovertyRadar SDGs dirancang untuk menutup tiga kesenjangan analisis data kemiskinan daerah:
-1. **Ketiadaan Dekomposisi Multidimensi:** Kebanyakan laporan publik hanya melihat angka agregat $P_0$ tanpa menguraikan dimensi penyusunnya (modal manusia, derajat sehat, sanitasi, air minum, pengeluaran, ketenagakerjaan).
-2. **Ketiadaan Tipologi Sosio-Ekonomi Murni:** Belum tersedianya pengelompokkan daerah berbasis profil struktural independen yang bebas dari bias label kemiskinan bawaan.
-3. **Ketiadaan Alat Skrining 2 Dimensi:** Belum adanya instrumen penapisan visual yang memadukan status kemiskinan moneter aktual dengan tingkat kerentanan fasilitas dasar untuk memprioritaskan intervensi.
+### 1.2 Fokus & Kebutuhan Pendekatan Analitis Proyek
+Dalam mengeksplorasi dataset kemiskinan daerah pada proyek ini, analisis diarahkan untuk memenuhi tiga kebutuhan pendekatan komparatif:
+1. **Dekomposisi Multidimensi:** Melampaui pembacaan angka tunggal $P_0$ dengan menguraikan dimensi-dimensi penyusun profil daerah (modal manusia, derajat kesehatan, akses air minum dan sanitasi, pengeluaran riil, serta dinamika ketenagakerjaan).
+2. **Tipologi Sosio-Ekonomi Independen:** Menyusun pengelompokan daerah berbasis profil struktural tanpa mengikutsertakan variabel kemiskinan moneter ke dalam model clustering, guna mencegah penalaran melingkar (*circular reasoning*).
+3. **Instrumen Skrining 2 Dimensi:** Menghadirkan penapisan visual komparatif yang memadukan tingkat kemiskinan moneter ($P_0$) dan kerentanan fasilitas dasar ($V_{\text{struc}}$) sebagai sarana penapisan awal sebelum investigasi lapangan.
 
 ### 1.3 Snapshot Integritas Data BPS 2021
 Analisis ini bertumpu pada dataset resmi BPS Tahun 2021 yang telah diverifikasi:
@@ -62,7 +62,7 @@ Analisis ini bertumpu pada dataset resmi BPS Tahun 2021 yang telah diverifikasi:
 ## 2. Perumusan Masalah, Pertanyaan Riset, & Objektif
 
 ### 2.1 Rumusan Masalah Utama
-> *"Bagaimana data indikator kemiskinan dan karakteristik sosial-ekonomi 514 kabupaten/kota di Indonesia tahun 2021 dapat dipetakan secara spasial, dikelompokkan ke dalam tipologi profil struktural melalui unsupervised clustering tanpa target leakage, serta divisualisasikan ke dalam dashboard interaktif yang komunikatif untuk mendukung skrining prioritas intervensi SDG 1 tanpa mengklaim prediksi risiko masa depan?"*
+> *"Bagaimana data indikator kemiskinan dan karakteristik sosial-ekonomi 514 kabupaten/kota di Indonesia tahun 2021 dapat dipetakan secara spasial, dikelompokkan ke dalam tipologi profil struktural melalui unsupervised clustering yang bebas dari penalaran melingkar (circular reasoning), serta divisualisasikan ke dalam dashboard interaktif yang komunikatif untuk mendukung skrining prioritas intervensi SDG 1 tanpa mengklaim prediksi risiko masa depan?"*
 
 ### 2.2 Enam Pertanyaan Analitis Kunci (Research Questions)
 1. **RQ-1 (Distribusi Spasial):** Bagaimana pola sebaran spasial tingkat kemiskinan moneter ($P_0$) antarkabupaten/kota di Indonesia pada tahun 2021?
@@ -77,7 +77,7 @@ Analisis ini bertumpu pada dataset resmi BPS Tahun 2021 yang telah diverifikasi:
 * **Objektif Khusus:**
   1. Melakukan audit mutu data, sanitasi, dan penanganan nilai batas pada 514 kabupaten/kota.
   2. Mengeksplorasi hubungan bivariat dan membuktikan paradoks pasar kerja (korelasi positif TPAK vs korelasi negatif TPT).
-  3. Membangun model *unsupervised clustering* bebas *target leakage* dengan algoritma K-Means ($k=4$) dan validasi Hierarchical Clustering.
+  3. Membangun model *unsupervised clustering* berbasis fitur independen yang bebas dari penalaran melingkar (*circular reasoning*) dengan algoritma K-Means ($k=4$) dan validasi Hierarchical Clustering.
   4. Merancang instrumen skrining dua dimensi ($P_0$ aktual vs Indeks Kerentanan Fasilitas Dasar) ke dalam matriks kuadran 2x2.
   5. Mengomunikasikan temuan ke dalam dashboard interaktif 5 babak naratif (*Freytag's Pyramid*) yang mematuhi kaidah visualisasi Knaflic, Few, dan Desbarats.
 
@@ -92,11 +92,11 @@ Analisis ini bertumpu pada dataset resmi BPS Tahun 2021 yang telah diverifikasi:
 > Meskipun berkas mentah bernama `Klasifikasi Tingkat Kemiskinan di Indonesia.csv` dan memuat kolom biner `Klasifikasi Kemiskinan` (0/1), **proyek ini secara tegas membuang kolom tersebut dan TIDAK melatih model klasifikasi terawasi**.
 > 
 > **Tiga Landasan Penolakan Klasifikasi Terawasi:**
-> 1. **Pencegahan Penalaran Melingkar (*Target Leakage*):** Memprediksi status kemiskinan dari indikator pengeluaran, pendidikan, dan kesehatan yang merupakan komponen pembentuk garis kemiskinan adalah bentuk kebocoran matematis yang tidak menghasilkan nilai analitis baru.
+> 1. **Pencegahan Kebocoran Target (*Target Leakage*) & Penalaran Melingkar (*Circular Reasoning*):** Dalam supervised learning, memprediksi status kemiskinan dari indikator pengeluaran, pendidikan, dan kesehatan yang merupakan komponen pembentuk garis kemiskinan adalah bentuk kebocoran target (*target leakage*). Sementara pada klastering, memasukkan variabel yang sama untuk membentuk kelompok sekaligus membuktikan keabsahan kelompok adalah bentuk penalaran melingkar (*tautology*) yang tidak menghasilkan wawasan baru.
 > 2. **Cacat Validitas Label Bawaan:** Kolom label biner bawaan bukan indikator resmi BPS, melainkan hasil penyekatan *ad-hoc* yang terbukti memuat anomali fatal (misal: Jayawijaya dengan $P_0 = 36.70\%$ diberi label 0 "tidak miskin", sedangkan daerah dengan $P_0 = 6.30\%$ diberi label 1 "miskin").
 > 3. **Orientasi Solusi Berbasis Tipologi:** Pengambil kebijakan membutuhkan pemahaman konfigurasi defisit fasilitas dasar, bukan klasifikasi hitam-putih.
 
-### 3.2 Isolasi Variabel & Pencegahan Target Leakage (P0 & IPM)
+### 3.2 Isolasi Variabel & Pencegahan Penalaran Melingkar (P0 & IPM)
 * **Eksklusi Persentase Kemiskinan ($P_0$):** $P_0$ dikeluarkan dari pembentukan fitur klastering agar menjadi tolok ukur pengujian eksternal independen (*unbiased external benchmark*).
 * **Eksklusi Indeks Pembangunan Manusia (IPM):** IPM dikeluarkan dari fitur jarak Euclidean karena berkorelasi $> 0.86$ dengan komponen pembangunnya (RLS, UHH, pengeluaran). Memasukkan IPM akan melipatgandakan bobot dimensi manusia secara artifisial (*double-counting*).
 * **Eksklusi Partisipasi Kerja (TPAK):** TPAK dan TPT berkorelasi $-0.582$. Memasukkan keduanya membuat dimensi tenaga kerja mendominasi 25% bobot model dan menurunkan skor Silhouette sebesar ~10%.
@@ -144,7 +144,7 @@ flowchart TD
     end
 ```
 
-### 4.2 Matriks 7 Fitur Independen Bebas Leakage
+### 4.2 Matriks 7 Fitur Independen (Bebas Penalaran Melingkar)
 
 Model klastering dilatih menggunakan **vektor 7 fitur terstandardisasi** yang merepresentasikan empat pilar utama pembangunan:
 
@@ -198,7 +198,7 @@ Seluruh gerbang keputusan integritas telah diaudit dan diselesaikan secara tunta
 | **1. Periode Tahun Data** | **TERSELESAIKAN** | Terverifikasi data resmi BPS Tahun 2021 (validasi silang Surakarta, Cilacap, Banyumas). |
 | **2. Satuan & Skala PDRB** | **TERSELESAIKAN** | Terverifikasi berskala Juta Rupiah. Transformasi $\log(1+x)$ sukses menekan skewness ke +0.23. |
 | **3. Nilai Batas Nol (0.00%)**| **TERSELESAIKAN** | Terverifikasi kondisi riil 3T Papua (Deiyai, Mamberamo Tengah, Nduga). |
-| **4. Isolasi Label Biner** | **TERSELESAIKAN** | Kolom label biner dibuang dari pipeline untuk mencegah *target leakage*. |
+| **4. Isolasi Label Biner** | **TERSELESAIKAN** | Kolom label biner dibuang dari pipeline untuk mencegah *target leakage* pada klasifikasi dan penalaran melingkar (*circular reasoning*) pada klastering. |
 | **5. Preprocessing & Sanitasi** | **TERSELESAIKAN** | Berkas bersih diekspor ke [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv). |
 | **6. Deteksi Anomali Multivariat** | **TERSELESAIKAN** | 26 daerah anomali ditandai via *Isolation Forest* tanpa membuang baris data. |
 
