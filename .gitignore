@@ -42,6 +42,8 @@ kaggle.json
 # Large Outputs & Binaries
 reports/*.html
 docs/*.pdf
+dashboard/public/data/indonesia-34-provinces.geojson
+dashboard/public/data/indonesia-districts-simple.geojson
 
 # Experiment Tracking & Build Residues
 catboost_info/
