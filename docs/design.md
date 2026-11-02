@@ -25,7 +25,16 @@ Berdasarkan taksonomi Nick Desbarats, dashboard ini diklasifikasikan sebagai **C
 > • **Janji Produk:** Membantu analis kebijakan, perencana pembangunan daerah, dan akademisi menyusun hipotesis eksplorasi yang berbasis integrasi data multidimensi, bukan intuisi semata.  
 > • **Batasan Produk:** Bukan pengganti verifikasi faktual lapangan, ini bukan membuktikan penyebab kemiskinan (bukan instrumen pembuktian kausalitas), tidak menghasilkan keputusan intervensi/bantuan secara otomatis, dan tidak memprediksi tren masa depan tanpa tersedianya data longitudinal multi-tahun.
 
-### 1.3 Alur Narasi 5 Babak (*5-Act Narrative Arc*)
+### 1.3 Target Pengguna & Persona Utama (*Target Audience*)
+Spesifikasi dashboard ini dirancang selaras dengan perumusan masalah pada [`docs/problem_framing_and_objectives.md`](problem_framing_and_objectives.md) serta arsitektur kebijakan fiskal dan perlindungan sosial nasional pada [`docs/01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md`](01-sistem-kebijakan-dan-intervensi-pemerintah-indonesia-2026.md). Dashboard difokuskan melayani 3 kelompok persona pengguna utama:
+
+| Persona Pengguna | Profil & Latar Belakang | Kebutuhan Informasi & Alur Interaksi Utama | Keputusan / Aksi yang Didukung |
+| :--- | :--- | :--- | :--- |
+| **1. Perencana Bappeda / Analis Kebijakan Pemda** | Praktisi perencanaan anggaran pembangunan daerah dan pengentasan kemiskinan yang membutuhkan landasan empiris objektif. | • Memeriksa posisi kuadran wilayahnya pada Matriks 2x2 (Halaman 4).<br>• Melakukan *drill-down* profil indikator defisit spesifik pada Halaman 2 & 3.<br>• Mengunduh daftar indikator untuk penyusunan dokumen RPJMD. | Menentukan alokasi belanja modal infrastruktur fisik dasar (WASH) vs stimulus ekonomi produktif agar intervensi tepat sasaran. |
+| **2. Dosen Penguji & Akademisi (Auditor Metodologi)** | Evaluator teknis yang menguji kepatuhan metodologi data science, pencegahan target leakage, dan validitas statistika. | • Memeriksa kebenaran pemisahan $P_0$ dari klastering di Halaman 3.<br>• Membuka Halaman 5 untuk memeriksa pengujian outlier 1.5x IQR, ketiadaan supervisi, dan rekonsiliasi data BPS 2021. | Menilai integritas ilmiah, kejujuran model unsupervised, dan keterandalan bukti inferensial (ANOVA/Kruskal-Wallis). |
+| **3. Peneliti / Analis Kebijakan Publik Nasional** | Analis sosial-ekonomi makro yang mengeksplorasi fenomena disparitas regional Indonesia dan pencapaian target SDG 1 (*No Poverty*). | • Mengamati ketimpangan lanskap makro dan variasi antarpulau di Halaman 1.<br>• Menganalisis anomali spasial dan paradoks ketenagakerjaan (TPAK vs $P_0$) di Halaman 2. | Menyusun advokasi kebijakan diferensiasi regional berbasis bukti (*evidence-based policy advocacy*). |
+
+### 1.4 Alur Narasi 5 Babak (*5-Act Narrative Arc*)
 
 ```mermaid
 flowchart LR
@@ -191,6 +200,23 @@ Warna tidak boleh menjadi satu-satunya pembeda informasi. Setiap kategori wajib 
 * Pelabelan teks eksplisit pada legenda atau kontainer.
 * Bentuk penanda (*symbol shape*) yang berbeda jika diplot berdampingan pada grafik sebaran monokrom.
 
+### 5.4 Skala & Hierarki Tipografi Web (*Typography Scale*)
+Untuk memastikan keterbacaan tinggi (*high legibility*) pada proyektor presentasi maupun layar laptop, antarmuka mengadopsi skala tipografi modular terstruktur:
+
+* **Font-Family Stack:** `'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif` (bersih, sans-serif neutral, rendering tajam di semua OS).
+* **Standar Aksesibilitas Kontras:** Seluruh kombinasi warna teks dan latar belakang wajib melampaui standar **WCAG 2.1 Level AA** (kontras $\ge 4.5:1$ untuk teks reguler, dan $\ge 7:1$ untuk teks utama `#1E293B` di atas latar `#FFFFFF` / `#F8FAFC`).
+
+| Tingkat Hierarki | Elemen UI | Ukuran Font (px / rem) | Font Weight | Line Height | Warna Teks (Hex) | Contoh Penggunaan |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| **Display / H1** | Judul Halaman Utama | `28–32 px` (`1.75–2.0 rem`) | Bold (700) | 1.25 | `#0F172A` (Slate 900) | `01. Lanskap Kemiskinan Makro Daerah` |
+| **Section / H2** | Sub-bab / Judul Kontainer | `20–22 px` (`1.25–1.375 rem`) | Semi-Bold (600) | 1.3 | `#1E293B` (Slate 800) | `Sebaran 514 Daerah Antar-Wilayah Kepulauan` |
+| **Card Title / H3**| Judul Grafik / Kartu | `15–16 px` (`0.95–1.0 rem`) | Semi-Bold (600) | 1.4 | `#334155` (Slate 700) | `Matriks Karakteristik Klaster (Z-Score)` |
+| **KPI Value** | Angka Utama Kartu Metrik | `30–34 px` (`1.875–2.125 rem`)| Extra-Bold (800)| 1.1 | `#0F172A` (atau Okabe-Ito Accent) | `10.46%`, `162 Daerah` |
+| **KPI Context** | Pembanding / Benchmark | `12–13 px` (`0.75–0.81 rem`) | Medium (500) | 1.3 | `#64748B` (Muted Slate) | `▲ +0.32% vs Target SDG 1 (10.14%)` |
+| **Body Text** | Paragraf Narasi Insight | `14–15 px` (`0.875–0.95 rem`)| Regular (400) | 1.55 | `#334155` (Slate 700) | Teks penjelasan insight di bawah visual primer |
+| **Caption / Footnote**| Catatan Metodologi & Sumbu | `11–12 px` (`0.70–0.75 rem`)| Italic / Reg (400)| 1.4 | `#64748B` (Slate 500) | `*Sumber data: BPS Susenas 2021 (N=514 daerah)` |
+| **Table Data** | Sel Data Tabel Drill-down | `13–14 px` (`0.81–0.875 rem`)| Regular (400) | 1.4 | `#1E293B` (Slate 800) | Baris data kabupaten, angka persentase |
+
 ---
 
 ## 6. Anotasi Naratif & Garis Referensi (*In-Chart Annotations*)
@@ -311,6 +337,29 @@ PovertyRadar SDGs
 * **Pembedaan *Percentage Point* vs *Percent Change*:** Ketika membandingkan dua angka kemiskinan (misal 12% vs 10%), gunakan istilah "selisih 2 poin persentase", bukan "berbeda 2%".
 * **Korelasi Bukan Kausalitas:** Tampilkan koefisien korelasi bersama ukuran sampel ($N=514$) dan peringatan tegas bahwa korelasi tidak membuktikan hubungan sebab-akibat.
 * **Batas Uji ANOVA:** Nilai $p < 0.001$ pada uji beda rata-rata membuktikan keberhasilan algoritma memisahkan profil daerah, bukan bukti keberhasilan program intervensi di lapangan.
+
+### 8.3 Matriks Sumber Data & Sinkronisasi State Filter (*Data Flow & State Management*)
+Setiap halaman dashboard mengonsumsi berkas data terstandardisasi dari lapisan data olahan kanonik (`data/processed/` dan `data/interim/`) tanpa melakukan kalkulasi pemodelan ulang saat runtime:
+
+| Halaman Dashboard | File Sumber Data Masukan | Format Data & Ukuran | Komponen / State yang Digunakan |
+| :--- | :--- | :---: | :--- |
+| **Halaman 1**<br>(*Poverty Landscape*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv) | CSV (514 baris, 21 kolom) | Mengagregasi metrik nasional ($P_0$ median, rentang, rasio), histogram sebaran, dan ranking pulau. |
+| **Halaman 2**<br>(*Poverty & Indicator Map*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>*(Opsi GeoJSON: Poligon 514 Daerah)* | CSV (514 baris)<br>+ GeoJSON FeatureCollection | Menampilkan choropleth map indikator terpilih, rasio dualistik kabupaten vs kota, dan scatter TPAK vs $P_0$. |
+| **Halaman 3**<br>(*Regional Profiles*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>[`data/processed/poverty_cluster_summary.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_cluster_summary.csv) | CSV (514 baris)<br>CSV (4 baris, 30 kolom) | Memuat ringkasan rata-rata 7 fitur Z-Score per klaster, profil persona, metrik evaluasi model, dan ANOVA $P_0$. |
+| **Halaman 4**<br>(*Priority & Implications*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>[`data/processed/policy_recommendations_matrix.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/policy_recommendations_matrix.csv) | CSV (514 baris)<br>CSV (8 baris, 13 kolom) | Merender scatterplot kuadran 2x2 ($P_0$ vs $V_{struc}$), tabel daftar skrining, dan lookup rekomendasi kebijakan per kuadran. |
+| **Halaman 5**<br>(*Methodology & Data Quality*) | [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv)<br>[`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) | CSV (514 baris, 18 kolom)<br>Markdown data dictionary | Menyajikan kamus data, verifikasi rekonsiliasi BPS 2021, visualisasi Tukey boxplot outlier, dan tombol unduh dataset. |
+
+#### Aturan Sinkronisasi State Global Antar-Halaman (`st.session_state`):
+Untuk menjamin pengalaman eksplorasi yang kohesif (*seamless UX*):
+1. **Penyimpanan State Filter Terpusat:** Variabel filter disimpan pada session state:
+   * `st.session_state['selected_region_pulau']` (default: `'Semua'`)
+   * `st.session_state['selected_provinsi']` (default: `'Semua'`)
+   * `st.session_state['selected_cluster']` (default: `'Semua'`)
+   * `st.session_state['selected_quadrant']` (default: `'Semua'`)
+   * `st.session_state['p0_range']` (default: `[2.38, 41.66]`)
+   * `st.session_state['search_district']` (default: `""`)
+2. **Persistensi Lintas Halaman:** Jika pengguna memfilter Provinsi *"Jawa Timur"* di Halaman 2, filter tersebut tetap aktif ketika berpindah ke Halaman 3 atau Halaman 4, dengan indikator status filter aktif yang selalu terlihat di sidebar.
+3. **Tombol Reset Menyeluruh:** Tombol `Reset filters` di sidebar membersihkan seluruh nilai session state di atas kembali ke nilai default dalam 1 kali klik tanpa memicu *rerun loop*.
 
 ---
 
