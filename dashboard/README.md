@@ -46,7 +46,7 @@ cd dashboard
 npm install
 npm run dev
 ```
-Buka browser pada alamat: `http://localhost:3000`
+Buka browser pada alamat: `http://127.0.0.1:5173` (atau port yang dimunculkan Vite di terminal).
 
 ### 2. Membangun untuk Produksi (Production Build)
 ```bash

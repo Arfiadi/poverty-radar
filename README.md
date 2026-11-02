@@ -114,7 +114,7 @@ python -m poverty_radar.pipeline
 cd dashboard
 npm install
 npm run dev
-# Dashboard aktif di http://localhost:3000
+# Dashboard aktif di http://127.0.0.1:5173
 ```
 
 ---
