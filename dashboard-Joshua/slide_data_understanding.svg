@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap');
+      text { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    </style>
+    <!-- Shadow Filter -->
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Background Base (Clean Paper Slate) -->
+  <rect width="1920" height="1080" fill="#F4F4F0"/>
+
+  <!-- Geometric Design Accents (Inspired by template) -->
+  <path d="M 960 60 L 1120 60 L 1090 120 L 930 120 Z" fill="#E26553" opacity="0.9"/>
+  <circle cx="280" cy="980" r="140" fill="#E5A93C" opacity="0.85"/>
+  <path d="M 1680 920 C 1760 920, 1840 960, 1880 1040 L 1600 1040 Z" fill="#E26553" opacity="0.85"/>
+
+  <!-- Browser Window Wrapper -->
+  <g transform="translate(160, 100)">
+    <!-- Window Frame Outer -->
+    <rect width="1600" height="880" rx="28" fill="#FFFFFF" filter="url(#cardShadow)"/>
+    
+    <!-- Window Header Bar -->
+    <rect width="1600" height="56" rx="28" fill="#F8FAFC"/>
+    <rect y="36" width="1600" height="20" fill="#F8FAFC"/>
+    <line x1="0" y1="56" x2="1600" y2="56" stroke="#E2E8F0" stroke-width="1.5"/>
+    
+    <!-- Window Dots -->
+    <circle cx="42" cy="28" r="8" fill="#E2E8F0"/>
+    <circle cx="68" cy="28" r="8" fill="#E5A93C"/>
+    <circle cx="94" cy="28" r="8" fill="#E26553"/>
+    <text x="800" y="34" fill="#94A3B8" font-size="14" font-weight="600" text-anchor="middle">povertyradar-sdgs.id — presentation/data-understanding</text>
+
+    <!-- MAIN TEAL CONTAINER CARD -->
+    <g transform="translate(60, 96)">
+      <rect width="1480" height="720" rx="36" fill="#209F85"/>
+
+      <!-- ================= LEFT COLUMN ================= -->
+      <g transform="translate(80, 100)">
+        <!-- Massive Title (2 Lines) -->
+        <text x="0" y="60" fill="#FFFFFF" font-size="68" font-weight="800" letter-spacing="-1">Data</text>
+        <text x="0" y="140" fill="#FFFFFF" font-size="68" font-weight="800" letter-spacing="-1">Understanding</text>
+
+        <!-- Divider Line -->
+        <rect x="0" y="220" width="80" height="6" rx="3" fill="#E5A93C"/>
+
+        <!-- Metadata Section Tag -->
+        <text x="0" y="310" fill="#A7F3D0" font-size="18" font-weight="700" letter-spacing="1.5">PROFIL DATASET NASIONAL</text>
+
+        <!-- Population Scope -->
+        <text x="0" y="370" fill="#FFFFFF" font-size="28" font-weight="700" line-height="1.3">514 Kabupaten/Kota</text>
+        <text x="0" y="410" fill="#FFFFFF" font-size="28" font-weight="700">di 34 Provinsi Indonesia</text>
+        <text x="0" y="460" fill="#E6FFFA" font-size="16" font-weight="400" opacity="0.9">Integritas 100% Lengkap (0 Missing Values)</text>
+      </g>
+
+      <!-- Center Divider Line (Subtle) -->
+      <line x1="680" y1="80" x2="680" y2="640" stroke="#2DD4BF" stroke-width="2" stroke-dasharray="6 6" opacity="0.4"/>
+
+      <!-- ================= RIGHT COLUMN (3 FEATURE ROWS) ================= -->
+      <g transform="translate(740, 100)">
+        
+        <!-- ROW 1: Cakupan & Validitas Data -->
+        <g transform="translate(0, 0)">
+          <!-- Yellow Badge -->
+          <circle cx="36" cy="48" r="36" fill="#DBA11E"/>
+          <!-- Icon: Search / Lens -->
+          <circle cx="34" cy="46" r="14" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+          <line x1="44" y1="56" x2="55" y2="67" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="30" cy="42" r="3" fill="#FFFFFF"/>
+          
+          <!-- Text Block -->
+          <text x="96" y="38" fill="#FFFFFF" font-size="22" font-weight="700">Cakupan Populasi &amp; Integritas Data</text>
+          <text x="96" y="70" fill="#E6FFFA" font-size="16" font-weight="400">514 observasi resmi tingkat kabupaten/kota di seluruh Indonesia.</text>
+          <text x="96" y="94" fill="#E6FFFA" font-size="16" font-weight="400">Data teruji bersih tanpa baris duplikat maupun nilai hilang.</text>
+        </g>
+
+        <!-- ROW 2: Taksonomi 4 Dimensi Fitur -->
+        <g transform="translate(0, 180)">
+          <!-- Yellow Badge -->
+          <circle cx="36" cy="48" r="36" fill="#DBA11E"/>
+          <!-- Icon: Database / Layers -->
+          <path d="M 22 40 C 22 34 50 34 50 40 C 50 46 22 46 22 40 Z" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+          <path d="M 22 48 C 22 54 50 54 50 48" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+          <path d="M 22 56 C 22 62 50 62 50 56" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+          
+          <!-- Text Block -->
+          <text x="96" y="38" fill="#FFFFFF" font-size="22" font-weight="700">Taksonomi 4 Pilar Pembangunan Daerah</text>
+          <text x="96" y="70" fill="#E6FFFA" font-size="16" font-weight="400">Merangkum 10 indikator multisektoral: Kemiskinan (P0, Pengeluaran),</text>
+          <text x="96" y="94" fill="#E6FFFA" font-size="16" font-weight="400">Modal Manusia (IPM, RLS, UHH), Sanitasi/Air, dan Ketenagakerjaan.</text>
+        </g>
+
+        <!-- ROW 3: Distribusi Label & Imbalance -->
+        <g transform="translate(0, 360)">
+          <!-- Yellow Badge -->
+          <circle cx="36" cy="48" r="36" fill="#DBA11E"/>
+          <!-- Icon: Target / Focus -->
+          <circle cx="36" cy="48" r="16" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+          <circle cx="36" cy="48" r="7" fill="#FFFFFF"/>
+          
+          <!-- Text Block -->
+          <text x="96" y="38" fill="#FFFFFF" font-size="22" font-weight="700">Distribusi Target &amp; Polarisasi Kelas</text>
+          <text x="96" y="70" fill="#E6FFFA" font-size="16" font-weight="400">Label biner kemiskinan: 452 daerah Reguler (Kelas 0) dan 62 daerah</text>
+          <text x="96" y="94" fill="#E6FFFA" font-size="16" font-weight="400">Prioritas Akut (Kelas 1) yang 85.5% terkonsentrasi di Indonesia Timur.</text>
+        </g>
+
+      </g>
+    </g>
+  </g>
+</svg>
