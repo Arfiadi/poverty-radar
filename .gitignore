@@ -49,7 +49,8 @@ mlruns/
 wandb/
 
 # Temporary Directories & Scratch Files
-scripts/
+scripts/*
+!scripts/export_dashboard_payload.py
 scratch/
 tmp/
 temp/
@@ -58,3 +59,15 @@ temp/
 
 # Heavy External Datasets (Raw non-canonical downloads)
 data/raw/bps_2023/
+
+# Node.js & Frontend Build Outputs
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.vite/
+**/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+

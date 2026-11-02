@@ -65,6 +65,10 @@ PovertyRadar/
 ├── AGENTS.md                  # Kontrak kerja coding agent & aturan domain proyek
 ├── README.md                  # Halaman orientasi & dokumentasi utama repositori
 ├── dashboard_guide.md         # Pedoman visualisasi data & storytelling (Knaflic & Few)
+├── dashboard/                 # Interactive Storytelling Dashboard (React 18 + Vite + TypeScript + ECharts)
+│   ├── public/data/           # Single source of truth JSON payloads (514 kab/kota, benchmarks, OLS)
+│   ├── src/                   # 5-act narrative pages, ECharts components, Zustand global filters
+│   └── README.md              # Panduan setup & deployment dashboard
 ├── data/
 │   ├── raw/                   # [READ-ONLY] Data mentah BPS 2021 dari Kaggle
 │   ├── interim/               # poverty_data_cleaned.csv (terstandar & ter-flag anomali)
@@ -105,6 +109,12 @@ python -m pytest tests -v
 
 # 3. Jalankan end-to-end pipeline (Data Mentah -> Interim -> Processed -> Visualisasi)
 python -m poverty_radar.pipeline
+
+# 4. Jalankan Interactive Storytelling Dashboard (React + Vite)
+cd dashboard
+npm install
+npm run dev
+# Dashboard aktif di http://localhost:3000
 ```
 
 ---

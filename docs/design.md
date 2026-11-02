@@ -234,7 +234,8 @@ Warna tidak boleh menjadi satu-satunya pembeda informasi. Setiap kategori wajib 
 
 ### 5.4 Skala & Hierarki Tipografi Web (*Typography Scale*)
 
-* **Font-Family Stack:** `'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`.
+* **Font-Family Stack (UI & Teks):** `'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`.
+* **Font-Family Stack (Angka KPI & Data):** `'JetBrains Mono', 'SF Mono', Consolas, monospace` dengan penerapan `font-variant-numeric: tabular-nums` (memastikan angka tidak bergetar saat filter digeser).
 * **Standar Aksesibilitas Kontras:** Seluruh kombinasi warna teks dan latar belakang wajib memenuhi standar **WCAG 2.1 Level AA** (kontras $\ge 4.5:1$ untuk teks reguler, dan $\ge 7:1$ untuk teks utama `#1E293B` di atas latar `#FFFFFF` / `#F8FAFC`).
 
 | Tingkat Hierarki | Elemen UI | Ukuran Font (px / rem) | Font Weight | Line Height | Warna Teks (Hex) | Contoh Penggunaan |
@@ -247,6 +248,18 @@ Warna tidak boleh menjadi satu-satunya pembeda informasi. Setiap kategori wajib 
 | **Body Text** | Paragraf Narasi Insight | `14–15 px` (`0.875–0.95 rem`)| Regular (400) | 1.55 | `#334155` | Penjelasan wawasan kebijakan di bawah visual |
 | **Caption / Footnote**| Catatan Metodologi & Sumbu | `11–12 px` (`0.70–0.75 rem`)| Italic / Reg (400)| 1.4 | `#64748B` | `*Sumber: BPS Susenas 2021 (N=514 daerah)` |
 | **Table Data** | Sel Data Tabel Drill-down | `13–14 px` (`0.81–0.875 rem`)| Regular (400) | 1.4 | `#1E293B` | Baris data kabupaten, persentase kuadran |
+
+
+
+### 5.5 Standar Desain Editorial Anti-AI Slop & Micro-Interactions
+
+Untuk memastikan produk memiliki wibawa akademis setara *Financial Times Visual Journalism*, *The Economist*, dan *Our World in Data*, dashboard menerapkan 6 guardrail anti-AI slop:
+1. **Peniadaan Elemen Klise AI:** Dilarang keras menggunakan latar belakang gelap gulita (*pure black*), gradien ungu-cyan neon, kartu berbayangan menyala (*neon glow*), atau ilustrasi robot AI generatif yang tidak relevan dengan data BPS.
+2. **Ketenangan Kanvas Netral (*Calm Editorial Palette*):** Kanvas menggunakan Slate terang `#F8FAFC`, permukaan kartu putih bersih bergaris batas halus `1px solid #E2E8F0/80` dan elevasi rendah, dipadukan header *glassmorphism* minimalis `backdrop-blur-md bg-white/80`.
+3. **Micro-Interactions Halus (`framer-motion`):** Transisi halaman 200 ms fade-slide, animasi *count-up* angka KPI yang anggun, serta efek redup halus (*dimming opacity 0.15*) pada scatterplot saat penyorot studi kasus aktif.
+4. **Pencegahan Jitter Angka (Tabular Numerals):** Seluruh angka KPI dan sel numerik tabel menerapkan `tabular-nums` agar kolom angka tidak bergeser saat data berubah secara dinamis.
+5. **ECharts HTML Tooltip Kustom:** Desain tooltip menggunakan kartu mini putih bergaris kontras tipis, menampilkan nama kabupaten, nilai indikator bersatuan resmi, badge klaster, dan deviasi $\Delta$ terhadap median nasional.
+6. **Storytelling Berbasis Fakta Terkurasi (Zero Hallucination):** Seluruh narasi insight berasal dari kurasi data empiris 514 daerah pada `src/constants/paradoxes.ts`, bukan teks generatif yang panjang dan klise.
 
 ---
 

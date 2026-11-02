@@ -1,0 +1,70 @@
+import { create } from 'zustand';
+import { CaseStudyPin } from '../types';
+
+interface FilterStore {
+  selectedIsland: string;
+  selectedProvince: string;
+  selectedCluster: number | 'all';
+  selectedQuadrant: string | 'all';
+  searchQuery: string;
+  p0Range: [number, number];
+  activeCasePin: CaseStudyPin;
+  activeAct: number; // 0: Landscape, 1: Map/Indicator, 2: Profiles, 3: Priority, 4: Methodology
+
+  setSelectedIsland: (island: string) => void;
+  setSelectedProvince: (prov: string) => void;
+  setSelectedCluster: (cluster: number | 'all') => void;
+  setSelectedQuadrant: (quadrant: string | 'all') => void;
+  setSearchQuery: (query: string) => void;
+  setP0Range: (range: [number, number]) => void;
+  setActiveCasePin: (pin: CaseStudyPin) => void;
+  setActiveAct: (act: number) => void;
+  resetFilters: () => void;
+  hasActiveFilters: () => boolean;
+}
+
+const DEFAULT_P0_RANGE: [number, number] = [2.0, 42.0];
+
+export const useFilterStore = create<FilterStore>((set, get) => ({
+  selectedIsland: 'Semua Wilayah',
+  selectedProvince: 'Semua Provinsi',
+  selectedCluster: 'all',
+  selectedQuadrant: 'all',
+  searchQuery: '',
+  p0Range: DEFAULT_P0_RANGE,
+  activeCasePin: 'none',
+  activeAct: 0,
+
+  setSelectedIsland: (island) => set({ selectedIsland: island, selectedProvince: 'Semua Provinsi' }),
+  setSelectedProvince: (prov) => set({ selectedProvince: prov }),
+  setSelectedCluster: (cluster) => set({ selectedCluster: cluster }),
+  setSelectedQuadrant: (quadrant) => set({ selectedQuadrant: quadrant }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  setP0Range: (range) => set({ p0Range: range }),
+  setActiveCasePin: (pin) => set({ activeCasePin: pin }),
+  setActiveAct: (act) => set({ activeAct: act }),
+
+  resetFilters: () => set({
+    selectedIsland: 'Semua Wilayah',
+    selectedProvince: 'Semua Provinsi',
+    selectedCluster: 'all',
+    selectedQuadrant: 'all',
+    searchQuery: '',
+    p0Range: DEFAULT_P0_RANGE,
+    activeCasePin: 'none',
+  }),
+
+  hasActiveFilters: () => {
+    const s = get();
+    return (
+      s.selectedIsland !== 'Semua Wilayah' ||
+      s.selectedProvince !== 'Semua Provinsi' ||
+      s.selectedCluster !== 'all' ||
+      s.selectedQuadrant !== 'all' ||
+      s.searchQuery.trim() !== '' ||
+      s.activeCasePin !== 'none' ||
+      s.p0Range[0] > 2.0 ||
+      s.p0Range[1] < 42.0
+    );
+  }
+}));

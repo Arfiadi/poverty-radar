@@ -1,0 +1,23 @@
+{
+  "n_regions": 514,
+  "n_provinces": 34,
+  "median_p0": 10.46,
+  "mean_p0": 12.27,
+  "min_p0": 2.38,
+  "min_p0_region": "Kota Kota Sawah Lunto",
+  "min_p0_province": "SUMATERA BARAT",
+  "max_p0": 41.66,
+  "max_p0_region": "Kabupaten Intan Jaya",
+  "max_p0_province": "PAPUA",
+  "disparity_ratio": 17.5,
+  "total_acute_pockets": 61,
+  "eastern_acute_count": 0,
+  "eastern_acute_pct": 0.0,
+  "western_acute_count": 61,
+  "western_acute_pct": 100.0,
+  "median_v_struc": 0.272,
+  "dualism_kab_p0": 13.51,
+  "dualism_kota_p0": 7.22,
+  "dualism_kab_tpt": 4.36,
+  "dualism_kota_tpt": 7.92
+}

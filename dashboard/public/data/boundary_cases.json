@@ -1,0 +1,33 @@
+[
+  {
+    "region": "Kab. Deiyai",
+    "province": "PAPUA",
+    "variable": "sanitation_access_pct",
+    "variable_label": "Akses Sanitasi Layak",
+    "value": 0.0,
+    "unit": "%",
+    "p0": 40.59,
+    "context": "Wilayah pedalaman pegunungan Papua dengan keterisolasian topografi ekstrem; rumah tangga mengandalkan sanitasi alamiah terbuka."
+  },
+  {
+    "region": "Kab. Mamberamo Tengah",
+    "province": "PAPUA",
+    "variable": "clean_water_access_pct",
+    "variable_label": "Akses Air Minum Terlindung",
+    "value": 0.0,
+    "unit": "%",
+    "p0": 36.76,
+    "context": "Sumber air mengandalkan aliran sungai mentah permukaan hutan hujan tanpa infrastruktur perpipaan PDAM maupun sumur bor terlindung."
+  },
+  {
+    "region": "Kab. Nduga",
+    "province": "PAPUA",
+    "variable": "unemployment_rate_tpt",
+    "variable_label": "Pengangguran Terbuka (TPT)",
+    "value": 0.0,
+    "unit": "%",
+    "p0": 37.18,
+    "tpak": 97.93,
+    "context": "Warga wajib bekerja subsistensi harian (kebun/hutan) demi bertahan hidup; ketiadaan pasar kerja formal membuat konsep menganggur mencari kerja tidak berlaku."
+  }
+]
