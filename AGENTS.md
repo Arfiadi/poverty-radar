@@ -78,6 +78,7 @@ Read referenced documents only when relevant to the current task:
 - `docs/design.md`: Read when building, styling, or updating dashboard layouts, navigation, and interactive charts.
 - `dashboard_guide.md` & `docs/ui_brief_mockup.md`: Read when designing visual components, choosing chart types, applying color palettes, or drafting wireframes.
 - `docs/development.md`: Read when setting up Python environments, configuring packages, or running verification workflows.
+- `dashboard-Joshua/INSIGHT_EKSPONENSIAL.md`: Read when exploring deep socioeconomic storytelling paradoxes, empirical findings across 514 districts, econometric policy elasticity, and theoretical chart justifications (Knaflic & Few).
 
 ---
 
