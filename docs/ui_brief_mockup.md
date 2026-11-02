@@ -1,7 +1,7 @@
 # UI Design Brief & Wireframe Companion Sheet
 ## PovertyRadar SDGs Interactive Dashboard Mockup
 
-> **Tujuan Dokumen:** Lembar panduan tata letak (*wireframe layout*), spesifikasi spasial kanvas, dan diagram purwarupa ASCII untuk desainer UI dan pengembang frontend (Figma, Canva, Streamlit, Plotly Dash, React/Vite/Tailwind).  
+> **Tujuan Dokumen:** Lembar panduan tata letak (*wireframe layout*), spesifikasi spasial kanvas, dan diagram purwarupa ASCII untuk desainer UI dan pengembang frontend.  
 > **Dokumen Induk Fungsional & Style Guide:** 👉 [`docs/design.md`](design.md) *(Master Design Specification, Color Tokens, Typography, & Engineering Guardrails)*  
 > **Standar Desain:** *Storytelling with Data* (Knaflic) · *Information Dashboard Design* (Few) · *Practical Dashboards* (Desbarats)  
 > **Versi Dokumen:** 4.1 (Penyelarasan Wireframe Terintegrasi 9 Paradoks & Case-Study Pins) | November 2026  
