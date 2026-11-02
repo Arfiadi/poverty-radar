@@ -5,7 +5,7 @@
 **Topik / Tema:** Analisis Multidimensi Kemiskinan Daerah di Indonesia (SDG 1 — *No Poverty*)  
 **Judul Produk:** **PovertyRadar SDGs: Sistem Pemetaan Klaster dan Skrining Kerentanan Kemiskinan Daerah Indonesia**  
 **Standar Desain:** *Storytelling with Data* (Knaflic) · *Information Dashboard Design* (Few) · *Practical Dashboards* (Desbarats)  
-**Versi Dokumen:** 4.0 (Integrasi Temuan 9 Paradoks Sosioekonomi untuk Memperkuat Storytelling) | November 2026  
+**Versi Dokumen:** 4.1 (Penyelarasan Metodologi, Ekonometrika, & Epistemik Desain) | November 2026
 
 ---
 
@@ -31,34 +31,34 @@ Spesifikasi dashboard ini dirancang selaras dengan perumusan masalah pada [`docs
 | Persona Pengguna | Profil & Latar Belakang | Kebutuhan Informasi & Alur Interaksi Utama | Keputusan / Aksi yang Didukung |
 | :--- | :--- | :--- | :--- |
 | **1. Perencana Bappeda / Analis Kebijakan Pemda** | Praktisi perencanaan anggaran pembangunan daerah dan pengentasan kemiskinan yang membutuhkan landasan empiris objektif. | • Memeriksa posisi kuadran wilayahnya pada Matriks 2x2 (Halaman 4).<br>• Melakukan *drill-down* profil indikator defisit spesifik pada Halaman 2 & 3.<br>• Menguji kasus wilayahnya melalui *Case-Study Pins* (Halaman 4).<br>• Mengunduh daftar indikator untuk penyusunan dokumen RPJMD. | Menentukan alokasi belanja modal infrastruktur fisik dasar (sanitasi/air) vs stimulus ekonomi produktif agar intervensi tepat sasaran. |
-| **2. Dosen Penguji & Akademisi (Auditor Metodologi)** | Evaluator teknis yang menguji kepatuhan metodologi data science, pencegahan target leakage, dan validitas statistika. | • Memeriksa kebenaran pemisahan $P_0$ dari klastering di Halaman 3.<br>• Membuka Halaman 5 untuk memeriksa pengujian outlier 1.5x IQR, ketiadaan supervisi, verifikasi nilai batas 0%, dan elastisitas OLS. | Menilai integritas ilmiah, kejujuran model unsupervised, dan keterandalan bukti inferensial (ANOVA/Kruskal-Wallis). |
+| **2. Dosen Penguji & Akademisi (Auditor Metodologi)** | Evaluator teknis yang menguji kepatuhan metodologi data science, pencegahan target leakage, dan validitas statistika. | • Memeriksa kebenaran pemisahan $P_0$ dari klastering di Halaman 3.<br>• Membuka Halaman 5 untuk memeriksa pengujian outlier 1.5x IQR, ketiadaan supervisi, verifikasi nilai batas 0%, dan koefisien regresi terstandarisasi baku OLS. | Menilai integritas ilmiah, kejujuran model unsupervised, dan keterandalan bukti inferensial (ANOVA/Kruskal-Wallis). |
 | **3. Peneliti / Analis Kebijakan Publik Nasional** | Analis sosial-ekonomi makro yang mengeksplorasi fenomena disparitas regional Indonesia dan pencapaian target SDG 1 (*No Poverty*). | • Mengamati ketimpangan lanskap makro dan jurang 17.5x di Halaman 1.<br>• Menganalisis anomali spasial The Great Dualism dan The Working Poor (TPAK vs $P_0$) di Halaman 2. | Menyusun advokasi kebijakan diferensiasi regional berbasis bukti (*evidence-based policy advocacy*). |
 
 ### 1.4 Alur Narasi 5 Babak (*5-Act Narrative Arc*)
 
 ```mermaid
 flowchart LR
-    A["Babak 1: The Hook\r\n(1. Poverty Landscape)\r\nJurang Ekstrem 17.5x\r\n& Konsentrasi Timur"] --> B["Babak 2: The Geography\r\n(2. Poverty & Indicator Map)\r\nThe Great Dualism &\r\nThe Working Poor"]
-    B --> C["Babak 3: The Archetypes\r\n(3. Regional Profiles)\r\nFasilitas Dasar Determinan\r\n& The Educated Poor"]
-    C --> D["Babak 4: The Call to Action\r\n(4. Priority & Implications)\r\nMatriks 2x2 & Case Pins:\r\nKutukan Tambang & Madura"]
-    D --> E["Babak 5: The Integrity\r\n(5. Methodology & Data)\r\nBatas 0%, Dekonstruksi\r\nKaggle, & OLS Elasticity"]
+    A["Babak 1: The Hook<br/>(1. Poverty Landscape)<br/>Jurang Ekstrem 17.5x<br/>& Konsentrasi Timur"] --> B["Babak 2: The Geography<br/>(2. Poverty & Indicator Map)<br/>The Great Dualism &<br/>The Working Poor"]
+    B --> C["Babak 3: The Archetypes<br/>(3. Regional Profiles)<br/>Faktor Layanan Dasar<br/>& The Educated Poor"]
+    C --> D["Babak 4: The Call to Action<br/>(4. Priority & Implications)<br/>Matriks 2x2 & Case Pins:<br/>Kutukan Tambang & Madura"]
+    D --> E["Babak 5: The Integrity<br/>(5. Methodology & Data)<br/>Batas 0%, Dekonstruksi<br/>Kaggle, & Koefisien OLS"]
 ```
 
 1. **Babak 1 — *The Hook* (`01. Poverty Landscape`):**  
    *Pertanyaan yang Dijawab:* Apa gambaran kemiskinan pada wilayah yang tercakup dan pola penting apa yang terlihat?  
-   Menggugah audiens dengan realitas ketimpangan ekstrem di 514 kabupaten/kota: median nasional $10.46\%$ menutupi jurang 17.5x lipat antardaerah (Sawahlunto 2.38% vs Intan Jaya 41.66%) dan fakta bahwa 87.1% kantong kemiskinan akut ($P_0 \ge 20\%$) menumpuk di Indonesia Timur (Maluku, Papua, NTT), sementara kawasan barat hanya menyumbang 12.9% di kepulauan terisolir (Nias & Mentawai).
+   Menggugah audiens dengan realitas ketimpangan ekstrem di 514 kabupaten/kota: median nasional $10.46\%$ menutupi jurang 17.5x lipat antardaerah (Sawahlunto 2.38% vs Intan Jaya 41.66%) dan fakta bahwa 86.9% kantong kemiskinan akut ($P_0 \ge 20\%$) menumpuk di Indonesia Timur (Maluku, Papua, NTT; 53 dari 61 daerah), sementara kawasan barat menyumbang 13.1% (8 daerah di kepulauan terisolir Nias & Mentawai serta kantong tertentu).
 2. **Babak 2 — *The Geography* (`02. Poverty & Indicator Map`):**  
    *Pertanyaan yang Dijawab:* Di mana pola geografis atau perbedaan indikator paling terlihat?  
    Menjelajahi dimensi spasial 34 provinsi dan menyingkap dua paradoks mendasar: **The Great Dualism** (kabupaten 1.8x lebih miskin dari kota, namun kota 1.8x lebih menganggur) serta paradoks **The Working Poor** (korelasi positif $P_0$ vs TPAK $r = +0.462$, di mana warga miskin 3T wajib bekerja subsistensi bertahan hidup sehingga TPT tercatat mendekati $0.00\%$).
 3. **Babak 3 — *The Archetypes* (`03. Regional Profiles`):**  
    *Pertanyaan yang Dijawab:* Apa karakteristik setiap kelompok daerah dan apa yang membedakannya?  
-   Menjawab profil pembeda melalui visualisasi **Small Multiples Bar Charts (Z-Score)** dan **Heatmap Matrix** yang membuktikan bahwa fasilitas dasar (sanitasi $r = -0.56$) merupakan determinan struktural yang beriringan 2.3x lebih kuat dibanding PDRB nominal daerah ($r = -0.24$), serta menyajikan paradoks **The Educated Poor** di kepulauan terpencil (RLS tinggi namun kemiskinan tetap kritis).
+   Menjawab profil pembeda melalui visualisasi **Small Multiples Bar Charts (Z-Score)** dan **Heatmap Matrix** yang menunjukkan bahwa akses fasilitas fisik dan layanan dasar (sanitasi bivariat  = -0.56$) beriringan kuat dengan kemiskinan mendampingi PDRB nominal skala asli ( = -0.24$), serta menyajikan paradoks **The Educated Poor** di kepulauan terpencil (RLS tinggi namun kemiskinan tetap kritis).
 4. **Babak 4 — *The Call to Action* (`04. Priority & Implications`):**  
    *Pertanyaan yang Dijawab:* Wilayah mana yang layak dianalisis lebih lanjut berdasarkan kondisi yang teramati?  
    Puncak rekomendasi praktis melalui **Matriks Kuadran 2x2** ($P_0$ Aktual vs Indeks Kerentanan Struktural $V_{struc}$) dilengkapi fitur **Interactive Case-Study Pins** (Kutukan Sumber Daya Enclave dan Disparitas Madura) untuk menguji efektivitas penapisan intervensi.
 5. **Babak 5 — *The Integrity* (`05. Methodology & Data Quality`):**  
    *Pertanyaan yang Dijawab:* Bagaimana temuan diperoleh dan apa yang tidak dapat disimpulkan?  
-   Menutup cerita dengan transparansi ilmiah penuh: membuktikan data resmi BPS 2021, memverifikasi nilai batas ekstrem $0.00\%$ pada wilayah 3T, membongkar formula heuristik label biner Kaggle (akurasi rekonstruksi 98.8%), dan memaparkan grafik koefisien baku OLS.
+   Menutup cerita dengan transparansi ilmiah penuh: memvalidasi data resmi BPS 2021, memverifikasi nilai batas ekstrem $0.00\%$ pada wilayah 3T, membongkar formula heuristik label biner Kaggle (akurasi rekonstruksi 98.8%), dan memaparkan grafik koefisien regresi terstandarisasi baku OLS.
 
 ### 1.5 Matriks Integrasi 9 Paradoks Sosioekonomi ke Komponen Dashboard
 Untuk memperkuat daya pikat cerita (*data storytelling impact*) tanpa menimbulkan kepadatan teks (*decluttering*), 9 temuan paradoks sosioekonomi dipetakan langsung ke komponen fungsional pada masing-masing halaman:
@@ -66,14 +66,14 @@ Untuk memperkuat daya pikat cerita (*data storytelling impact*) tanpa menimbulka
 | Paradoks Sosioekonomi | Temuan Data Kunci | Halaman Dashboard | Bentuk Komponen UI Terintegrasi |
 | :--- | :--- | :---: | :--- |
 | **Paradoks 1: The Working Poor** | Kemiskinan akut di wilayah 3T mencatat TPT $\approx 0.00\%$ & TPAK $> 85\%$; sebaliknya kota kaya mencatat TPT tinggi ($8\%–10\%$). | **Halaman 2** | *Action Title* & Anotasi garis regresi scatterplot TPAK vs $P_0$ ($r = +0.462$). |
-| **Paradoks 2: The Great Dualism** | Kabupaten 1.8x lebih miskin dari Kota (13.51% vs 7.22%), namun Kota 1.8x lebih menganggur (7.92% vs 4.36%). | **Halaman 2** | Grouped Bar Chart komparasi dualistik Kabupaten vs Kota berlabel rasio 1.8x. |
-| **Paradoks 3: The Resource Curse** | 17 daerah dengan PDRB $\ge \text{Rp } 25\text{ Triliun}$ tetap memiliki kemiskinan di atas median nasional (Mimika, Bojonegoro, Morowali, Bintuni). | **Halaman 4** | **[Pin: Kutukan Sumber Daya]** pada Matriks 2x2 yang mengisolasi titik PDRB raksasa di Kuadran III. |
-| **Paradoks 4: Sanitasi Dasar vs PDRB** | Variasi akses sanitasi beriringan $2.3\text{x}$ lebih kuat ($r = -0.56$) dibanding PDRB nominal daerah ($r = -0.24$). | **Halaman 3** | *Callout Badge* Determinan Struktural pada Small Multiples Z-Score dan Heatmap Klaster. |
+| **Paradoks 2: The Great Dualism** | Kabupaten ~1.9x lebih miskin dari Kota (13.51% vs 7.22%), namun Kota 1.8x lebih menganggur (7.92% vs 4.36%). | **Halaman 2** | Grouped Bar Chart komparasi dualistik Kabupaten vs Kota berlabel rasio ~1.9x vs 1.8x. |
+| **Paradoks 3: The Resource Curse** | 17 daerah dengan PDRB $\ge \text{Rp } 25\text{ Triliun}$ tetap memiliki kemiskinan di atas median nasional (Mimika, Bojonegoro, Morowali, Bintuni), mengindikasikan fenomena enclave ekstraktif. | **Halaman 4** | **[Pin: Kutukan Sumber Daya]** pada Matriks 2x2 yang mengisolasi titik PDRB raksasa di Kuadran III. |
+| **Paradoks 4: Sanitasi Dasar vs PDRB** | Korelasi bivariat sanitasi beriringan kuat ($r = -0.56$); pada OLS multivariat terstandarisasi, sanitasi ($\beta = -0.21$) dan $\log_{10}(\text{PDRB})$ ($\beta = -0.20$) berkontribusi komplementer. | **Halaman 3** | *Callout Badge* Faktor Layanan Dasar pada Small Multiples Z-Score dan Heatmap Klaster. |
 | **Paradoks 5: Disparitas Madura** | Jarak $5.4\text{ km}$ Jembatan Suramadu memisahkan Surabaya ($P_0 = 5.2\%$, RLS 10.5 thn) dengan Sampang ($P_0 = 23.8\%$, RLS 4.86 thn). | **Halaman 4** | **[Pin: Disparitas Madura]** pada Matriks 2x2 yang mengisolasi 4 kabupaten Madura vs Ring-1 Jatim. |
-| **Paradoks 6: 3T di Kawasan Barat** | Kemiskinan akut melintasi bujur timur-barat; Kepulauan Nias dan Mentawai memiliki sanitasi $38.9\%$ dan RLS $6.4\text{ thn}$. | **Halaman 1 & 3** | Label anomali spasial pada Jittered Strip Plot Kepulauan & Klaster 3T Terisolir. |
+| **Paradoks 6: 3T di Kawasan Barat** | Kemiskinan akut melintasi bujur timur-barat; Kepulauan Nias dan Mentawai memiliki sanitasi $38.9\%$ dan RLS $6.4\text{ thn}$ (bagian dari 13.1% kantong akut barat). | **Halaman 1 & 3** | Label anomali spasial pada Jittered Strip Plot Kepulauan & Klaster 3T Terisolir. |
 | **Paradoks 7: The Educated Poor** | Daerah kepulauan terpencil mencatat RLS setara SMP/SMA ($8.2–9.2\text{ thn}$) namun $P_0$ tetap kritis ($27\%–38\%$). | **Halaman 3** | Anotasi titik anomali pada visualisasi profil klaster (Supiori, Waropen, Bintuni). |
-| **Paradoks 8: Dekonstruksi Label Kaggle** | Label biner Kaggle terbukti merupakan aturan heuristik sederhana ($P_0 > 20\%$ atau pengeluaran rendah), membenarkan penolakan model klasifikasi. | **Halaman 5** | Kotak Transparansi Metodologi: Pembuktian Target Leakage & Rekonstruksi Aturan 98.8%. |
-| **Paradoks 9: Elastisitas OLS Baku** | Daya beli ($\beta = -0.32$) dan sanitasi ($\beta = -0.21$) mendominasi elastisitas multivariat; TPAK ($\beta = +0.18$) positif signifikan. | **Halaman 5** | Visualisasi Horizontal Bar Chart Koefisien Baku Regresi OLS untuk Auditor Ekonometrika. |
+| **Paradoks 8: Dekonstruksi Label Kaggle** | Label biner Kaggle terbukti merupakan aturan heuristik sederhana ($P_0 > 20\%$ atau pengeluaran rendah), memvalidasi penolakan model klasifikasi. | **Halaman 5** | Kotak Transparansi Metodologi: Pembuktian Target Leakage & Rekonstruksi Aturan 98.8%. |
+| **Paradoks 9: Koefisien Regresi Terstandarisasi OLS** | Daya beli ($\beta = -0.32$) dan sanitasi ($\beta = -0.21$) mendominasi koefisien terstandarisasi multivariat; TPAK ($\beta = +0.18$) positif signifikan. | **Halaman 5** | Visualisasi Horizontal Bar Chart Koefisien Terstandarisasi Baku Regresi OLS untuk Auditor Ekonometrika. |
 
 ---
 
@@ -95,9 +95,9 @@ Sesuai temuan Stephen Few mengenai pola pemindaian mata (*F-Pattern* dan *Z-Patt
 2. **Satu Layar, Satu Pekerjaan Utama:** Setiap halaman dashboard memiliki 1 pertanyaan inti, 1 visual primer dominan, dan 1 aksi eksplorasi lanjutan yang jelas.
 3. **Penerjemahan Narasi ke Komponen Visual:** Dilarang menempelkan esai atau artikel panjang di layar; seluruh pesan analitis diterjemahkan ke dalam *Action Titles*, anotasi langsung, dan tombol penyorot kasus interaktif.
 4. **Pencegahan Target Leakage ($P_0$ sebagai Tolok Ukur Eksternal):** Indikator $P_0$ tidak disertakan dalam pembentukan fitur klastering utama, melainkan difungsikan sebagai tolok ukur pengujian eksternal (*external benchmark*) pasca-klaster.
-5. **Disiplin Bahasa Determinan Struktural & Asosiasi Statistik:**
-   * Dalam kerangka teori pembangunan dan perencanaan sosial, fasilitas dasar (sanitasi, air, pendidikan) diakui sebagai **determinan struktural langsung (*underlying structural determinants*)**.
-   * Dalam konteks analisis data kuantitatif BPS 2021, data disajikan secara disiplin sebagai **asosiasi empiris potong lintang (*cross-sectional statistical association*)**.
+5. **Disiplin Bahasa Faktor Layanan Dasar & Asosiasi Statistik:**
+   * Dalam kerangka teori pembangunan dan perencanaan sosial, akses air dan sanitasi diposisikan sebagai **faktor materiil infrastruktur dasar (*underlying basic infrastructure determinants*)**, sedangkan pendidikan dan tata kelola merupakan determinan struktural sosial.
+   * Dalam konteks analisis data kuantitatif BPS 2021, seluruh hubungan empiris disajikan secara disiplin sebagai **asosiasi statistik potong lintang (*cross-sectional statistical association*)**, bukan klaim kausalitas langsung.
 6. **Tidak Menyamakan Klaster dengan Kategori Resmi Pemerintah:** Penamaan persona klaster merupakan ringkasan deskriptif interpretatif tim analis, bukan status yuridis resmi daerah.
 7. **Transparansi Nilai Batas Lapangan (*Boundary Values*):** Nilai minimum $0.00\%$ pada wilayah 3T ditampilkan secara terbuka sebagai fakta lapangan faktual, bukan disembunyikan atau dibuang (*no data dropping*).
 8. **Anti-Hardcoded Snapshot:** Seluruh metrik agregat, nilai KPI, dan kartu ringkasan wajib dihitung secara dinamis saat runtime dari dataset aktif di memori.
@@ -113,7 +113,7 @@ Sesuai temuan Stephen Few mengenai pola pemindaian mata (*F-Pattern* dan *Z-Patt
   * *Halaman 2 (Map & Explorer):* Peta/ranking sekitar `60–65%`, panel komparasi dualisme bawah `35–40%`.
   * *Halaman 3 (Profiles):* Heatmap dan small multiples mendominasi area utama; panel arketipe di bagian samping/bawah.
   * *Halaman 4 (Matrix):* Scatterplot kuadran `60–65%`, panel rekomendasi & case pin `35–40%`.
-  * *Halaman 5 (Method):* Tab terstruktur rapi dengan tabel metadata dan grafik koefisien OLS.
+  * *Halaman 5 (Method):* Tab terstruktur rapi dengan tabel metadata dan grafik koefisien regresi terstandarisasi baku OLS.
 
 | Breakpoint Layar | Perilaku Layout & Navigasi |
 | :--- | :--- |
@@ -144,17 +144,17 @@ Sistem antarmuka wajib merancang 6 state defensif:
 ## 3. Standar Pemilihan Grafik & Prinsip Decluttering
 
 ### 3.1 Matriks Pemilihan Tipe Grafik Sesuai Kaidah Desain
-Mengacu pada prinsip visualisasi data komparatif pada [`dashboard_guide.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/dashboard_guide.md):
+Mengacu pada prinsip visualisasi data komparatif pada [`dashboard_guide.md`](../dashboard_guide.md):
 
 | Kebutuhan Analitis & Storytelling | Tipe Grafik Terpilih | Yang DILARANG / DIHINDARI | Alasan Ilmiah & Justifikasi |
 | :--- | :--- | :--- | :--- |
 | **Distribusi Makro & Jurang 17.5x** | **Histogram Distribusi & Ranking Bar Chart** | Pie Chart, Donut Chart | Distribusi 514 titik data kontinu dan menceng kanan; pie chart gagal memperlihatkan bentuk ekor ketimpangan (*skewness*). |
 | **Sebaran Regional & Anomali 3T Barat**| **Jittered Strip Plot (Dot Density)** | Boxplot biasa (pada layar utama) | Menghindari kebingungan kuartil non-teknis; menampilkan 514 titik data riil dengan garis median tebal per pulau. |
-| **Dikotomi The Great Dualism** | **Grouped Horizontal Bar Chart** | Dual-axis Bar Chart | Membandingkan rasio kemiskinan (13.51% vs 7.22%) dan pengangguran (7.92% vs 4.36%) kabupaten vs kota secara berdampingan. |
+| **Dikotomi The Great Dualism** | **Grouped Horizontal Bar Chart** | Dual-axis Bar Chart | Membandingkan rasio kemiskinan (13.51% vs 7.22%, rasio 1.87x ~ 1.9x) dan pengangguran (7.92% vs 4.36%, rasio 1.82x ~ 1.8x) kabupaten vs kota secara berdampingan. |
 | **Paradoks The Working Poor** | **Scatterplot Regresi (TPAK vs $P_0$)** | Tabel angka mentah | Menunjukkan tren korelasi positif ($r = +0.462$) dan posisi anomali wilayah 3T subsisten vs kota terdidik. |
 | **Profil Multidimensi Klaster** | **Small Multiples Bar / Heatmap Matrix** | **STRICTLY FORBIDDEN: Radar / Spider Chart** | Radar chart mendistorsi luas area akibat urutan sumbu buatan. Bar chart Z-score memiliki sumbu linear objektif dengan zero baseline. |
 | **Skrining Kerentanan & Case Pins** | **Scatterplot Kuadran Kartesius (1:1)** | Dual-Axis Line Chart | Menghindari korelasi palsu sumbu ganda; dua sumbu dengan garis referensi median membentuk 4 kuadran skrining prioritas yang intuitif. |
-| **Audit Ekonometrika & Nilai Batas** | **Horizontal Bar Chart Koefisien Baku OLS** | Tabel regresi teks mentah | Menyajikan nilai elastisitas $\beta$ secara visual dengan tingkat signifikansi yang mudah dipahami. |
+| **Audit Ekonometrika & Nilai Batas** | **Horizontal Bar Chart Koefisien Baku OLS** | Tabel regresi teks mentah | Menyajikan nilai koefisien regresi terstandarisasi ($\beta$) secara visual dengan tingkat signifikansi yang mudah dipahami. |
 
 ### 3.2 Prinsip Decluttering & Rasio Tinta-Data (Data-Ink Ratio)
 * **Hilangkan Garis Kisi Berat:** Gunakan garis kisi abu-abu sangat tipis (`#E2E8F0`) hanya pada sumbu bernilai, atau hilangkan total jika label batang langsung tersedia.
@@ -184,9 +184,9 @@ Format visual kartu KPI terstandarisasi untuk metrik kunci:
 ```text
 ┌──────────────────────────────────────────────┐
 │ KONSENTRASI KEMISKINAN AKUT (P0 >= 20%)      │  <-- Label jelas & spesifik
-│ 87.1% di Kawasan Timur                       │  <-- Angka utama (runtime)
+│ 86.9% di Kawasan Timur                       │  <-- Angka utama (runtime: 53/61)
 │ 53 dari 61 kantong akut di Maluku, Papua, NTT│  <-- Konteks wilayah riil
-│ Kawasan barat menyumbang 12.9% (pulau 3T)    │  <-- Pembeda spasial
+│ Kawasan barat menyumbang 13.1% (8 daerah 3T) │  <-- Pembeda spasial (8/61)
 └──────────────────────────────────────────────┘
 ```
 
@@ -207,9 +207,18 @@ Untuk mencegah kelelahan visual (*alarm fatigue*):
 * **Teks Utama (*Ink*):** `#1E293B` (Slate gelap, rasio kontras $> 7:1$ terhadap latar).
 * **Teks Sekunder (*Muted*):** `#64748B` (Abu-abu netral).
 * **Aksen Tunggal Kritis (SDG 1 Red):** `#E5243B` — digunakan untuk menyorot kondisi kemiskinan ekstrem atau badge SDG 1.
+* **Standar Aksesibilitas Kontras (WCAG 2.1 Level AA):**
+  * Teks utama (`#1E293B`) di atas putih (`#FFFFFF`) menghasilkan rasio kontras $> 11:1$ (memenuhi Level AAA).
+  * Teks sekunder/muted wajib menggunakan warna Slate 600 (`#475569`) dengan rasio kontras $> 5.5:1$ di atas putih dan $> 5.0:1$ di atas `#F8FAFC` (lulus Level AA $\ge 4.5:1$). Hindari penggunaan `#64748B` untuk teks ukuran kecil karena berada tipis pada ambang batas $4.5:1$.
+  * Warna Vermillion (`#D55E00`) memiliki rasio kontras $3.88:1$ di atas putih; warna ini **hanya dialokasikan untuk elemen non-teks, penanda titik/garis grafik, badge kontras terbalik, atau teks angka KPI ekstra-besar ($\ge 24	ext{ px}$ bold)** yang memenuhi standar teks besar WCAG ($\ge 3.0:1$). Dilarang menggunakan `#D55E00` untuk teks narasi berukuran reguler (gunakan `#9E3A00` atau `#991B1B` jika memerlukan teks merah kontras tinggi $\ge 4.5:1$).
 
 ### 5.2 Palet Klaster Ramah Buta Warna (*Okabe-Ito Colorblind-Safe*)
 Sesuai standar `AGENTS.md`, pewarnaan 4 klaster sosio-ekonomi wajib menggunakan palet Okabe-Ito:
+
+> [!IMPORTANT]
+> **Pemisahan Semantik Palet Klaster vs Kuadran 2x2:**  
+> Untuk mencegah disorientasi kognitif visual (Stephen Few), warna palet Okabe-Ito (`#0072B2`, `#E69F00`, `#009E73`, `#D55E00`) dialokasikan secara **khusus untuk 4 Klaster Sosio-Ekonomi** di Halaman 3.  
+> Pada Matriks Kuadran 2x2 (Halaman 4), pembedaan 4 kuadran menggunakan **arsir zona latar belakang lembut (*quadrant background zone tinting*)** dan label kuadran yang eksplisit. Titik scatterplot pada Matriks 2x2 tetap merepresentasikan **Klaster aslinya** atau **kategori studi kasus terpilih**, sehingga pengguna tidak mengalami kebingungan makna warna antara klaster vs kuadran.
 
 | Entitas | Nama Klaster Persona | Kode Hex | Karakteristik Visual & Aksesibilitas |
 | :---: | :--- | :---: | :--- |
@@ -255,9 +264,9 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
 * **The Working Poor Callout:**  
   > *\"💡 DIKOTOMI KETENAGAKERJAAN: Angka pengangguran rendah di wilayah 3T (~0.00%) bukan mencerminkan kemakmuran, melainkan keharusan mutlak warga bekerja subsistensi harian demi bertahan hidup. Sebaliknya, pengangguran terbuka perkotaan didominasi pencari kerja terdidik (search unemployment).\"*
 * **The Resource Curse Callout:**  
-  > *\"💡 DISTORSI EKSTRAKTIF: Daerah tambang dan migas raksasa (Mimika PDRB Rp69.6T, Bojonegoro Rp65.8T) tetap mencatat kemiskinan di atas median nasional, membuktikan terjadinya enclave economy tanpa penyerapan tenaga kerja lokal yang memadai.\"*
+  > *\"💡 DISTORSI EKSTRAKTIF: Daerah tambang dan migas raksasa (Mimika PDRB Rp69.6T, Bojonegoro Rp65.8T) tetap mencatat kemiskinan di atas median nasional, mengindikasikan terjadinya distorsi enclave economy tanpa penyerapan tenaga kerja lokal yang memadai.\"*
 * **Disparitas Madura Callout:**  
-  > *\"💡 KETERBATASAN KONEKTIVITAS FISIK: Jembatan Suramadu menghubungkan Surabaya (P0 5.2%, RLS 10.5 thn) dengan Sampang (P0 23.8%, RLS 4.86 thn), membuktikan infrastruktur fisik gagal memutus kemiskinan tanpa intervensi pendidikan dan sanitasi mendasar.\"*
+  > *\"💡 KETERBATASAN KONEKTIVITAS FISIK: Jembatan Suramadu menghubungkan Surabaya (P0 5.2%, RLS 10.5 thn) dengan Sampang (P0 23.8%, RLS 4.86 thn), mengindikasikan bahwa infrastruktur fisik semata belum memadai untuk memutus kemiskinan tanpa intervensi pendidikan dan fasilitas dasar permukiman.\"*
 
 ---
 
@@ -273,7 +282,7 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
   2. *Top-Left KPI Strip (Runtime-Calculated):*
      * **Kartu 1 (Benchmark Nasional):** Median $P_0$ `10.46%` | Rentang `2.38% – 41.66%` (514 daerah).
      * **Kartu 2 (Rasio Ekstrem):** Jurang Disparitas `17.50x Lipat` (Aksen Vermillion `#D55E00`).
-     * **Kartu 3 (Konsentrasi Spasial):** `87.1% di Kawasan Timur` (53 dari 61 kantong akut di Maluku, Papua, NTT).
+     * **Kartu 3 (Konsentrasi Spasial):** `86.9% di Kawasan Timur` (53 dari 61 kantong akut di Maluku, Papua, NTT, sementara kawasan barat menyumbang 13.1%).
   3. *Visual Primer (Jittered Strip Plot 6 Kepulauan):*
      * Sebaran 514 titik wilayah per pulau dengan garis median tebal per pulau.
      * *Anotasi Visual Langsung:* Penanda panah ke titik-titik Kepulauan Nias dan Mentawai di Sumatera (*"Anomali Barat: Daerah kepulauan terisolir dengan profil kerentanan menyerupai wilayah timur"*).
@@ -290,8 +299,8 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
      * Layer Selector: [Tingkat Kemiskinan $P_0$ %], [Sanitasi Layak %], [Air Bersih %], [Pengeluaran Riil], [TPT %], [TPAK %].
      * *Geospatial Fallback:* Mode alternatif Horizontal Bar Chart jika file GeoJSON tidak termuat.
   2. *Komparasi Kiri Bawah (The Great Dualism):*
-     * *Action Title:* **"The Great Dualism: Kabupaten 1.8x Lebih Miskin, Namun Kota 1.8x Lebih Menganggur"**.
-     * Grouped Bar Chart: Kemiskinan (Kabupaten 13.51% vs Kota 7.22%) dan Pengangguran (Kota 7.92% vs Kabupaten 4.36%).
+     * *Action Title:* **"The Great Dualism: Kabupaten ~1.9x Lebih Miskin, Namun Kota ~1.8x Lebih Menganggur"**.
+     * Grouped Bar Chart: Kemiskinan (Kabupaten 13.51% vs Kota 7.22%, rasio 1.87x ~ 1.9x) dan Pengangguran (Kota 7.92% vs Kabupaten 4.36%, rasio 1.82x ~ 1.8x).
   3. *Komparasi Kanan Bawah (The Working Poor Paradox):*
      * *Action Title:* **"The Working Poor: Tekanan Kerja Subsistensi Menekan Angka Pengangguran di Daerah Miskin"**.
      * Scatterplot TPAK vs $P_0$ dengan garis tren korelasi positif ($r = +0.462$).
@@ -299,20 +308,24 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
 
 ---
 
-### Halaman 3: `03. Regional Profiles` (The Archetypes — Determinan Fasilitas Dasar)
+### Halaman 3: `03. Regional Profiles` (The Archetypes — Faktor Layanan Dasar)
 * **Pertanyaan Kunci:** *Apa karakteristik setiap kelompok daerah dan apa yang membedakannya?*
-* **Fokus Storytelling:** Membuktikan secara ilmiah bahwa konfigurasi defisit fasilitas dasar antardaerah berbeda-beda melalui *Unsupervised Clustering* murni (*Zero Target Leakage*).
+* **Fokus Storytelling:** Menguraikan konfigurasi defisit fasilitas fisik dan layanan dasar antardaerah melalui *Unsupervised Clustering* murni (*Zero Target Leakage*).
 * **Komponen & Layout:**
-  1. *Action Title & Banner Determinan Struktural:*
-     * Judul: *"Profil 4 Arketipe: Defisit Fasilitas Dasar Menjadi Determinan Struktural Antar-Klaster"*.
-     * *Banner Insight:* *"Sebagai determinan struktural kebutuhan dasar, defisit sanitasi layak ($r = -0.56$) dan air bersih ($r = -0.42$) beriringan sangat kuat dengan tingginya kemiskinan, jauh melampaui variasi PDRB nominal ($r = -0.24$) yang sering kali terkonsentrasi pada industri padat modal."*
-  2. *Header Diagnostik Model:* Ringkasan $k=4$, Silhouette Score ($0.2028$), Davies-Bouldin ($1.4522$), dan stabilitas multi-seed ARI ($0.9803$).
+  1. *Action Title & Banner Faktor Layanan Dasar:*
+     * Judul: *"Profil 4 Arketipe: Defisit Layanan Dasar Beriringan Erat dengan Disparitas Antar-Klaster"*.
+     * *Banner Insight:* *"Pada telaah bivariat, defisit sanitasi layak ($r = -0.56$) dan air bersih ($r = -0.42$) beriringan sangat kuat dengan tingginya kemiskinan mendampingi PDRB nominal skala asli ($r = -0.24$) yang sangat menceng. Namun pada telaah multivariat, sanitasi ($\beta = -0.209$) dan log PDRB ($\beta = -0.197$) keduanya memberikan kontribusi signifikan yang saling melengkapi sebagai pilar kesejahteraan."*
+  2. *Header Diagnostik Model & Refleksi Metodologi:*
+     * Menampilkan metrik $k=4$, Silhouette Score ($0.2028$), Davies-Bouldin ($1.4522$), dan stabilitas multi-seed ARI ($0.9803$).
+     * *Catatan Refleksi Metodologi (Kejujuran Ilmiah):* Sesuai skala Kaufman & Rousseeuw (1990), nilai Silhouette $0.2028$ berada pada rentang struktur klaster moderat-rendah, yang mencerminkan realitas empiris bahwa disparitas sosial-ekonomi 514 daerah di Indonesia membentuk suatu kontinum gradasi alami, bukan klaster bola terpisah secara terisolasi. Oleh karena itu, klastering K-Means di sini difungsikan secara tepat sebagai instrumen diskretisasi tipologi profiling yang stabil (ARI $0.9803$), bukan klaim partisi alami mutlak.
+  3. *Komposisi Keanggotaan Klaster Baseline:*
+     * Rujukan sebaran kanonik: Klaster 1 Perkotaan Modern (78 daerah / 15.2%), Klaster 2 Penyangga Mapan (187 daerah / 36.4%), Klaster 3 Agraris Rentan (216 daerah / 42.0%), Klaster 4 3T Deprivasi Akut (33 daerah / 6.4%). Seluruh ringkasan metrik dihitung secara dinamis saat runtime.
   3. *Visual Primer (STRICTLY NO RADAR CHART):*
      * **Small Multiples Horizontal Bar Charts (Z-Score):** Deviasi 7 indikator terhadap mean nasional pada 4 klaster persona.
      * **Heatmap Matrix Karakteristik:** Matriks 28 sel z-score indikator (Biru = Unggul, Oranye/Merah = Defisit).
   4. *Anotasi Kasus "The Educated Poor":*
      * Penandaan khusus pada anomali Kab. Supiori (RLS 8.87 thn, $P_0 = 37.91\%$) dan Kab. Waropen (RLS 9.21 thn, $P_0 = 29.85\%$) yang menunjukkan bahwa pendidikan tanpa serapan pasar kerja formal tidak mampu mengentaskan kemiskinan.
-  5. *Validasi Inferensial Eksternal:* Jittered Strip Plot distribusi $P_0$ antarklaster beranotasi hasil ANOVA ($F=155.94, p < 0.001$).
+  5. *Validasi Inferensial Eksternal:* Jittered Strip Plot distribusi $P_0$ antarklaster beranotasi hasil ANOVA ($F=155.94, p < 0.001$), disertai catatan bahwa signifikansi statistik ini sejalan dengan korelasi bawaan antara fitur pembentuk klaster (pengeluaran, sanitasi, sekolah) terhadap kemiskinan moneter, sekaligus mengonfirmasi efektivitas pemisahan gradasi profil kesejahteraan.
 
 ---
 
@@ -334,14 +347,14 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
      * **Kuadran III (Kantong Kemiskinan Daya Beli | 95 Daerah / 18.5%):** Reddish Purple `#CC79A7`.
      * **Kuadran IV (Wilayah Terbina / Mapan | 162 Daerah / 31.5%):** Dark Blue `#0072B2`.
   4. *Panel Rekomendasi Samping & Lookup Kebijakan:*
-     * Terintegrasi dengan [`data/processed/policy_recommendations_matrix.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/policy_recommendations_matrix.csv) untuk menampilkan menu intervensi APBN/TKD dan instansi pengampu secara dinamis saat kuadran atau titik dipilih.
+     * Terintegrasi dengan [`data/processed/policy_recommendations_matrix.csv`](../data/processed/policy_recommendations_matrix.csv) untuk menampilkan menu intervensi APBN/TKD dan instansi pengampu secara dinamis saat kuadran atau titik dipilih.
      * Tombol aksi berlabel **`Ekspor daftar skrining`** (bukan `Daftar penerima bantuan`).
 
 ---
 
 ### Halaman 5: `05. Methodology & Data Quality` (The Integrity — Transparansi Batas Data & OLS)
 * **Pertanyaan Kunci:** *Bagaimana temuan diperoleh dan apa yang tidak dapat disimpulkan?*
-* **Fokus Storytelling:** Menjaga transparansi akademis, membongkar dekonstruksi model biner Kaggle, dan membuktikan keabsahan angka ekstrem di hadapan auditor data.
+* **Fokus Storytelling:** Menjaga transparansi akademis, membongkar dekonstruksi model biner Kaggle, dan memverifikasi keabsahan angka ekstrem di hadapan auditor data.
 * **Komponen & Layout:**
   1. *Action Title:* **"Integritas Metodologi: Rekonsiliasi Data BPS 2021, Dekonstruksi Model, & Verifikasi Nilai Batas"**.
   2. *Tab 1: Transparansi Nilai Batas Lapangan Ekstrem:*
@@ -351,9 +364,9 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
      * Menampilkan bukti matematis formula heuristik aturan biner:
        $$\text{Class 1} \iff (P_0 > 20.0\%) \lor (\text{Pengeluaran} \le 6.25 \text{ Juta} \land \text{Sanitasi} \le 56.0\%)$$
      * Akurasi rekonstruksi formula terhadap 514 data: **98.8%** (508 dari 514 daerah identik).
-     * Membuktikan secara ilmiah mengapa label biner Kaggle ditolak untuk mencegah *target leakage* dan *circular reasoning*.
-  4. *Tab 3: Ekonometrika Multivariat OLS & Koefisien Elastisitas Relatif:*
-     * Horizontal Bar Chart koefisien regresi linier berganda baku ($\beta$):
+     * Memberikan bukti empiris kuat mengapa label biner Kaggle ditolak untuk mencegah *target leakage* dan *circular reasoning*.
+  4. *Tab 3: Ekonometrika Multivariat OLS & Koefisien Regresi Terstandarisasi Baku ($eta$):*
+     * Horizontal Bar Chart koefisien regresi linier berganda terstandarisasi baku ($\beta$):
        * Pengeluaran Riil ($\beta = -0.317$, $t = -5.82$, $p < 0.0001$)
        * Akses Sanitasi Layak ($\beta = -0.209$, $t = -4.66$, $p < 0.0001$)
        * $\log_{10}(\text{PDRB})$ ($\beta = -0.197$, $t = -4.30$, $p < 0.0001$)
@@ -362,7 +375,7 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
        * Pengangguran Terbuka TPT ($\beta = +0.093$, $t = +2.04$, $p = 0.0415$)
   5. *Inspeksi Outlier Teknis & Kamus Data:*
      * Boxplot Tukey 1.5x IQR untuk memeriksa 36 pencilan numerik.
-     * Tabel kamus data interaktif dan tombol unduh file bersih [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv).
+     * Tabel kamus data interaktif dan tombol unduh file bersih [`data/interim/poverty_data_cleaned.csv`](../data/interim/poverty_data_cleaned.csv).
 
 ---
 
@@ -377,18 +390,18 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
 * **P0 adalah Rate (%):** Indikator $P_0$ adalah rasio persentase penduduk miskin, bukan jumlah absolut orang miskin. Dilarang menyebut daerah dengan $P_0$ tertinggi sebagai daerah dengan orang miskin terbanyak.
 * **Pembedaan *Percentage Point* vs *Percent Change*:** Ketika membandingkan dua angka kemiskinan (misal 12% vs 10%), gunakan istilah "selisih 2 poin persentase", bukan "berbeda 2%".
 * **Korelasi vs Determinan:** Sajikan koefisien korelasi bersama konteks teori kebutuhan dasar (sanitasi dan pendidikan sebagai determinan struktural mendasar) tanpa klaim kausalitas deterministik tunggal pada data potong lintang.
-* **Batas Uji ANOVA:** Nilai $p < 0.001$ pada uji beda rata-rata membuktikan keberhasilan algoritma memisahkan profil daerah, bukan bukti keberhasilan program intervensi di lapangan.
+* **Batas Uji ANOVA:** Nilai  < 0.001$ pada uji beda rata-rata mengonfirmasi keberhasilan algoritma memisahkan profil daerah, bukan bukti keberhasilan program intervensi di lapangan.
 
 ### 8.3 Matriks Sumber Data & Sinkronisasi State Filter (*Data Flow & State Management*)
 Setiap halaman dashboard mengonsumsi berkas data terstandardisasi dari lapisan data olahan kanonik (`data/processed/` dan `data/interim/`) tanpa melakukan kalkulasi pemodelan ulang saat runtime:
 
 | Halaman Dashboard | File Sumber Data Masukan | Format Data & Ukuran | Komponen / State yang Digunakan |
 | :--- | :--- | :---: | :--- |
-| **Halaman 1**<br>(*Poverty Landscape*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv) | CSV (514 baris, 21 kolom) | Mengagregasi metrik nasional ($P_0$ median 10.46%, rentang, rasio 17.5x), histogram sebaran, dan ranking pulau. |
-| **Halaman 2**<br>(*Poverty & Indicator Map*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>*(Opsi GeoJSON: Poligon 514 Daerah)* | CSV (514 baris)<br>+ GeoJSON FeatureCollection | Menampilkan choropleth map indikator terpilih, rasio dualistik kabupaten vs kota (1.8x), dan scatter TPAK vs $P_0$. |
-| **Halaman 3**<br>(*Regional Profiles*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>[`data/processed/poverty_cluster_summary.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_cluster_summary.csv) | CSV (514 baris)<br>CSV (4 baris, 30 kolom) | Memuat ringkasan rata-rata 7 fitur Z-Score per klaster, profil persona, metrik evaluasi model, dan ANOVA $P_0$. |
-| **Halaman 4**<br>(*Priority & Implications*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>[`data/processed/policy_recommendations_matrix.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/policy_recommendations_matrix.csv) | CSV (514 baris)<br>CSV (8 baris, 13 kolom) | Merender scatterplot kuadran 2x2 ($P_0$ vs $V_{struc}$), toolbar Case-Study Pins, tabel daftar skrining, dan lookup rekomendasi kebijakan. |
-| **Halaman 5**<br>(*Methodology & Data Quality*) | [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv)<br>[`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) | CSV (514 baris, 18 kolom)<br>Markdown data dictionary | Menyajikan kamus data, verifikasi rekonsiliasi BPS 2021, visualisasi Tukey boxplot outlier, tabel nilai batas 0%, dan tombol unduh dataset. |
+| **Halaman 1**<br>(*Poverty Landscape*) | [`data/processed/poverty_clusters.csv`](../data/processed/poverty_clusters.csv) | CSV (514 baris, 21 kolom) | Mengagregasi metrik nasional ($P_0$ median 10.46%, rentang, rasio 17.5x), histogram sebaran, dan ranking pulau. |
+| **Halaman 2**<br>(*Poverty & Indicator Map*) | [`data/processed/poverty_clusters.csv`](../data/processed/poverty_clusters.csv)<br>*(Opsi GeoJSON: Poligon 514 Daerah)* | CSV (514 baris)<br>+ GeoJSON FeatureCollection | Menampilkan choropleth map indikator terpilih, rasio dualistik kabupaten vs kota (1.8x), dan scatter TPAK vs $P_0$. |
+| **Halaman 3**<br>(*Regional Profiles*) | [`data/processed/poverty_clusters.csv`](../data/processed/poverty_clusters.csv)<br>[`data/processed/poverty_cluster_summary.csv`](../data/processed/poverty_cluster_summary.csv) | CSV (514 baris)<br>CSV (4 baris, 30 kolom) | Memuat ringkasan rata-rata 7 fitur Z-Score per klaster, profil persona, metrik evaluasi model, dan ANOVA $P_0$. |
+| **Halaman 4**<br>(*Priority & Implications*) | [`data/processed/poverty_clusters.csv`](../data/processed/poverty_clusters.csv)<br>[`data/processed/policy_recommendations_matrix.csv`](../data/processed/policy_recommendations_matrix.csv) | CSV (514 baris)<br>CSV (8 baris, 13 kolom) | Merender scatterplot kuadran 2x2 ($P_0$ vs $V_{struc}$), toolbar Case-Study Pins, tabel daftar skrining, dan lookup rekomendasi kebijakan. |
+| **Halaman 5**<br>(*Methodology & Data Quality*) | [`data/interim/poverty_data_cleaned.csv`](../data/interim/poverty_data_cleaned.csv)<br>[`data/README.md`](../data/README.md) | CSV (514 baris, 18 kolom)<br>Markdown data dictionary | Menyajikan kamus data, verifikasi rekonsiliasi BPS 2021, visualisasi Tukey boxplot outlier, tabel nilai batas 0%, dan tombol unduh dataset. |
 
 #### Aturan Sinkronisasi State Global Antar-Halaman (*Global Filter State Management*):
 Untuk menjamin pengalaman eksplorasi yang kohesif (*seamless UX*), status filter dikelola secara terpusat (*centralized application state*) agar perubahan pilihan filter di satu layar otomatis tersinkronisasi ke layar lainnya:
@@ -413,7 +426,7 @@ Untuk menjamin objektivitas ilmiah, kepatuhan teoritis, dan mencegah overclaimin
 
 | Diksi Terpilih (Direkomendasikan) | Diksi yang DILARANG / DIHINDARI | Justifikasi Ilmiah & Kebijakan |
 | :--- | :--- | :--- |
-| **"Determinan struktural kebutuhan dasar"** | "Akar penyebab kemiskinan mutlak" | Mengakui teori kemiskinan multidimensi tanpa klaim kausalitas deterministik tunggal pada data potong lintang. |
+| **"Faktor materiil infrastruktur & layanan dasar"** | "Akar penyebab kemiskinan mutlak / determinan struktural tunggal" | Mengakui peran vital fasilitas dasar secara tepat tanpa mengaburkan klasifikasi determinan sosial atau mengklaim kausalitas deterministik pada data potong lintang. |
 | **"Tekanan kerja subsistensi"** | "Bukan pengangguran sejati / pura-pura" | Menghormati fakta sosiologis bahwa warga miskin wajib bekerja informal setiap hari demi bertahan hidup. |
 | **"Disparitas ekstrem antardaerah"** | "Daerah paling tertinggal / gagal" | Objektivitas netral tanpa konotasi peyoratif terhadap wilayah 3T. |
 | **"Search unemployment kelas menengah"** | "Pengangguran perkotaan adalah hak istimewa" | Terminologi formal ekonomi ketenagakerjaan yang lebih tepat bagi perencana kebijakan. |
@@ -438,18 +451,19 @@ flowchart TD
 ```
 
 ### A. Fitur MVP (Wajib Ada untuk Demonstrasi Presentasi)
-1. Overview makro dengan KPI strip dinamis (Median 10.46%, Disparitas 17.5x, Konsentrasi Timur 87.1%).
+1. Overview makro dengan KPI strip dinamis (Median 10.46%, Disparitas 17.50x, Konsentrasi Timur 86.9%).
 2. Histogram sebaran $P_0$ dan ranking kabupaten/kota.
-3. Filter provinsi, pencarian toleran nama daerah, dan tabel wilayah yang dapat diurutkan.
-4. Komparasi The Great Dualism (bar chart 1.8x) dan scatterplot The Working Poor ($r = +0.462$).
-5. Visualisasi Small Multiples / Heatmap profil 4 klaster dengan banner fasilitas dasar determinan.
-6. Matriks skrining 2x2 dengan garis median dan toolbar Case-Study Pins (Kutukan Tambang & Madura).
-7. Halaman Data & Method dengan transparansi metadata, tabel nilai batas 0%, dekonstruksi label Kaggle 98.8%, dan OLS elastisitas baku.
-8. Tombol ekspor CSV hasil filter aktif berlabel `Ekspor daftar skrining`.
-9. Penanganan state kosong (*empty state*) dan state pemuatan (*loading skeleton*).
+3. Filter wilayah pulau/provinsi, pencarian toleran nama daerah, dan tabel wilayah yang dapat diurutkan.
+4. Peta Spasial / Ranking Spasial 514 Daerah Halaman 2 (Choropleth teroptimasi dengan fallback otomatis ke Ranking Bar Chart Spasial 34 Provinsi jika poligon GeoJSON belum termuat).
+5. Komparasi The Great Dualism (bar chart rasio ~1.9x vs 1.8x) dan scatterplot The Working Poor ($r = +0.462$).
+6. Visualisasi Small Multiples / Heatmap profil 4 klaster dengan refleksi kejujuran metodologi.
+7. Matriks skrining 2x2 dengan garis median, arsir zona kuadran, dan toolbar Case-Study Pins (Kutukan Tambang & Madura).
+8. Halaman Data & Method dengan transparansi metadata, tabel nilai batas 0%, dekonstruksi label Kaggle 98.8%, dan koefisien regresi terstandarisasi baku OLS.
+9. Tombol ekspor CSV hasil filter aktif berlabel `Ekspor daftar skrining`.
+10. Penanganan state kosong (*empty state*) dan state pemuatan (*loading skeleton*).
 
 ### B. Fitur Peningkatan Pasca-MVP
-1. Peta choropleth interaktif berbasis poligon GeoJSON terverifikasi.
+1. Peningkatan fitur peta geospasial: Layer poligon resolusi tinggi, integrasi multi-layer choropleth mendalam, dan custom geographic boundary inspection.
 2. Fitur perbandingan berdampingan (*side-by-side comparison*) antara dua kabupaten.
 3. Kontrol analisis sensitivitas ambang batas matriks (median vs kuartil).
 4. Riwayat unduh profil lengkap format ringkasan laporan PDF/Markdown.
