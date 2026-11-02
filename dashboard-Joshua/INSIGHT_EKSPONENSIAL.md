@@ -144,3 +144,17 @@ Semua grafik telah digenerate di direktori `dashboard-Joshua/figures/`:
 6. `6_kota_vs_kabupaten_dualism.png`: Boxplot ganda disparitas struktural 98 Kota vs 416 Kabupaten.
 7. `7_policy_elasticity_ols.png`: Horizontal bar chart koefisien elastisitas $\beta$ baku regresi OLS.
 8. `8_educated_poor_anomaly.png`: Anomali lama sekolah tinggi tanpa lapangan kerja di pulau terpencil.
+
+---
+
+## 5. Pemilihan & Rasionalisasi Bentuk Visualisasi (Landasan Teori Knaflic & Few)
+
+| No | Bentuk Visualisasi | Pesan Data / Paradoks | Landasan Teori (*Storytelling with Data*) |
+|---|---|---|---|
+| **1** | **Scatter Plot + Anotasi** | Working Poor (TPAK vs Kemiskinan) | **Knaflic hlm 42:** Bentuk baku hubungan 2 variabel kontinu. Titik anomali (Nduga vs Depok) memakai *preattentive attribute* warna & label langsung (*no legend*). |
+| **2** | **Dumbbell Plot (Connected Dots)** | Great Dualism (Kota vs Kabupaten) | **Few (*Perceptual Edge*):** Pengganti terbaik bar/boxplot untuk mengukur *gap* dua kondisi pada indikator yang sama tanpa visual clutter. |
+| **3** | **Matriks Kuadran 2x2** | Resource Curse (PDRB vs Kemiskinan) | **Few & Desbarats:** Segmentasi analitis dengan garis referensi median tegas, mengisolasi anomali fiskal di kuadran kanan-atas. |
+| **4** | **Small Multiples Scatter** | Sanitasi vs PDRB (Uji Daya Ungkit) | **Knaflic hlm 58 & Few:** Alternatif mutlak dari *Dual Y-Axis* (dilarang keras). Dua panel berskala sama dijejerkan untuk adu kemiringan kemiringan (*slope*). |
+| **5** | **Horizontal Ranked Bar** | Madura Disparity vs Surabaya | **Knaflic hlm 50:** Wajib untuk nama kategori panjang agar terbaca horizontal (mata tidak miring), wajib *sorted by value*, baseline nol. |
+| **6** | **Diverging Bar Chart** | Ekonometrika Koefisien $\beta$ OLS | **Knaflic hlm 46 & Few:** Standar baku menampilkan deviasi positif (risiko) vs negatif (proteksi) terhadap baseline titik nol. |
+
