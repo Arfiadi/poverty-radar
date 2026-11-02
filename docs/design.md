@@ -38,10 +38,10 @@ Spesifikasi dashboard ini dirancang selaras dengan perumusan masalah pada [`docs
 
 ```mermaid
 flowchart LR
-    A["Babak 1: The Hook\n(1. Poverty Landscape)\nJurang Ekstrem 17.5x\n& Konsentrasi Timur"] --> B["Babak 2: The Geography\n(2. Poverty & Indicator Map)\nThe Great Dualism &\nThe Working Poor"]
-    B --> C["Babak 3: The Archetypes\n(3. Regional Profiles)\nFasilitas Dasar Determinan\n& The Educated Poor"]
-    C --> D["Babak 4: The Call to Action\n(4. Priority & Implications)\nMatriks 2x2 & Case Pins:\nKutukan Tambang & Madura"]
-    D --> E["Babak 5: The Integrity\n(5. Methodology & Data)\nBatas 0%, Dekonstruksi\nKaggle, & OLS Elasticity"]
+    A["Babak 1: The Hook\r\n(1. Poverty Landscape)\r\nJurang Ekstrem 17.5x\r\n& Konsentrasi Timur"] --> B["Babak 2: The Geography\r\n(2. Poverty & Indicator Map)\r\nThe Great Dualism &\r\nThe Working Poor"]
+    B --> C["Babak 3: The Archetypes\r\n(3. Regional Profiles)\r\nFasilitas Dasar Determinan\r\n& The Educated Poor"]
+    C --> D["Babak 4: The Call to Action\r\n(4. Priority & Implications)\r\nMatriks 2x2 & Case Pins:\r\nKutukan Tambang & Madura"]
+    D --> E["Babak 5: The Integrity\r\n(5. Methodology & Data)\r\nBatas 0%, Dekonstruksi\r\nKaggle, & OLS Elasticity"]
 ```
 
 1. **Babak 1 — *The Hook* (`01. Poverty Landscape`):**  
@@ -59,6 +59,21 @@ flowchart LR
 5. **Babak 5 — *The Integrity* (`05. Methodology & Data Quality`):**  
    *Pertanyaan yang Dijawab:* Bagaimana temuan diperoleh dan apa yang tidak dapat disimpulkan?  
    Menutup cerita dengan transparansi ilmiah penuh: membuktikan data resmi BPS 2021, memverifikasi nilai batas ekstrem $0.00\%$ pada wilayah 3T, membongkar formula heuristik label biner Kaggle (akurasi rekonstruksi 98.8%), dan memaparkan grafik koefisien baku OLS.
+
+### 1.5 Matriks Integrasi 9 Paradoks Sosioekonomi ke Komponen Dashboard
+Untuk memperkuat daya pikat cerita (*data storytelling impact*) tanpa menimbulkan kepadatan teks (*decluttering*), 9 temuan paradoks sosioekonomi dipetakan langsung ke komponen fungsional pada masing-masing halaman:
+
+| Paradoks Sosioekonomi | Temuan Data Kunci | Halaman Dashboard | Bentuk Komponen UI Terintegrasi |
+| :--- | :--- | :---: | :--- |
+| **Paradoks 1: The Working Poor** | Kemiskinan akut di wilayah 3T mencatat TPT $\approx 0.00\%$ & TPAK $> 85\%$; sebaliknya kota kaya mencatat TPT tinggi ($8\%–10\%$). | **Halaman 2** | *Action Title* & Anotasi garis regresi scatterplot TPAK vs $P_0$ ($r = +0.462$). |
+| **Paradoks 2: The Great Dualism** | Kabupaten 1.8x lebih miskin dari Kota (13.51% vs 7.22%), namun Kota 1.8x lebih menganggur (7.92% vs 4.36%). | **Halaman 2** | Grouped Bar Chart komparasi dualistik Kabupaten vs Kota berlabel rasio 1.8x. |
+| **Paradoks 3: The Resource Curse** | 17 daerah dengan PDRB $\ge \text{Rp } 25\text{ Triliun}$ tetap memiliki kemiskinan di atas median nasional (Mimika, Bojonegoro, Morowali, Bintuni). | **Halaman 4** | **[Pin: Kutukan Sumber Daya]** pada Matriks 2x2 yang mengisolasi titik PDRB raksasa di Kuadran III. |
+| **Paradoks 4: Sanitasi Dasar vs PDRB** | Variasi akses sanitasi beriringan $2.3\text{x}$ lebih kuat ($r = -0.56$) dibanding PDRB nominal daerah ($r = -0.24$). | **Halaman 3** | *Callout Badge* Determinan Struktural pada Small Multiples Z-Score dan Heatmap Klaster. |
+| **Paradoks 5: Disparitas Madura** | Jarak $5.4\text{ km}$ Jembatan Suramadu memisahkan Surabaya ($P_0 = 5.2\%$, RLS 10.5 thn) dengan Sampang ($P_0 = 23.8\%$, RLS 4.86 thn). | **Halaman 4** | **[Pin: Disparitas Madura]** pada Matriks 2x2 yang mengisolasi 4 kabupaten Madura vs Ring-1 Jatim. |
+| **Paradoks 6: 3T di Kawasan Barat** | Kemiskinan akut melintasi bujur timur-barat; Kepulauan Nias dan Mentawai memiliki sanitasi $38.9\%$ dan RLS $6.4\text{ thn}$. | **Halaman 1 & 3** | Label anomali spasial pada Jittered Strip Plot Kepulauan & Klaster 3T Terisolir. |
+| **Paradoks 7: The Educated Poor** | Daerah kepulauan terpencil mencatat RLS setara SMP/SMA ($8.2–9.2\text{ thn}$) namun $P_0$ tetap kritis ($27\%–38\%$). | **Halaman 3** | Anotasi titik anomali pada visualisasi profil klaster (Supiori, Waropen, Bintuni). |
+| **Paradoks 8: Dekonstruksi Label Kaggle** | Label biner Kaggle terbukti merupakan aturan heuristik sederhana ($P_0 > 20\%$ atau pengeluaran rendah), membenarkan penolakan model klasifikasi. | **Halaman 5** | Kotak Transparansi Metodologi: Pembuktian Target Leakage & Rekonstruksi Aturan 98.8%. |
+| **Paradoks 9: Elastisitas OLS Baku** | Daya beli ($\beta = -0.32$) dan sanitasi ($\beta = -0.21$) mendominasi elastisitas multivariat; TPAK ($\beta = +0.18$) positif signifikan. | **Halaman 5** | Visualisasi Horizontal Bar Chart Koefisien Baku Regresi OLS untuk Auditor Ekonometrika. |
 
 ---
 
@@ -418,8 +433,8 @@ Setiap kartu insight pada dashboard wajib mengikuti pola 4 struktur:
 
 ```mermaid
 flowchart TD
-    MVP["FASE 1: MVP\n(Wajib untuk Demonstrasi & Presentasi)"] --> POST["FASE 2: Peningkatan Pasca-MVP\n(Eksplorasi Lanjutan)"]
-    POST -.-> DONT["FITUR TERLARANG\n(Scope Creep - Jangan Dikerjakan)"]
+    MVP["FASE 1: MVP\r\n(Wajib untuk Demonstrasi & Presentasi)"] --> POST["FASE 2: Peningkatan Pasca-MVP\r\n(Eksplorasi Lanjutan)"]
+    POST -.-> DONT["FITUR TERLARANG\r\n(Scope Creep - Jangan Dikerjakan)"]
 ```
 
 ### A. Fitur MVP (Wajib Ada untuk Demonstrasi Presentasi)
