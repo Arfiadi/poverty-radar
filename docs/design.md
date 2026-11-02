@@ -349,17 +349,18 @@ Setiap halaman dashboard mengonsumsi berkas data terstandardisasi dari lapisan d
 | **Halaman 4**<br>(*Priority & Implications*) | [`data/processed/poverty_clusters.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/poverty_clusters.csv)<br>[`data/processed/policy_recommendations_matrix.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/processed/policy_recommendations_matrix.csv) | CSV (514 baris)<br>CSV (8 baris, 13 kolom) | Merender scatterplot kuadran 2x2 ($P_0$ vs $V_{struc}$), tabel daftar skrining, dan lookup rekomendasi kebijakan per kuadran. |
 | **Halaman 5**<br>(*Methodology & Data Quality*) | [`data/interim/poverty_data_cleaned.csv`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/interim/poverty_data_cleaned.csv)<br>[`data/README.md`](file:///d:/ARFI/Kuliah/Project/project-semester5/PovertyRadar/data/README.md) | CSV (514 baris, 18 kolom)<br>Markdown data dictionary | Menyajikan kamus data, verifikasi rekonsiliasi BPS 2021, visualisasi Tukey boxplot outlier, dan tombol unduh dataset. |
 
-#### Aturan Sinkronisasi State Global Antar-Halaman (`st.session_state`):
-Untuk menjamin pengalaman eksplorasi yang kohesif (*seamless UX*):
-1. **Penyimpanan State Filter Terpusat:** Variabel filter disimpan pada session state:
-   * `st.session_state['selected_region_pulau']` (default: `'Semua'`)
-   * `st.session_state['selected_provinsi']` (default: `'Semua'`)
-   * `st.session_state['selected_cluster']` (default: `'Semua'`)
-   * `st.session_state['selected_quadrant']` (default: `'Semua'`)
-   * `st.session_state['p0_range']` (default: `[2.38, 41.66]`)
-   * `st.session_state['search_district']` (default: `""`)
-2. **Persistensi Lintas Halaman:** Jika pengguna memfilter Provinsi *"Jawa Timur"* di Halaman 2, filter tersebut tetap aktif ketika berpindah ke Halaman 3 atau Halaman 4, dengan indikator status filter aktif yang selalu terlihat di sidebar.
-3. **Tombol Reset Menyeluruh:** Tombol `Reset filters` di sidebar membersihkan seluruh nilai session state di atas kembali ke nilai default dalam 1 kali klik tanpa memicu *rerun loop*.
+#### Aturan Sinkronisasi State Global Antar-Halaman (*Global Filter State Management*):
+Untuk menjamin pengalaman eksplorasi yang kohesif (*seamless UX*), status filter dikelola secara terpusat (*centralized application state*) agar perubahan pilihan filter di satu layar otomatis tersinkronisasi ke layar lainnya:
+
+1. **Parameter Filter Global & Nilai Standar Sistem:**
+   * **Wilayah Pulau:** Pilihan wilayah pulau utama (Jawa, Sumatera, Kalimantan, Sulawesi, Maluku-Papua, Bali-Nusa Tenggara) dengan nilai standar: *Semua Wilayah*.
+   * **Provinsi:** Pilihan 34 provinsi (tersaring secara hierarkis sesuai pulau yang aktif) dengan nilai standar: *Semua Provinsi*.
+   * **Klaster Sosio-Ekonomi:** Pilihan 4 klaster persona dengan nilai standar: *Semua Klaster*.
+   * **Kuadran Skrining 2x2:** Pilihan 4 kuadran prioritas penapisan portofolio dengan nilai standar: *Semua Kuadran*.
+   * **Rentang Tingkat Kemiskinan ($P_0$):** Kontrol interval persentase kemiskinan dengan nilai standar: *Rentang Penuh (2,38% s.d. 41,66%)*.
+   * **Pencarian Nama Daerah:** Kontrol pencarian nama kabupaten/kota dengan nilai standar: *Kosong (tanpa filter teks)*.
+2. **Persistensi Lintas Halaman:** Jika pengguna memilih filter Provinsi *"Jawa Timur"* di Halaman 2, parameter filter tersebut tetap aktif dan tersimpan saat berpindah ke Halaman 3 atau Halaman 4, dengan indikator status filter aktif yang terlihat jelas pada panel navigasi/sidebar.
+3. **Aksi Reset Menyeluruh:** Kontrol *Reset Filters* pada panel navigasi mengembalikan seluruh parameter filter global di atas kembali ke nilai standar awal dalam satu kali interaksi tanpa menimbulkan anomali render antarmuka.
 
 ---
 
@@ -423,7 +424,7 @@ flowchart TD
 
 > [!NOTE]
 > **Status: Menunggu Diskusi & Kesepakatan Internal Tim**  
-> Penentuan framework dashboard (Python Streamlit / Dash / Shiny for Python, atau React/Next.js dengan Plotly/D3) diputuskan bersama tim dengan mempertimbangkan kesiapan teknis, latensi interaksi filter, dan kelancaran rendering visualisasi.
+> Penentuan framework dashboard diputuskan bersama tim dengan mempertimbangkan kesiapan teknis, latensi interaksi filter, dan kelancaran rendering visualisasi.
 
 ---
 
