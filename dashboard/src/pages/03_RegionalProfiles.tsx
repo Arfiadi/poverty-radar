@@ -67,10 +67,12 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, clusterSummar
         {CLUSTERS.map((c) => {
           const summary = clusterSummary.find(s => s.cluster_id === c.id);
           const cDistricts = districts.filter(d => d.cluster_id === c.id);
-          const meanP0 = summary?.mean_p0 ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.poverty_rate_p0, 0) / cDistricts.length : 0);
-          const meanRls = summary?.mean_avg_school_years ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0);
-          const meanSan = summary?.mean_sanitation ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0);
-          const meanExp = summary?.mean_expenditure ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0);
+          const totalRegions = summary?.total_regions ?? c.count;
+          const pctNational = summary?.pct_of_national ?? Number(((c.count / 514) * 100).toFixed(1));
+          const meanP0 = summary?.poverty_rate_p0_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.poverty_rate_p0, 0) / cDistricts.length : 0);
+          const meanRls = summary?.avg_school_years_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0);
+          const meanSan = summary?.sanitation_access_pct_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0);
+          const meanExp = summary?.expenditure_per_capita_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0);
 
           return (
             <div 
@@ -82,7 +84,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, clusterSummar
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Klaster {c.id + 1}</span>
                   <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
-                    N = {c.count} ({((c.count / 514) * 100).toFixed(1)}%)
+                    N = {totalRegions} ({pctNational.toFixed(1)}%)
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-ink-primary mt-1 leading-snug">{c.name.split(':')[1]}</h3>

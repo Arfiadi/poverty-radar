@@ -26,8 +26,8 @@ export const ISLAND_REGIONS = [
   "Sumatera",
   "Kalimantan",
   "Sulawesi",
-  "Maluku-Papua",
-  "Bali-Nusa Tenggara"
+  "Bali & Nusa Tenggara",
+  "Maluku & Papua"
 ] as const;
 
 export const CLUSTERS = [

@@ -18,10 +18,61 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
       }
     }));
 
+    // Compute real linear regression trendline (OLS)
+    const n = districts.length;
+    let r = 0.462;
+    let regressionData: any[] = [];
+
+    if (n >= 2) {
+      let sumX = 0;
+      let sumY = 0;
+      let minX = Infinity;
+      let maxX = -Infinity;
+
+      for (const d of districts) {
+        const x = d.labor_participation_tpak;
+        const y = d.poverty_rate_p0;
+        sumX += x;
+        sumY += y;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+      }
+
+      const meanX = sumX / n;
+      const meanY = sumY / n;
+
+      let num = 0;
+      let denX = 0;
+      let denY = 0;
+
+      for (const d of districts) {
+        const dx = d.labor_participation_tpak - meanX;
+        const dy = d.poverty_rate_p0 - meanY;
+        num += dx * dy;
+        denX += dx * dx;
+        denY += dy * dy;
+      }
+
+      if (denX > 0) {
+        const m = num / denX;
+        const c = meanY - m * meanX;
+        r = denY > 0 ? num / Math.sqrt(denX * denY) : 0;
+        const yStart = m * minX + c;
+        const yEnd = m * maxX + c;
+
+        regressionData = [
+          [
+            { coord: [Math.round(minX * 100) / 100, Math.round(yStart * 100) / 100] },
+            { coord: [Math.round(maxX * 100) / 100, Math.round(yEnd * 100) / 100] }
+          ]
+        ];
+      }
+    }
+
     return {
       title: {
         text: 'The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan',
-        subtext: 'Korelasi positif r = +0.462. Di perdesaan 3T, warga miskin wajib bekerja harian untuk bertahan hidup.',
+        subtext: `Korelasi ${r >= 0 ? 'positif' : 'negatif'} r = ${r >= 0 ? '+' : ''}${r.toFixed(3)}. Di perdesaan 3T, warga miskin wajib bekerja harian untuk bertahan hidup.`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
         subtextStyle: { fontSize: 11, color: '#64748B' }
@@ -84,7 +135,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
             silent: true,
             symbol: ['none', 'none'],
             label: {
-              formatter: 'Garis Tren Positif (r = +0.462)',
+              formatter: `Garis Tren OLS (r = ${r >= 0 ? '+' : ''}${r.toFixed(3)})`,
               position: 'insideEndTop',
               color: '#0072B2',
               fontWeight: 'bold',
@@ -95,12 +146,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
               color: '#0072B2',
               width: 1.8
             },
-            data: [
-              [
-                { coord: [60, 6] },
-                { coord: [95, 30] }
-              ]
-            ]
+            data: regressionData
           }
         }
       ]

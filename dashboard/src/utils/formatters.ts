@@ -13,9 +13,9 @@ export const formatYears = (val: number | null | undefined, decimals: number = 2
   return `${val.toFixed(decimals)} thn`;
 };
 
-export const formatCurrencyMillion = (valInRupiah: number | null | undefined): string => {
-  if (valInRupiah === null || valInRupiah === undefined || isNaN(valInRupiah)) return '—';
-  const millionVal = valInRupiah / 1_000_000;
+export const formatCurrencyMillion = (valInThousandRupiah: number | null | undefined): string => {
+  if (valInThousandRupiah === null || valInThousandRupiah === undefined || isNaN(valInThousandRupiah)) return '—';
+  const millionVal = valInThousandRupiah / 1_000;
   return `Rp${millionVal.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} jt`;
 };
 

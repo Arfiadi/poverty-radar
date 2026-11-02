@@ -45,9 +45,13 @@ def export_all():
     # Acute poverty pockets (P0 >= 20%)
     acute_mask = df_clusters["poverty_rate_p0"] >= 20.0
     total_acute = int(acute_mask.sum())
-    eastern_regions = ["Maluku-Papua", "Bali-Nusa Tenggara"]
+    eastern_regions = ["Maluku & Papua", "Bali & Nusa Tenggara"]
     eastern_acute = int(df_clusters[acute_mask]["region_pulau"].isin(eastern_regions).sum())
     western_acute = total_acute - eastern_acute
+    assert eastern_acute + western_acute == total_acute, "Acute pockets partition mismatch!"
+
+    def format_region_name(tipe: str, name: str) -> str:
+        return name if name.lower().startswith(tipe.lower()) else f"{tipe} {name}"
 
     benchmarks = {
         "n_regions": len(df_clusters),
@@ -55,10 +59,10 @@ def export_all():
         "median_p0": round(float(p0.median()), 2),
         "mean_p0": round(float(p0.mean()), 2),
         "min_p0": round(float(p0.min()), 2),
-        "min_p0_region": f"{df_clusters.loc[min_idx, 'tipe_wilayah']} {df_clusters.loc[min_idx, 'kab_kota']}",
+        "min_p0_region": format_region_name(df_clusters.loc[min_idx, "tipe_wilayah"], df_clusters.loc[min_idx, "kab_kota"]),
         "min_p0_province": df_clusters.loc[min_idx, "provinsi"],
         "max_p0": round(float(p0.max()), 2),
-        "max_p0_region": f"{df_clusters.loc[max_idx, 'tipe_wilayah']} {df_clusters.loc[max_idx, 'kab_kota']}",
+        "max_p0_region": format_region_name(df_clusters.loc[max_idx, "tipe_wilayah"], df_clusters.loc[max_idx, "kab_kota"]),
         "max_p0_province": df_clusters.loc[max_idx, "provinsi"],
         "disparity_ratio": round(float(p0.max() / p0.min()), 2),
         "total_acute_pockets": total_acute,
@@ -149,24 +153,25 @@ def export_all():
     ]
 
     # 5. Kaggle Reverse-Engineering Rule Metrics (Page 5 Tab 2)
-    # Rule: Class 1 if (P0 > 20.0%) OR (expenditure <= 6.25M AND sanitation <= 56.0%)
-    cleaned_path = DATA_INTERIM_DIR / "poverty_data_cleaned.csv"
-    kaggle_reconstruction_pct = 98.83  # 508 / 514
-    if cleaned_path.exists():
-        df_cleaned = pd.read_csv(cleaned_path)
-        if "poverty_class_target" in df_cleaned.columns:
-            rule_pred = (df_cleaned["poverty_rate_p0"] > 20.0) | (
-                (df_cleaned["expenditure_per_capita"] <= 6250000) & (df_cleaned["sanitation_access_pct"] <= 56.0)
-            )
-            actual_class = df_cleaned["poverty_class_target"] == 1
-            matches = int((rule_pred == actual_class).sum())
-            kaggle_reconstruction_pct = round(matches / len(df_cleaned) * 100, 2)
+    # Rule: Class 1 if (P0 > 20.0%) OR (expenditure <= 6250 Ribu Rp AND sanitation <= 56.0%)
+    raw_path = REPO_DIR / "data" / "raw" / "Klasifikasi Tingkat Kemiskinan di Indonesia.csv"
+    assert raw_path.exists(), f"Missing raw dataset: {raw_path}"
+    df_raw = pd.read_csv(raw_path)
+    p0_raw = df_raw["Persentase Penduduk Miskin (P0) Menurut Kabupaten/Kota (Persen)"]
+    exp_raw = df_raw["Pengeluaran per Kapita Disesuaikan (Ribu Rupiah/Orang/Tahun)"]
+    san_raw = df_raw["Persentase rumah tangga yang memiliki akses terhadap sanitasi layak"]
+    actual_class = df_raw["Klasifikasi Kemiskinan"] == 1
+
+    rule_pred = (p0_raw > 20.0) | ((exp_raw <= 6250) & (san_raw <= 56.0))
+    matches = int((rule_pred == actual_class).sum())
+    kaggle_reconstruction_pct = round(matches / len(df_raw) * 100, 2)
+    assert matches == 508, f"Expected 508 matches, got {matches}"
 
     kaggle_rule_info = {
         "formula": "Class 1 <=> (P0 > 20.0%) OR (Pengeluaran <= Rp6.25 Juta AND Sanitasi <= 56.0%)",
         "accuracy_pct": kaggle_reconstruction_pct,
-        "matched_regions": 508,
-        "total_regions": 514,
+        "matched_regions": matches,
+        "total_regions": len(df_raw),
         "conclusion": "Label biner Kaggle terbukti merupakan aturan heuristik deterministik sederhana, bukan ground truth BPS, memvalidasi penolakan model klasifikasi terawasi."
     }
 

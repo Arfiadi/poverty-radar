@@ -18,7 +18,7 @@ export const exportDistrictsToCSV = (districts: District[], filenamePrefix: stri
     'Skor_Kerentanan_V_struc',
     'Persentase_Kemiskinan_P0',
     'Rata_Rata_Lama_Sekolah_RLS',
-    'Pengeluaran_per_Kapita_Rp',
+    'Pengeluaran_per_Kapita_Ribu_Rp',
     'IPM_BPS',
     'UHH_Tahun',
     'Akses_Sanitasi_Pct',

@@ -30,9 +30,9 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     id: "paradox-3",
     name: "The Resource Curse",
     page: "04_PriorityImplications",
-    actionTitle: "Kutukan Sumber Daya: 17 Daerah Lumbung Tambang Jumbo Terjebak Kemiskinan di Atas Median",
-    insightCallout: "Sebanyak 17 daerah dengan PDRB raksasa (≥ Rp 25 Triliun) tetap mencatatkan persentase kemiskinan di atas median nasional 10.46%. Ini menandakan terjadinya distorsi enclave economy ekstraktif di mana nilai tambah komoditas diserap ke luar daerah tanpa penyerapan tenaga kerja lokal yang memadai.",
-    evidence: "Kab. Mimika (PDRB Rp69.6T, P0 14.29%), Bojonegoro (Rp65.8T, P0 12.28%), Morowali (Rp54.9T, P0 13.80%), Musi Banyuasin (Rp46.1T, P0 15.84%), Teluk Bintuni (Rp25.1T, P0 29.38%).",
+    actionTitle: "Kutukan Sumber Daya: 29 Daerah Lumbung Tambang Jumbo Terjebak Kemiskinan di Atas Median",
+    insightCallout: "Sebanyak 29 daerah dengan PDRB raksasa (≥ Rp 25 Triliun) tetap mencatatkan persentase kemiskinan di atas median nasional 10.46%. Ini menandakan terjadinya distorsi enclave economy ekstraktif di mana nilai tambah komoditas diserap ke luar daerah tanpa penyerapan tenaga kerja lokal yang memadai.",
+    evidence: "Kab. Mimika (PDRB Rp69.6T, P0 14.17%), Bojonegoro (Rp65.8T, P0 13.27%), Morowali (Rp54.9T, P0 13.75%), Musi Banyuasin (Rp46.1T, P0 15.84%), Teluk Bintuni (Rp25.1T, P0 29.79%).",
     caseDistricts: ["Mimika", "Bojonegoro", "Morowali", "Musi Banyuasin", "Teluk Bintuni"]
   },
   basicServices: {
@@ -40,8 +40,8 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "Sanitasi & Air Dasar vs PDRB",
     page: "03_RegionalProfiles",
     actionTitle: "Faktor Layanan Dasar: Akses Sanitasi & Air Beriringan Sangat Kuat dengan Disparitas Kemiskinan",
-    insightCallout: "Pada analisis bivariat, akses sanitasi layak (r = -0.56) dan air bersih (r = -0.42) beriringan jauh lebih konsisten dengan penurunan kemiskinan dibanding skala nominal PDRB (r = -0.24). Pada ekonometrika multivariat OLS, sanitasi (β = -0.209) dan log PDRB (β = -0.197) keduanya berkontribusi komplementer.",
-    evidence: "Korelasi Pearson: Sanitasi r = -0.56, Air r = -0.42, Log PDRB r = -0.36."
+    insightCallout: "Pada analisis bivariat, akses sanitasi layak (r = -0.562) dan air bersih (r = -0.374) beriringan jauh lebih konsisten dengan penurunan kemiskinan dibanding skala nominal PDRB (r = -0.240). Pada ekonometrika multivariat OLS, sanitasi (β = -0.190) dan log PDRB (β = -0.190) keduanya berkontribusi komplementer.",
+    evidence: "Korelasi Pearson: Sanitasi r = -0.562, Air r = -0.374, Log PDRB r = -0.527."
   },
   maduraDisparity: {
     id: "paradox-5",
@@ -49,7 +49,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     page: "04_PriorityImplications",
     actionTitle: "Disparitas Madura: Jembatan Fisik Suramadu (5.4 km) Belum Mampu Memutus Jurang Kemiskinan",
     insightCallout: "Hanya berjarak 5.4 km melalui Jembatan Suramadu, Kota Surabaya mencatat kemiskinan 5.23% (RLS 10.51 tahun), sementara Kab. Sampang mencatat kemiskinan 23.76% (RLS 4.86 tahun). Bukti empiris bahwa infrastruktur konektivitas fisik semata tidak memadai tanpa pemenuhan modal manusia dan sarana permukiman.",
-    evidence: "Surabaya (P0 5.23%, RLS 10.51) vs Sampang (P0 23.76%, RLS 4.86), Bangkalan (P0 21.57%), Pamekasan (P0 14.60%), Sumenep (P0 20.51%).",
+    evidence: "Surabaya (P0 5.23%, RLS 10.51) vs Sampang (P0 23.76%, RLS 4.86), Bangkalan (P0 21.57%), Pamekasan (P0 15.30%), Sumenep (P0 20.51%).",
     caseDistricts: ["Sampang", "Bangkalan", "Pamekasan", "Sumenep", "Kota Surabaya"]
   },
   westernAnomaly: {
@@ -67,7 +67,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     page: "03_RegionalProfiles",
     actionTitle: "The Educated Poor: RLS Tinggi di Kepulauan Terpencil Namun Kemiskinan Tetap Kritis",
     insightCallout: "Kabupaten kepulauan terpencil di Papua mencatatkan RLS setara SMP/SMA (8.2 - 9.2 tahun), namun persentase kemiskinan tetap ekstrem di atas 27% hingga 38%. Menunjukkan bahwa peningkatan lama sekolah tanpa penyerapan pasar kerja produktif bernilai tambah lokal tidak mampu mengentaskan kemiskinan.",
-    evidence: "Kab. Supiori (RLS 8.87 thn, P0 37.91%), Kab. Waropen (RLS 9.21 thn, P0 29.85%), Kab. Teluk Bintuni (RLS 8.78 thn, P0 29.38%).",
+    evidence: "Kab. Supiori (RLS 8.87 thn, P0 37.91%), Kab. Waropen (RLS 9.21 thn, P0 29.85%), Kab. Teluk Bintuni (RLS 8.22 thn, P0 29.79%).",
     caseDistricts: ["Supiori", "Waropen", "Teluk Bintuni"]
   },
   kaggleDeconstruction: {
@@ -82,8 +82,8 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     id: "paradox-9",
     name: "Koefisien Terstandarisasi OLS",
     page: "05_MethodologyAudit",
-    actionTitle: "Ekonometrika OLS: Pengeluaran Riil (β = -0.317) & Sanitasi (β = -0.209) Mendominasi Variasi",
-    insightCallout: "Hasil estimasi multivariat OLS terstandarisasi membuktikan bahwa daya beli warga (β = -0.317, p < 0.0001) dan sanitasi fisik (β = -0.209, p < 0.0001) memegang koefisien terstandarisasi negatif terkuat, diikuti log PDRB (β = -0.197), sementara TPAK justru berkoefisien positif signifikan (β = +0.183, p < 0.0001).",
-    evidence: "Koefisien baku: Pengeluaran (-0.317) > Sanitasi (-0.209) > Log PDRB (-0.197) > TPAK (+0.183) > RLS (-0.118) > TPT (+0.093)."
+    actionTitle: "Ekonometrika OLS: Pengeluaran Riil (β = -0.318) & Sanitasi (β = -0.190) Mendominasi Variasi",
+    insightCallout: "Hasil estimasi multivariat OLS terstandarisasi membuktikan bahwa daya beli warga (β = -0.318, p < 0.0001) dan sanitasi fisik (β = -0.190, p < 0.0001) memegang koefisien terstandarisasi negatif terkuat, diikuti log PDRB (β = -0.190), sementara TPAK justru berkoefisien positif signifikan (β = +0.179, p < 0.0001).",
+    evidence: "Koefisien baku: Pengeluaran (-0.318) > Sanitasi (-0.190) = Log PDRB (-0.190) > TPAK (+0.179) > RLS (-0.113) > TPT (+0.100)."
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Download, ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import { District } from '../../types';
 import { exportDistrictsToCSV } from '../../utils/csvExport';
@@ -24,6 +24,10 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [sortAsc, setSortAsc] = useState<boolean>(defaultSortAsc);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+
+  useEffect(() => {
+    setPage(1);
+  }, [districts]);
 
   const handleSort = (field: keyof District) => {
     if (sortField === field) {

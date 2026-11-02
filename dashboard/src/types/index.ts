@@ -25,26 +25,34 @@ export interface District {
 export interface ClusterSummary {
   cluster_id: number;
   cluster_name: string;
-  n_members: number;
-  pct_share: number;
-  mean_p0: number;
-  median_p0: number;
-  mean_v_struc: number;
-  mean_avg_school_years: number;
-  mean_expenditure: number;
-  mean_life_expectancy: number;
-  mean_sanitation: number;
-  mean_water: number;
-  mean_tpt: number;
-  mean_tpak: number;
-  mean_log_pdrb: number;
-  z_avg_school_years?: number;
-  z_expenditure?: number;
-  z_life_expectancy?: number;
-  z_sanitation?: number;
-  z_water?: number;
-  z_tpt?: number;
-  z_log_pdrb?: number;
+  total_regions: number;
+  pct_of_national: number;
+  total_kabupaten: number;
+  total_kota: number;
+  dominant_region_pulau: string;
+  poverty_rate_p0_mean: number;
+  poverty_rate_p0_median: number;
+  poverty_rate_p0_min: number;
+  poverty_rate_p0_max: number;
+  vulnerability_score_mean: number;
+  vulnerability_score_median: number;
+  human_dev_index_mean: number;
+  human_dev_index_median: number;
+  expenditure_per_capita_mean: number;
+  expenditure_per_capita_median: number;
+  avg_school_years_mean: number;
+  avg_school_years_median: number;
+  life_expectancy_mean: number;
+  life_expectancy_median: number;
+  sanitation_access_pct_mean: number;
+  sanitation_access_pct_median: number;
+  clean_water_access_pct_mean: number;
+  clean_water_access_pct_median: number;
+  unemployment_rate_tpt_mean: number;
+  unemployment_rate_tpt_median: number;
+  labor_participation_tpak_mean: number;
+  labor_participation_tpak_median: number;
+  grdp_constant_million_idr_median: number;
 }
 
 export interface PolicyRecommendation {

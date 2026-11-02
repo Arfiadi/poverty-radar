@@ -14,8 +14,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
     "Sumatera",
     "Kalimantan",
     "Sulawesi",
-    "Bali-Nusa Tenggara",
-    "Maluku-Papua"
+    "Bali & Nusa Tenggara",
+    "Maluku & Papua"
   ], []);
 
   // Compute medians per island

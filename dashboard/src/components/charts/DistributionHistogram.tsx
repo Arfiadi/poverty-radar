@@ -7,7 +7,7 @@ interface HistogramProps {
 }
 
 export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) => {
-  const { binLabels, counts, nationalMedian } = useMemo(() => {
+  const { binLabels, counts, nationalMedian, medianBinLabel } = useMemo(() => {
     const binSize = 3;
     const maxVal = 42;
     const bins: number[] = [];
@@ -35,15 +35,25 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
     const p0Sorted = districts.map(d => d.poverty_rate_p0).sort((a, b) => a - b);
     const mid = Math.floor(p0Sorted.length / 2);
     const med = p0Sorted.length % 2 !== 0 ? p0Sorted[mid] : (p0Sorted[mid - 1] + p0Sorted[mid]) / 2;
+    const finalMedian = med || 10.46;
 
-    return { binLabels: labels, counts: binCounts, nationalMedian: med || 10.46 };
+    // Determine bin containing median dynamically
+    let medianBin = labels[0] || '0–3%';
+    for (let i = 0; i < bins.length - 1; i++) {
+      if (finalMedian >= bins[i] && (i === bins.length - 2 ? finalMedian <= bins[i + 1] : finalMedian < bins[i + 1])) {
+        medianBin = labels[i];
+        break;
+      }
+    }
+
+    return { binLabels: labels, counts: binCounts, nationalMedian: finalMedian, medianBinLabel: medianBin };
   }, [districts]);
 
   const option = useMemo(() => {
     return {
       title: {
         text: 'Distribusi Frekuensi Kemiskinan Moneter (P0 %)',
-        subtext: 'Pola sebaran menceng kanan (right-skewed). Garis putus-putus merah menandakan median nasional 10.46%.',
+        subtext: `Pola sebaran menceng kanan (right-skewed). Garis putus-putus merah menandakan median ${nationalMedian.toFixed(2)}%.`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
         subtextStyle: { fontSize: 11, color: '#64748B' }
@@ -111,14 +121,13 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
               width: 1.8
             },
             data: [
-              // Draw at approximately category bin index 3 (9–12% contains 10.46%)
-              { xAxis: '9–12%' }
+              { xAxis: medianBinLabel }
             ]
           }
         }
       ]
     };
-  }, [binLabels, counts, nationalMedian, districts.length]);
+  }, [binLabels, counts, nationalMedian, medianBinLabel, districts.length]);
 
   return (
     <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">

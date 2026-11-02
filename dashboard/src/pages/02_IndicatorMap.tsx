@@ -22,7 +22,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
     { key: 'sanitation_access_pct', label: 'Akses Sanitasi Layak', unit: '%' },
     { key: 'clean_water_access_pct', label: 'Akses Air Bersih Terlindung', unit: '%' },
     { key: 'avg_school_years', label: 'Rata-rata Lama Sekolah (RLS)', unit: ' thn' },
-    { key: 'expenditure_per_capita', label: 'Pengeluaran Riil per Kapita', unit: ' Rp' },
+    { key: 'expenditure_per_capita', label: 'Pengeluaran Riil per Kapita', unit: ' Ribu Rp/thn' },
     { key: 'unemployment_rate_tpt', label: 'Tingkat Pengangguran Terbuka (TPT)', unit: '%' },
     { key: 'labor_participation_tpak', label: 'Tingkat Partisipasi Kerja (TPAK)', unit: '%' },
   ];
