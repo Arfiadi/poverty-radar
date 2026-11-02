@@ -50,12 +50,12 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
             {currentItem.label} <span className="text-slate-400 font-normal">| {currentItem.sub}</span>
           </h1>
           <div className="flex items-center space-x-2 mt-0.5">
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
               {filteredCount} dari {totalDistricts} Daerah Terpilih
             </span>
             {activeCasePin !== 'none' && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
                 <Sparkles className="w-2.5 h-2.5 mr-1 text-amber-600" />
                 Pin: {activeCasePin === 'resource_curse' ? 'Kutukan Tambang' : 'Disparitas Madura'}
                 <button 

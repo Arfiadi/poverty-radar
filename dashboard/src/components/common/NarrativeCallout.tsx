@@ -20,14 +20,14 @@ export const NarrativeCallout: React.FC<NarrativeCalloutProps> = ({
         <Lightbulb className="w-4 h-4" />
       </div>
       <div className="space-y-1">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-amber-800 flex items-center space-x-2">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center space-x-2">
           <span>💡 {title}</span>
         </div>
         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
           {insight}
         </p>
         {evidence && (
-          <p className="text-[11px] text-amber-900/80 font-medium italic pt-0.5">
+          <p className="text-xs text-amber-900/90 font-medium italic pt-1">
             Bukti empiris: {evidence}
           </p>
         )}

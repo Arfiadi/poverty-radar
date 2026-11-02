@@ -3,7 +3,8 @@
 **Tanggal audit:** 2 November 2026  
 **Snapshot commit:** `a0c0f77` — `feat(dashboard): add interactive 34-province choropleth map with district inspector on Act 2`  
 **Objek audit:** `dashboard/` (React 18 + Vite + TypeScript + ECharts) dan payload `dashboard/public/data/*`  
-**Sifat audit:** Audit statis kode, payload JSON, dan rekonsiliasi angka terhadap `data/processed/poverty_clusters.csv`. Tidak dilakukan uji visual/interaksi di browser.
+**Sifat audit:** Audit statis kode, payload JSON, dan rekonsiliasi angka terhadap `data/processed/poverty_clusters.csv`. Tidak dilakukan uji visual/interaksi di browser.  
+**Status tindak lanjut:** Sebagian temuan sudah diperbaiki pada commit `519dceb`. Ringkasan status per temuan ada di [§13](#13-status-tindak-lanjut--verifikasi-walkthrough-2-november-2026).
 
 ---
 
@@ -550,3 +551,93 @@ python -c "import pandas as pd; df=pd.read_csv('data/raw/Klasifikasi Tingkat Kem
 - `dashboard/public/data/poverty_districts.json`
 - `data/processed/poverty_clusters.csv`
 - `data/processed/policy_recommendations_matrix.csv`
+
+---
+
+## 13. Status Tindak Lanjut — Verifikasi Walkthrough (2 November 2026)
+
+**Konteks:** Setelah snapshot audit `a0c0f77`, muncul commit `519dceb` — `fix(dashboard): resolve forensic audit findings F-01 through F-15 and sync data contracts` — beserta walkthrough eksternal. Bagian ini memverifikasi klaim tersebut terhadap kode, payload, dan data per commit `519dceb`.
+
+**Sifat verifikasi:** Statis (kode, JSON, CSV) + eksekusi tes Python dan TypeScript. Tidak dilakukan uji visual di browser. Status di bawah mengacu pada commit `519dceb` ditambah snapshot working tree 2 November 2026 23:54. Sejak snapshot itu, worktree berubah lagi (antara lain `ArchipelagoStripPlot.tsx`, `KpiCard.tsx`, `01_PovertyLandscape.tsx`, `02_IndicatorMap.tsx`, `VulnerabilityMatrix2x2.tsx`, `04_PriorityImplications.tsx`); perubahan tersebut belum di-commit dan belum masuk penilaian status di tabel. Perubahan itu menambah KPI dual-state di halaman 1–2, tab kuadran lokal di halaman 4, dan desain ulang strip plot, tetapi belum menambah panel filter global (pulau/provinsi/klaster/rentang P0). `npx tsc --noEmit` tetap exit 0 dengan perubahan tersebut.
+
+### 13.1 Klaim walkthrough yang terbukti
+
+| Klaim walkthrough | Bukti verifikasi | Status |
+|---|---|---|
+| Python test suite 18/18 lulus | `python -m pytest tests --tb=short` → `18 passed in 6.54s` | Terbukti |
+| F-01: 514/514 daerah terpetakan | `poverty_districts.json` + 6 nama region kanonik → 514 titik; tidak ada lagi `"Maluku-Papua"`/`"Bali-Nusa Tenggara"` di `dashboard/src` | Terbukti |
+| F-02: 53 Timur (86,9%) + 8 Barat (13,1%) = 61 | `national_benchmarks.json`: `eastern_acute_count=53`, `western_acute_count=8`, `total_acute_pockets=61`; rekonsiliasi pandas cocok | Terbukti |
+| F-03: `formatCurrencyMillion(14596)` → `Rp14,60 jt` | `formatters.ts` membagi `1_000`; unit peta diubah menjadi `Ribu Rp/thn`; header CSV menjadi `Pengeluaran_per_Kapita_Ribu_Rp` | Terbukti (statis) |
+| F-04: kontrak `ClusterSummary` selaras | `types/index.ts` memakai key yang sama dengan `cluster_summary.json` (`total_regions`, `poverty_rate_p0_mean`, dst.); halaman 3 membaca key tersebut | Terbukti |
+| F-07: garis tren OLS dihitung dinamis | `WorkingPoorScatter.tsx` menghitung slope/intercept/`r` dari `labor_participation_tpak` vs `poverty_rate_p0`; koordinat mock `[60,6]`–`[95,30]` dihapus | Terbukti (statis) |
+| F-12: 508/514 (98,83%) dari raw data, threshold 6250 | Exporter membaca raw CSV, memakai threshold `6250`, dan `assert matches == 508`; `tests/test_dashboard_payload.py` lulus | Terbukti untuk pipeline |
+| Peta 34/34 provinsi | Join `indonesia-provinces.geojson` vs `poverty_clusters.csv` → 34/34 exact | Terbukti (tidak berubah) |
+| TypeScript 0 error | `npx tsc --noEmit` → exit 0 | Terbukti |
+| Production build sukses | `dashboard/dist` terbarui 2 Nov 2026 23:40:32, tepat sebelum commit 23:41:05 | Terbukti secara artefak; build tidak dijalankan ulang agar tidak menimpa `dist/` |
+
+### 13.2 Status per temuan audit
+
+| ID | Tingkat | Status | Bukti / catatan |
+|---|---|---|---|
+| F-01 | Kritis | **Fixed** | Nama region disatukan; strip plot 514/514; konstanta `ISLAND_REGIONS` ikut diperbaiki |
+| F-02 | Kritis | **Fixed** | Exporter memakai nama kanonik + assertion partisi; payload sudah 53/8 |
+| F-03 | Kritis | **Fixed** | Formatter `/1_000`, unit peta, dan header CSV diperbaiki |
+| F-04 | Tinggi | **Fixed** | Tipe dan halaman memakai kontrak JSON aktual; kartu membaca `total_regions` dan mean dari summary |
+| F-05 | Tinggi | **Sebagian** | Angka sudah 29 dan P0 evidence sudah cocok (Mimika 14,17; Bojonegoro 13,27; Morowali 13,75; Teluk Bintuni 29,79), tetapi masih hardcoded di `paradoxes.ts`, belum dihitung dari filter |
+| F-06 | Tinggi | **Fixed (snapshot)** | β OLS dan korelasi sudah cocok: sanitasi −0,562; air −0,374; PDRB nominal −0,240; log PDRB −0,527; β sanitasi/log PDRB −0,190. Catatan: callout menyebut “PDRB nominal” (−0,240) sedangkan evidence menyebut “Log PDRB” (−0,527); keduanya benar, tetapi perlu diberi label eksplisit agar tidak terbaca kontradiktif |
+| F-07 | Tinggi | **Fixed** | Regresi OLS dihitung dari data; label `r` dinamis |
+| F-08 | Tinggi | **Belum** | Label statis masih ada: `N=78/187/216/33` di `SmallMultiplesZScore.tsx`, `Daerah 514` di `VulnerabilityMatrix2x2.tsx`, `Semua (514)`/`Kuadran I (162 daerah / 31.5%)` di halaman 4, `34 Provinsi` di ranking, caption Top 10 statis, subtitle median statis. Worktree sudah menambah KPI dual-state di halaman 1–2 dan tab kuadran di halaman 4, tetapi label N halaman 3, caption Top 10, dan jumlah `514`/kuadran masih dari konstanta |
+| F-09 | Tinggi | **Belum** | Tidak ada panel filter pulau/provinsi/klaster/rentang P0. Setter hanya ada di `useFilterStore.ts`; UI hanya search, reset, case pin, dan (di worktree) tab kuadran lokal halaman 4 |
+| F-10 | Sedang | **Fixed** | `DataTable.tsx` menambahkan `useEffect(() => setPage(1), [districts])` |
+| F-11 | Sedang | **Fixed** | Histogram menghitung `medianBinLabel` dari bin yang memuat median |
+| F-12 | Sedang | **Sebagian** | Exporter dan tes sudah benar, tetapi frontend masih hardcoded `98.83%`/`508 dari 514` di `05_MethodologyAudit.tsx` dan `paradoxes.ts`; `kaggle_rule_info.json` belum di-fetch oleh `useDashboardData.ts` |
+| F-13 | Sedang | **Belum** | `policy_recommendations_matrix.csv` masih 31 Okt 2026; `pipeline.py` tetap tidak menulis policy matrix |
+| F-14 | Sedang | **Belum** | `dashboard/README.md` masih menyebut klaster 248/133/74/59, 36 pencilan (chart menghitung 35 dengan metode indeks), dan pemetaan warna lama; `docs/design.md` masih menyebut 17 daerah resource curse dan OLS lama |
+| F-15 | Sedang | **Fixed** | `min_p0_region` menjadi `Kota Sawah Lunto`; exporter memakai `format_region_name` agar prefix tidak duplikat |
+| F-16 | Rendah | **Belum** | Silhouette `0.2028`, DBI `1.4522`, ARI `0.9803` masih hardcoded di halaman 3; belum diekspor ke payload |
+| F-17 | Rendah | **Belum** | `SpatialRankingBar.tsx` masih menulis “Fallback Geospasial” |
+| F-18 | Rendah | **Belum** | `useDashboardData.ts` masih hanya memeriksa `districtsRes.ok`; payload lain langsung `.json()` tanpa validasi skema |
+| F-19 | Rendah | **Belum** | Heatmap masih memakai `#FDE047`/`#38BDF8`; badge UI masih memakai warna Tailwind di luar palette data |
+
+**Rekap:** 9 temuan fixed (F-01, F-02, F-03, F-04, F-06, F-07, F-10, F-11, F-15), 2 sebagian (F-05, F-12), dan 8 belum (F-08, F-09, F-13, F-14, F-16, F-17, F-18, F-19). Dengan demikian klaim walkthrough “resolve F-01 through F-15” **terlalu luas**: semua temuan Kritis sudah beres, tetapi beberapa temuan Tinggi/Sedang belum.
+
+### 13.3 Klaim walkthrough yang belum akurat
+
+1. **Silhouette 0.283** di bagian “Babak 3” walkthrough tidak cocok dengan kode dan eksperimen. Nilai yang dipakai dashboard dan `experiments/clustering_benchmark_results.csv` adalah **0.2028**.
+2. **Persona klaster 248/133/74/59** di walkthrough sudah basi. Data aktual: **78/187/216/33** (total 514).
+3. **“Filter pulau, klaster, dan kuadran … keyboard shortcut `/`”** hanya benar untuk pencarian. Shortcut `/` memfokuskan kolom search; tidak ada kontrol filter pulau/klaster/kuadran di UI.
+4. **“36 pencilan”** hanya cocok jika kuartil dihitung dengan interpolasi pandas. `TukeyBoxplot.tsx` memakai indeks `floor(n*0.25)`/`floor(n*0.75)`, yang menghasilkan **35** outlier P0 (Q3 = 14,89; batas atas = 26,50). Jadi angka 36 di walkthrough/README tidak sama dengan yang dihitung chart.
+5. **F-12 “selesai”** hanya benar untuk sisi pipeline. Frontend masih menampilkan angka hardcoded, sehingga metrik tetap bisa basi jika aturan berubah.
+
+### 13.4 Perintah verifikasi yang dijalankan
+
+```powershell
+python -m pytest tests --tb=short
+# 18 passed in 6.54s
+
+cd dashboard
+npx tsc --noEmit
+# exit 0
+```
+
+```powershell
+python -c "import pandas as pd; df=pd.read_csv('data/processed/poverty_clusters.csv'); print((df.poverty_rate_p0>=20).sum())"
+# 61
+
+python -c "import pandas as pd; df=pd.read_csv('data/processed/poverty_clusters.csv'); print(len(df[(df.grdp_constant_million_idr>=25000000)&(df.poverty_rate_p0>=10.46)]))"
+# 29
+
+python -c "import json; j=json.load(open('dashboard/public/data/poverty_districts.json')); islands=['Jawa','Sumatera','Kalimantan','Sulawesi','Bali & Nusa Tenggara','Maluku & Papua']; print(len([d for d in j if d['region_pulau'] in islands]))"
+# 514
+```
+
+Rekonsiliasi tambahan: `national_benchmarks.json` → 53 Timur + 8 Barat = 61; `cluster_summary.json` → 78/187/216/33; korelasi pandas → sanitasi −0,5623, air −0,3735, PDRB nominal −0,2415, log PDRB −0,5272, TPAK +0,4623.
+
+### 13.5 Sisa pekerjaan prioritas
+
+1. **F-09 + F-08:** implementasikan panel filter global, lalu pastikan semua label N/jumlah provinsi/baseline berubah mengikuti subset atau diberi label “nasional” secara eksplisit.
+2. **F-12:** fetch `kaggle_rule_info.json` di frontend dan hapus angka `98.83%` hardcoded.
+3. **F-05:** hitung jumlah resource curse dari data saat pin aktif, bukan dari teks statis.
+4. **F-13:** tambahkan generasi policy matrix ke pipeline atau tandai sebagai snapshot bertanggal.
+5. **F-14:** sinkronkan `dashboard/README.md` dan `docs/design.md` dengan data aktual (78/187/216/33, 29 resource curse, Silhouette 0.2028, peta choropleth).
+6. **F-16/F-17/F-18/F-19:** ekspor diagnostik model, hapus label “Fallback Geospasial”, tambahkan validasi skema runtime, dan rapikan palette heatmap/badge.

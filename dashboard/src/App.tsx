@@ -96,9 +96,9 @@ export const App: React.FC = () => {
           <div className="flex items-center space-x-2">
             <span className="font-bold text-slate-800">PovertyRadar SDGs</span>
             <span>·</span>
-            <span>Sistem Klastering &amp; Skrining Kerentanan Relatif 514 Daerah</span>
+            <span>Sistem Klastering &amp; Skrining Kerentanan Relatif Daerah</span>
           </div>
-          <div className="text-[11px] text-slate-400">
+          <div className="text-xs text-slate-400">
             Sumber Data: BPS Susenas &amp; Sakernas 2021 · Unsupervised Learning · MIT License
           </div>
         </footer>

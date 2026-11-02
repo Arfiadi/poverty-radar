@@ -30,10 +30,10 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
     return {
       title: {
         text: 'The Great Dualism: Jurang Kemiskinan vs Paradoks Pengangguran',
-        subtext: `Kabupaten ~${p0Ratio}x lebih miskin dari Kota, namun Kota ~${tptRatio}x lebih menganggur (N_Kab=${countKab}, N_Kota=${countKota}).`,
+        subtext: `Kabupaten ~${p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~${tptRatio}x lebih tinggi.`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 12, color: '#64748B' }
       },
       tooltip: {
         trigger: 'axis',

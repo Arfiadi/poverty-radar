@@ -6,7 +6,9 @@ import { SpatialRankingBar } from '../components/charts/SpatialRankingBar';
 import { TheGreatDualismBar } from '../components/charts/TheGreatDualismBar';
 import { WorkingPoorScatter } from '../components/charts/WorkingPoorScatter';
 import { NarrativeCallout } from '../components/common/NarrativeCallout';
+import { KpiCard } from '../components/common/KpiCard';
 import { PARADOXES } from '../constants/paradoxes';
+import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
 import { Map, BarChart3 } from 'lucide-react';
 
 interface PageProps {
@@ -28,6 +30,32 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
   ];
 
   const activeOption = indicatorOptions.find(o => o.key === selectedIndicator) || indicatorOptions[0];
+
+  // Dynamic summary statistics for active indicator
+  const validDistricts = districts.filter(d => typeof d[selectedIndicator] === 'number');
+  const sortedByIndicator = [...validDistricts].sort((a, b) => (a[selectedIndicator] as number) - (b[selectedIndicator] as number));
+  const minRegion = sortedByIndicator[0] || null;
+  const maxRegion = sortedByIndicator[sortedByIndicator.length - 1] || null;
+
+  const minVal = minRegion ? (minRegion[selectedIndicator] as number) : 0;
+  const maxVal = maxRegion ? (maxRegion[selectedIndicator] as number) : 0;
+
+  let medianVal = 0;
+  if (sortedByIndicator.length > 0) {
+    const mid = Math.floor(sortedByIndicator.length / 2);
+    medianVal = sortedByIndicator.length % 2 !== 0
+      ? (sortedByIndicator[mid][selectedIndicator] as number)
+      : (((sortedByIndicator[mid - 1][selectedIndicator] as number) + (sortedByIndicator[mid][selectedIndicator] as number)) / 2);
+  }
+
+  const disparitySpan = maxVal - minVal;
+  const disparityRatio = (minVal > 0 && maxVal > 0) ? (maxVal / minVal) : null;
+
+  const formatIndicatorVal = (v: number): string => {
+    if (selectedIndicator === 'expenditure_per_capita') return formatCurrencyMillion(v);
+    if (selectedIndicator === 'avg_school_years') return formatYears(v);
+    return formatPercent(v);
+  };
 
   return (
     <motion.div
@@ -95,6 +123,63 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         </div>
       </div>
 
+      {/* Row 1: Active Indicator KPI Cards Strip (3 Cards with Stephen Few Micro Bullet Graph) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <KpiCard
+          label={`Median: ${activeOption.label}`}
+          value={formatIndicatorVal(medianVal)}
+          benchmarkText="Titik Tengah Distribusi (Median Wilayah)"
+          contextText={`Cakupan: ${districts.length} daerah · Rentang: ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
+          badge={{ text: `${districts.length} Daerah`, type: "default" }}
+          range={{
+            min: minVal,
+            max: maxVal,
+            current: medianVal,
+            minLabel: minRegion ? `${minRegion.kab_kota} (${formatIndicatorVal(minVal)})` : "",
+            maxLabel: maxRegion ? `${maxRegion.kab_kota} (${formatIndicatorVal(maxVal)})` : "",
+            unit: activeOption.unit,
+          }}
+        />
+
+        <KpiCard
+          label={`Capaian Tertinggi: ${activeOption.label}`}
+          value={formatIndicatorVal(maxVal)}
+          benchmarkText={maxRegion ? `${maxRegion.kab_kota} (${maxRegion.provinsi})` : "—"}
+          contextText={`Selisih terhadap titik tengah: +${formatIndicatorVal(maxVal - medianVal)}`}
+          badge={{ text: "Nilai Maksimum", type: "positive" }}
+          range={{
+            min: minVal,
+            max: maxVal,
+            current: maxVal,
+            minLabel: `Min: ${formatIndicatorVal(minVal)}`,
+            maxLabel: `Max: ${formatIndicatorVal(maxVal)}`,
+            unit: activeOption.unit,
+          }}
+          accentColor="#0072B2"
+        />
+
+        <KpiCard
+          label={`Capaian Terendah: ${activeOption.label}`}
+          value={formatIndicatorVal(minVal)}
+          benchmarkText={minRegion ? `${minRegion.kab_kota} (${minRegion.provinsi})` : "—"}
+          contextText={
+            disparityRatio !== null
+              ? `Rasio kesenjangan: ${disparityRatio.toFixed(1)}x lipat (Rentang disparitas: ${formatIndicatorVal(disparitySpan)})`
+              : `Rentang disparitas absolut: ${formatIndicatorVal(disparitySpan)}`
+          }
+          badge={{ text: "Nilai Minimum", type: "warning" }}
+          range={{
+            min: minVal,
+            max: maxVal,
+            current: minVal,
+            minLabel: `Min: ${formatIndicatorVal(minVal)}`,
+            maxLabel: `Max: ${formatIndicatorVal(maxVal)}`,
+            unit: activeOption.unit,
+          }}
+          accentColor="#D55E00"
+        />
+      </div>
+
       {/* Primary Spatial Visualization: Map or Ranking Bar */}
       {viewMode === 'map' ? (
         <IndonesiaChoroplethMap
@@ -120,9 +205,9 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
 
       {/* Narrative Callout for Dualism & Working Poor */}
       <NarrativeCallout
-        title="WAWASAN THE GREAT DUALISM & THE WORKING POOR"
-        insight={`${PARADOXES.greatDualism.insightCallout} ${PARADOXES.workingPoor.insightCallout}`}
-        evidence={PARADOXES.workingPoor.evidence}
+        title="WAWASAN DUALISME SPASIAL & KERJA SUBSISTENSI"
+        insight="Kabupaten menanggung kemiskinan 1.9x lebih tinggi dari kota, sementara pengangguran rendah di wilayah miskin mencerminkan kerja subsistensi bertahan hidup (r = +0.462), bukan tingginya kemakmuran ekonomi."
+        evidence="Rasio P0 Kab:Kota = 1.87x; Rasio TPT Kota:Kab = 1.82x; Nduga TPAK 97.93% dengan TPT 0.00%."
       />
     </motion.div>
   );

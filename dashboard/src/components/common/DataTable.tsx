@@ -16,7 +16,7 @@ interface DataTableProps {
 export const DataTable: React.FC<DataTableProps> = ({
   districts,
   title = "Daftar Skrining Wilayah Terfilter",
-  subtitle = "Tabel rincian profil sosial-ekonomi 514 kabupaten/kota (BPS 2021)",
+  subtitle = "Tabel rincian profil sosial-ekonomi daerah",
   defaultSortField = 'poverty_rate_p0',
   defaultSortAsc = false,
 }) => {
@@ -86,7 +86,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold text-slate-600 uppercase tracking-wider select-none">
+            <tr className="bg-slate-50/80 border-b border-slate-200/80 text-xs font-semibold text-slate-600 uppercase tracking-wider select-none">
               <th className="py-2.5 px-3">No</th>
               <th className="py-2.5 px-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort('kab_kota')}>
                 Daerah {renderSortIcon('kab_kota')}
@@ -135,7 +135,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 const rankNum = (page - 1) * pageSize + idx + 1;
                 return (
                   <tr key={`${d.provinsi}-${d.kab_kota}`} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-2 px-3 text-slate-400 font-mono text-[11px]">{rankNum}</td>
+                    <td className="py-2 px-3 text-slate-400 font-mono text-xs">{rankNum}</td>
                     <td className="py-2 px-3 font-semibold text-ink-primary whitespace-nowrap">
                       {d.tipe_wilayah} {d.kab_kota}
                     </td>
@@ -190,7 +190,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           >
             Sebelumnya
           </button>
-          <span className="px-2 font-mono text-[11px]">
+          <span className="px-2 font-mono text-xs text-slate-600">
             {page} / {totalPages}
           </span>
           <button

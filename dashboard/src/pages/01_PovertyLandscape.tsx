@@ -20,12 +20,36 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
   const top10Highest = sortedByP0.slice(0, 10);
   const top10Lowest = [...districts].sort((a, b) => a.poverty_rate_p0 - b.poverty_rate_p0).slice(0, 10);
 
-  // Dynamic values
-  const medianP0 = benchmarks?.median_p0 ?? 10.46;
-  const disparityRatio = benchmarks?.disparity_ratio ?? 17.50;
+  // Baseline national benchmarks
+  const nationalMedianP0 = benchmarks?.median_p0 ?? 10.46;
+  const nationalDisparityRatio = benchmarks?.disparity_ratio ?? 17.50;
   const easternAcutePct = benchmarks?.eastern_acute_pct ?? 86.9;
   const easternAcuteCount = benchmarks?.eastern_acute_count ?? 53;
   const totalAcute = benchmarks?.total_acute_pockets ?? 61;
+
+  // Check if regional filter is currently active
+  const isFilterActive = districts.length < (benchmarks?.n_regions ?? 514);
+
+  // Compute dynamic statistics for current selection
+  const sortedP0Asc = [...districts].sort((a, b) => a.poverty_rate_p0 - b.poverty_rate_p0);
+  const minDistrict = sortedP0Asc[0] || null;
+  const maxDistrict = sortedP0Asc[sortedP0Asc.length - 1] || null;
+
+  let dynamicMedianP0 = nationalMedianP0;
+  if (sortedP0Asc.length > 0) {
+    const mid = Math.floor(sortedP0Asc.length / 2);
+    dynamicMedianP0 = sortedP0Asc.length % 2 !== 0
+      ? sortedP0Asc[mid].poverty_rate_p0
+      : (sortedP0Asc[mid - 1].poverty_rate_p0 + sortedP0Asc[mid].poverty_rate_p0) / 2;
+  }
+
+  const dynamicDisparityRatio = (minDistrict && minDistrict.poverty_rate_p0 > 0 && maxDistrict)
+    ? maxDistrict.poverty_rate_p0 / minDistrict.poverty_rate_p0
+    : nationalDisparityRatio;
+
+  const acuteDistricts = districts.filter(d => d.poverty_rate_p0 >= 20.0);
+  const acuteCount = acuteDistricts.length;
+  const acutePct = districts.length > 0 ? (acuteCount / districts.length) * 100 : 0;
 
   return (
     <motion.div 
@@ -42,39 +66,127 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             <span>Babak 1: The Hook · Lanskap Makro Kemiskinan Daerah</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-ink-primary tracking-tight leading-snug">
-            Di Balik Angka Median Nasional {medianP0.toFixed(2)}%, Tersembunyi Jurang Disparitas Ekstrem {disparityRatio.toFixed(2)}x Lipat Antardaerah
+            Jurang Disparitas Ekstrem {nationalDisparityRatio.toFixed(2)}x Lipat Membelah Lanskap Kemiskinan Antardaerah
           </h2>
           <p className="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
-            Eksplorasi data resmi BPS 2021 di 514 kabupaten/kota menyingkap bahwa kemiskinan moneter di Indonesia tidak terdistribusi secara seragam, 
-            melainkan terpolarisasi sangat tajam antara pusat kemakmuran perkotaan di kawasan barat dan deprivasi akut di kawasan kepulauan timur.
+            Data resmi BPS 2021 menyingkap polarisasi spasial yang tajam: pusat kemakmuran perkotaan di kawasan barat berbanding terbalik dengan konsentrasi deprivasi akut di kawasan kepulauan timur.
           </p>
         </div>
       </div>
 
-      {/* Row 1: KPI Cards Strip (3 Cards) */}
+      {/* Row 1: KPI Cards Strip (3 Dual-State Cards with Stephen Few Micro Bullet Graphs) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <KpiCard
-          label="Tingkat Kemiskinan Median Nasional"
-          value={formatPercent(medianP0)}
-          benchmarkText="Rentang: 2.38% (Sawahlunto) s.d. 41.66% (Intan Jaya)"
-          contextText="514 Kabupaten/Kota · 34 Provinsi BPS 2021"
-          badge={{ text: "Benchmark Nasional", type: "default" }}
+          label={isFilterActive ? "Tingkat Kemiskinan Median Wilayah" : "Tingkat Kemiskinan Median Nasional"}
+          value={formatPercent(isFilterActive ? dynamicMedianP0 : nationalMedianP0)}
+          benchmarkText={
+            isFilterActive
+              ? `Baseline Nasional: ${formatPercent(nationalMedianP0)} (${dynamicMedianP0 >= nationalMedianP0 ? '+' : ''}${(dynamicMedianP0 - nationalMedianP0).toFixed(2)}% poin)`
+              : `Titik tengah sebaran ${benchmarks?.n_regions ?? 514} kabupaten/kota`
+          }
+          contextText={
+            isFilterActive
+              ? `Cakupan filter aktif: ${districts.length} daerah`
+              : "Sasaran RPJMN: 6.5%–7.0%"
+          }
+          badge={{
+            text: isFilterActive ? `${districts.length} Daerah Terpilih` : "Agregat Nasional",
+            type: isFilterActive ? "filter" : "default",
+          }}
+          range={{
+            min: isFilterActive && minDistrict ? minDistrict.poverty_rate_p0 : (benchmarks?.min_p0 ?? 2.38),
+            max: isFilterActive && maxDistrict ? maxDistrict.poverty_rate_p0 : (benchmarks?.max_p0 ?? 41.66),
+            current: isFilterActive ? dynamicMedianP0 : nationalMedianP0,
+            target: isFilterActive ? nationalMedianP0 : 6.5,
+            minLabel: isFilterActive && minDistrict 
+              ? `${minDistrict.kab_kota} (${formatPercent(minDistrict.poverty_rate_p0)})`
+              : `${benchmarks?.min_p0_region ?? "Sawahlunto"} (2.38%)`,
+            maxLabel: isFilterActive && maxDistrict 
+              ? `${maxDistrict.kab_kota} (${formatPercent(maxDistrict.poverty_rate_p0)})`
+              : `${benchmarks?.max_p0_region ?? "Intan Jaya"} (41.66%)`,
+            targetLabel: isFilterActive ? `Ref: ${formatPercent(nationalMedianP0)}` : "Target: 6.5%",
+            unit: "%",
+          }}
         />
+
         <KpiCard
-          label="Rasio Disparitas Ekstrem (Max / Min)"
-          value={`${disparityRatio.toFixed(2)}x Lipat`}
-          benchmarkText="Sawahlunto (Terendah) vs Intan Jaya (Tertinggi)"
-          contextText="SDG 1: Ketimpangan struktural 17.5x antar-wilayah"
-          badge={{ text: "Ketimpangan Kritis", type: "critical" }}
-          accentColor="#D55E00"
+          label={isFilterActive ? "Rasio Disparitas Wilayah Terpilih" : "Rasio Disparitas Ekstrem (Max / Min)"}
+          value={`${(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x Lipat`}
+          benchmarkText={
+            isFilterActive && minDistrict && maxDistrict
+              ? `${minDistrict.kab_kota} (${formatPercent(minDistrict.poverty_rate_p0)}) vs ${maxDistrict.kab_kota} (${formatPercent(maxDistrict.poverty_rate_p0)})`
+              : "Sawahlunto (Terendah) vs Intan Jaya (Tertinggi)"
+          }
+          contextText={
+            isFilterActive
+              ? `Rujukan disparitas nasional: ${nationalDisparityRatio.toFixed(2)}x lipat`
+              : "Ketimpangan struktural ekstrem antar-wilayah"
+          }
+          badge={{
+            text: isFilterActive 
+              ? (dynamicDisparityRatio >= 5.0 ? "Disparitas Tinggi" : "Disparitas Terkendali")
+              : "Ketimpangan Kritis",
+            type: (isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio) >= 5.0 ? "critical" : "default",
+          }}
+          range={{
+            min: 1.0,
+            max: Math.max(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio, 20.0),
+            current: isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio,
+            target: 1.0,
+            minLabel: "1.0x (Seragam)",
+            maxLabel: `${Math.max(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio, 20.0).toFixed(0)}x`,
+            targetLabel: "Keseimbangan: 1.0x",
+            unit: "x",
+          }}
+          accentColor={
+            (isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio) >= 5.0 
+              ? "#D55E00" 
+              : "#0F172A"
+          }
         />
+
         <KpiCard
-          label="Konsentrasi Kantong Akut (P0 ≥ 20%)"
-          value={`${easternAcutePct.toFixed(1)}% di Kawasan Timur`}
-          benchmarkText={`${easternAcuteCount} dari ${totalAcute} kantong kemiskinan akut di Timur`}
-          contextText="Kawasan barat menyumbang 13.1% (8 daerah 3T terisolir)"
-          badge={{ text: "Polarisasi Spasial", type: "warning" }}
-          accentColor="#E69F00"
+          label={isFilterActive ? "Kantong Kemiskinan Akut (P0 ≥ 20%)" : "Konsentrasi Kantong Akut (P0 ≥ 20%)"}
+          value={
+            isFilterActive
+              ? `${acuteCount} Daerah (${acutePct.toFixed(1)}%)`
+              : `${easternAcutePct.toFixed(1)}% di Kawasan Timur`
+          }
+          benchmarkText={
+            isFilterActive
+              ? `Rujukan nasional: ${totalAcute} kantong akut`
+              : `${easternAcuteCount} dari ${totalAcute} kantong kemiskinan akut di Timur`
+          }
+          contextText={
+            isFilterActive
+              ? (acuteCount > 0 
+                  ? `${acuteCount} daerah terpilih berkategori kemiskinan kritis`
+                  : "Nol daerah terpilih dengan P0 ≥ 20%")
+              : "Kawasan barat menyumbang 13.1% (8 kepulauan 3T)"
+          }
+          badge={{
+            text: isFilterActive
+              ? (acuteCount > 0 ? `${acuteCount} Kantong Akut` : "Nol Kantong Akut")
+              : "Polarisasi Spasial",
+            type: isFilterActive 
+              ? (acuteCount > 0 ? "warning" : "positive") 
+              : "warning",
+          }}
+          range={{
+            min: 0,
+            max: isFilterActive ? Math.max(districts.length, 1) : 100,
+            current: isFilterActive ? acuteCount : easternAcutePct,
+            target: 0,
+            minLabel: isFilterActive ? "0" : "0%",
+            maxLabel: isFilterActive ? `${districts.length} daerah` : "100%",
+            targetLabel: "Eliminasi: 0",
+            unit: isFilterActive ? " daerah" : "%",
+          }}
+          accentColor={
+            isFilterActive 
+              ? (acuteCount > 0 ? "#E69F00" : "#009E73")
+              : "#E69F00"
+          }
         />
       </div>
 
@@ -91,7 +203,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       {/* Row 3: Narrative Insight Callout (Knaflic Style) */}
       <NarrativeCallout
         title="WAWASAN DISPARITAS REGIONAL & ANOMALI BARAT"
-        insight={`Angka rata-rata nasional kerap menyesatkan kebijakan jika diasumsikan mewakili seluruh daerah. Sebanyak ${easternAcutePct.toFixed(1)}% kantong kemiskinan ekstrem menumpuk di Maluku, Papua, dan NTT. Namun demikian, kemiskinan bukan semata batas bujur timur-barat: wilayah terisolir seperti Kepulauan Nias dan Mentawai di Sumatera memperlihatkan profil kerentanan yang menyerupai kawasan timur.`}
+        insight={`${easternAcutePct.toFixed(1)}% kantong kemiskinan akut terkonsentrasi di Kawasan Timur, namun profil deprivasi serupa juga muncul di kantong kepulauan terisolir barat seperti Nias dan Mentawai.`}
         evidence={PARADOXES.westernAnomaly.evidence}
       />
 
@@ -103,21 +215,21 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             <div>
               <h3 className="text-xs font-bold text-red-700 uppercase tracking-wider flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                <span>Top 10 Kabupaten Kemiskinan Tertinggi</span>
+                <span>Top 10 Daerah Kemiskinan Tertinggi</span>
               </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">Seluruhnya berlokasi di Papua dan Nusa Tenggara</p>
+              <p className="text-xs text-slate-500 mt-0.5">Peringkat persentase kemiskinan tertinggi pada wilayah terpilih</p>
             </div>
-            <span className="text-[10px] font-mono bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-200 font-bold">
+            <span className="text-xs font-mono bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-200 font-bold">
               Kritis (&gt; 30%)
             </span>
           </div>
           <div className="divide-y divide-slate-100 mt-2">
             {top10Highest.map((d, i) => (
-              <div key={d.kab_kota} className="py-2 flex items-center justify-between text-xs">
+              <div key={d.kab_kota} className="py-2.5 flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-2 truncate">
-                  <span className="font-mono text-[11px] text-slate-400 w-4">{i + 1}.</span>
+                  <span className="font-mono text-xs text-slate-400 w-5">{i + 1}.</span>
                   <span className="font-semibold text-slate-800 truncate">{d.tipe_wilayah} {d.kab_kota}</span>
-                  <span className="text-[10px] text-slate-400">({d.provinsi})</span>
+                  <span className="text-xs text-slate-400">({d.provinsi})</span>
                 </div>
                 <span className="font-bold font-mono text-red-600 text-xs tabular-nums">
                   {formatPercent(d.poverty_rate_p0)}
@@ -135,19 +247,19 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                 <span className="w-2 h-2 rounded-full bg-okabe-blue"></span>
                 <span>Top 10 Daerah Kemiskinan Terendah</span>
               </h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">Didominasi kota otonom pusat jasa & industri</p>
+              <p className="text-xs text-slate-500 mt-0.5">Peringkat persentase kemiskinan terendah pada wilayah terpilih</p>
             </div>
-            <span className="text-[10px] font-mono bg-blue-50 text-okabe-blue px-2 py-0.5 rounded border border-blue-200 font-bold">
+            <span className="text-xs font-mono bg-blue-50 text-okabe-blue px-2 py-0.5 rounded border border-blue-200 font-bold">
               Mapan (&lt; 4%)
             </span>
           </div>
           <div className="divide-y divide-slate-100 mt-2">
             {top10Lowest.map((d, i) => (
-              <div key={d.kab_kota} className="py-2 flex items-center justify-between text-xs">
+              <div key={d.kab_kota} className="py-2.5 flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-2 truncate">
-                  <span className="font-mono text-[11px] text-slate-400 w-4">{i + 1}.</span>
+                  <span className="font-mono text-xs text-slate-400 w-5">{i + 1}.</span>
                   <span className="font-semibold text-slate-800 truncate">{d.tipe_wilayah} {d.kab_kota}</span>
-                  <span className="text-[10px] text-slate-400">({d.provinsi})</span>
+                  <span className="text-xs text-slate-400">({d.provinsi})</span>
                 </div>
                 <span className="font-bold font-mono text-okabe-blue text-xs tabular-nums">
                   {formatPercent(d.poverty_rate_p0)}
@@ -161,8 +273,8 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       {/* Row 5: Detailed Data Table */}
       <DataTable 
         districts={districts} 
-        title="Eksplorasi Detail 514 Kabupaten / Kota" 
-        subtitle="Dapat diurutkan berdasarkan indikator dan disaring melalui filter global."
+        title="Eksplorasi Data Kabupaten / Kota" 
+        subtitle="Dapat diurutkan berdasarkan indikator dan disaring melalui filter."
       />
     </motion.div>
   );

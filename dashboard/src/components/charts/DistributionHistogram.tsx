@@ -53,10 +53,10 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
     return {
       title: {
         text: 'Distribusi Frekuensi Kemiskinan Moneter (P0 %)',
-        subtext: `Pola sebaran menceng kanan (right-skewed). Garis putus-putus merah menandakan median ${nationalMedian.toFixed(2)}%.`,
+        subtext: 'Sebaran menceng ke kanan (right-skewed) dengan ekor panjang kemiskinan ekstrem.',
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 12, color: '#64748B' }
       },
       tooltip: {
         trigger: 'axis',

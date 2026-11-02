@@ -58,10 +58,10 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts 
     return {
       title: {
         text: 'Profil Pembeda 4 Klaster Sosio-Ekonomi: Small Multiples Bar Charts (Z-Score)',
-        subtext: 'Bebas dari distorsi Radar Chart. Sumbu X menunjukkan standar deviasi deviasi (Z-Score) terhadap rata-rata nasional (Z = 0).',
+        subtext: 'Deviasi terstandarisasi (Z-Score) tiap indikator terhadap rata-rata nasional (Z = 0).',
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 12, color: '#64748B' }
       },
       tooltip: {
         trigger: 'axis',

@@ -18,7 +18,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
   olsResults,
   boundaryCases,
 }) => {
-  const [activeTab, setActiveTab] = useState<'boundaries' | 'kaggle' | 'ols'>('ols');
+  const [activeTab, setActiveTab] = useState<'principles' | 'ols' | 'kaggle' | 'boundaries'>('ols');
 
   return (
     <motion.div
@@ -34,7 +34,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
             <ShieldAlert className="w-5 h-5" />
           </div>
           <div>
-            <div className="inline-flex items-center space-x-2 text-[10px] font-mono uppercase tracking-wider text-emerald-400 mb-1">
+            <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-emerald-400 mb-1">
               <span>Scientific Rigor &amp; Anti-Target-Leakage</span>
             </div>
             <h2 className="text-xl font-bold tracking-tight">
@@ -48,8 +48,8 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         </div>
       </div>
 
-      {/* 3 Navigation Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-200 pb-3">
+      {/* 4 Navigation Tabs */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
         <button
           onClick={() => setActiveTab('ols')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -79,6 +79,16 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           }`}
         >
           Tab 3: Verifikasi Nilai Batas 0.00% 3T
+        </button>
+        <button
+          onClick={() => setActiveTab('principles')}
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            activeTab === 'principles'
+              ? 'bg-okabe-blue text-white shadow-xs'
+              : 'bg-surface text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          Tab 4: Prinsip Visualisasi &amp; Nol Target Leakage
         </button>
       </div>
 
@@ -114,20 +124,20 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-              <span className="text-slate-400 text-[10px] uppercase font-bold">Tingkat Kecocokan</span>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="text-slate-400 text-xs uppercase font-bold">Tingkat Kecocokan</span>
               <div className="text-lg font-bold text-okabe-blue mt-0.5">98.83% Cocok</div>
-              <p className="text-[11px] text-slate-500 mt-0.5">508 dari 514 observasi identik</p>
+              <p className="text-xs text-slate-500 mt-0.5">508 observasi terbukti identik</p>
             </div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-              <span className="text-slate-400 text-[10px] uppercase font-bold">Implikasi Ilmiah</span>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="text-slate-400 text-xs uppercase font-bold">Implikasi Ilmiah</span>
               <div className="text-lg font-bold text-amber-700 mt-0.5">Bukan Ground Truth</div>
-              <p className="text-[11px] text-slate-500 mt-0.5">Aturan buatan uploader Kaggle</p>
+              <p className="text-xs text-slate-500 mt-0.5">Aturan buatan uploader Kaggle</p>
             </div>
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-              <span className="text-slate-400 text-[10px] uppercase font-bold">Keputusan Metodologi</span>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <span className="text-slate-400 text-xs uppercase font-bold">Keputusan Metodologi</span>
               <div className="text-lg font-bold text-emerald-700 mt-0.5">Label Didrop 100%</div>
-              <p className="text-[11px] text-slate-500 mt-0.5">Mencegah circular reasoning</p>
+              <p className="text-xs text-slate-500 mt-0.5">Mencegah circular reasoning</p>
             </div>
           </div>
         </div>
@@ -150,14 +160,14 @@ export const MethodologyAudit: React.FC<PageProps> = ({
               <div key={b.region} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-ink-primary">{b.region}</span>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-800">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">
                     {b.value.toFixed(2)}{b.unit}
                   </span>
                 </div>
-                <div className="text-[11px] text-okabe-blue font-semibold">
+                <div className="text-xs text-okabe-blue font-semibold">
                   Indikator: {b.variable_label}
                 </div>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {b.context}
                 </p>
               </div>
@@ -166,19 +176,89 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         </div>
       )}
 
-      {/* Technical Outlier Inspection: Tukey 1.5x IQR Boxplot */}
-      <TukeyBoxplot districts={districts} />
+      {/* Tab 4: Design Principles & Unsupervised Integrity */}
+      {activeTab === 'principles' && (
+        <div className="bg-surface rounded-xl border border-slate-200/80 p-6 shadow-subtle space-y-5 text-xs">
+          <div>
+            <h3 className="text-sm font-bold text-ink-primary">
+              Standar Desain Visual &amp; Filosofi Unsupervised Learning
+            </h3>
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+              Dokumentasi resmi mengenai pilihan arsitektur visual dan batasan metodologis yang diterapkan pada sistem PovertyRadar SDGs.
+            </p>
+          </div>
 
-      {/* Data Dictionary & Verification Summary */}
-      <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle text-xs space-y-3">
-        <div className="flex items-center space-x-2 text-slate-800 font-bold">
-          <Database className="w-4 h-4 text-okabe-blue" />
-          <span>Kamus Data Singkat &amp; Standar Transformasi Fitur</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                <span>Mengapa Radar / Spider Chart Dilarang</span>
+              </div>
+              <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
+                <li>
+                  <strong>Axis-Order Bias:</strong> Luas area poligon radar chart berubah drastis hanya dengan mengubah urutan sumbu, menghasilkan ilusi visual yang membiaskan persepsi pengambil kebijakan (Knaflic, Few).
+                </li>
+                <li>
+                  <strong>Asumsi Hubungan Melingkar Semu:</strong> Radar chart dirancang untuk dimensi melingkar (arah kompas, siklus jam). Menghubungkan variabel independen (sanitasi, RLS, pengeluaran) memunculkan keterkaitan geometris fiktif.
+                </li>
+                <li>
+                  <strong>Solusi Terpilih:</strong> Menggunakan <em>Small Multiples Bar Charts (Z-Score)</em> yang memiliki garis acuan nol nasional dan <em>Matriks Diverging Heatmap 28 Sel</em>.
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Filosofi Zero Target Leakage &amp; SDG 1</span>
+              </div>
+              <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
+                <li>
+                  <strong>Penolakan Klasifikasi Supervised:</strong> Label biner Kaggle dibuang 100% untuk mencegah penalaran melingkar (*circular reasoning*), karena terbukti merupakan formula artifisial.
+                </li>
+                <li>
+                  <strong>Eksklusi P0 dari Fitur Klastering:</strong> Tingkat kemiskinan moneter $P_0$ tidak disertakan dalam ruang fitur K-Means, melainkan difungsikan murni untuk profil evaluasi pasca-klastering.
+                </li>
+                <li>
+                  <strong>Prinsip "Leave No One Behind":</strong> 26 anomali ekstrim wilayah 3T tidak dibuang, melainkan ditransformasikan dengan <code>log1p</code> pada PDRB dan diskalakan via <code>RobustScaler</code> (berbasis median &amp; IQR).
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <p className="text-slate-600 leading-relaxed">
-          Semua 7 fitur masukan klastering distandarisasi menggunakan <code>RobustScaler</code> (berbasis median dan IQR) untuk menahan distorsi dari 26 anomali multivariat tanpa membuang satu pun kabupaten dari dataset. PDRB ditransformasikan dengan <code>log1p</code> untuk mereduksi kemencengan dari +5.85 menjadi +0.23.
-        </p>
-      </div>
+      )}
+
+      {/* Collapsible: Tukey 1.5x IQR Boxplot Outlier Inspection */}
+      <details className="group bg-surface rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-subtle text-xs transition-all">
+        <summary className="cursor-pointer font-bold text-slate-800 flex justify-between items-center select-none text-xs">
+          <span className="flex items-center space-x-2">
+            <span>📊 Audit Distribusi &amp; Deteksi Pencilan (Tukey 1.5x IQR Boxplot)</span>
+          </span>
+          <span className="text-slate-400 text-xs transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div className="mt-4 pt-3 border-t border-slate-100">
+          <TukeyBoxplot districts={districts} />
+        </div>
+      </details>
+
+      {/* Collapsible: Data Dictionary & Transformation Standards */}
+      <details className="group bg-surface rounded-xl border border-slate-200/80 p-4 sm:p-5 shadow-subtle text-xs transition-all">
+        <summary className="cursor-pointer font-bold text-slate-800 flex justify-between items-center select-none text-xs">
+          <span className="flex items-center space-x-2">
+            <Database className="w-4 h-4 text-okabe-blue" />
+            <span>Kamus Data &amp; Standar Transformasi Fitur (7 Indikator Struktural)</span>
+          </span>
+          <span className="text-slate-400 text-xs transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div className="mt-3 pt-3 border-t border-slate-100 text-slate-600 leading-relaxed space-y-2">
+          <p>
+            Semua 7 fitur masukan klastering distandarisasi menggunakan <code>RobustScaler</code> (berbasis median dan IQR) untuk menahan distorsi dari 26 anomali multivariat tanpa membuang satu pun kabupaten dari dataset.
+          </p>
+          <p>
+            PDRB riil konstan ditransformasikan dengan <code>log1p</code> untuk mereduksi kemencengan dari +5.85 menjadi +0.23, menjaga stabilitas matematis algoritma berbasis jarak Euclidean.
+          </p>
+        </div>
+      </details>
     </motion.div>
   );
 };

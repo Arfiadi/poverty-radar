@@ -72,10 +72,10 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
     return {
       title: {
         text: 'The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan',
-        subtext: `Korelasi ${r >= 0 ? 'positif' : 'negatif'} r = ${r >= 0 ? '+' : ''}${r.toFixed(3)}. Di perdesaan 3T, warga miskin wajib bekerja harian untuk bertahan hidup.`,
+        subtext: `Korelasi positif (r = +${r.toFixed(3)}): warga wilayah miskin wajib bekerja subsistensi demi bertahan hidup.`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 12, color: '#64748B' }
       },
       tooltip: {
         trigger: 'item',

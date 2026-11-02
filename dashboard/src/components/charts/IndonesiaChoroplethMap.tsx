@@ -281,7 +281,7 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
         <div className="flex items-center justify-between mb-3 text-xs text-slate-500">
           <div className="flex items-center space-x-1.5">
             <MapPin className="w-4 h-4 text-okabe-blue" />
-            <span>Peta Poligon 34 Provinsi Indonesia (Data BPS 2021) · Navigasi: Scroll untuk Zoom, Drag untuk Geser</span>
+            <span>Peta Poligon 34 Provinsi Indonesia · Navigasi: Scroll untuk Zoom, Drag untuk Geser</span>
           </div>
           {selectedProvince && (
             <button
@@ -362,11 +362,11 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
                 className="p-2.5 rounded-lg border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-okabe-blue/50 transition flex flex-col justify-between"
               >
                 <div className="flex items-start justify-between gap-1 mb-1.5">
-                  <span className="font-bold text-slate-800 truncate text-[11px]">{d.kab_kota}</span>
-                  <span className="text-[10px] text-slate-500 shrink-0 font-medium">{d.tipe_wilayah}</span>
+                  <span className="font-bold text-slate-800 truncate text-xs">{d.kab_kota}</span>
+                  <span className="text-xs text-slate-500 shrink-0 font-medium">{d.tipe_wilayah}</span>
                 </div>
                 <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[10px] text-slate-500">{indicatorLabel}:</span>
+                  <span className="text-xs text-slate-500">{indicatorLabel}:</span>
                   <span className="font-mono font-bold text-xs text-ink-primary">
                     {Number(d[indicator])?.toFixed(2)}{unit}
                   </span>

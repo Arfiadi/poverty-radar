@@ -46,11 +46,11 @@ export const SpatialRankingBar: React.FC<SpatialRankingProps> = ({
   const option = useMemo(() => {
     return {
       title: {
-        text: `Ranking Rata-Rata ${indicatorLabel} Antar-Provinsi (34 Provinsi)`,
-        subtext: `Fallback Geospasial: Menampilkan perbandingan nilai rata-rata wilayah provinsi (Garis putus-putus: Rata-Rata Nasional ${nationalAvg}${unit}).`,
+        text: `Ranking Rata-Rata ${indicatorLabel} Antar-Provinsi`,
+        subtext: `Perbandingan rata-rata provinsi terhadap garis acuan nasional (${nationalAvg}${unit}).`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 12, color: '#64748B' }
       },
       tooltip: {
         trigger: 'axis',
@@ -84,7 +84,7 @@ export const SpatialRankingBar: React.FC<SpatialRankingProps> = ({
         type: 'category',
         data: provNames,
         axisLine: { lineStyle: { color: '#CBD5E1' } },
-        axisLabel: { color: '#1E293B', fontSize: 10, fontWeight: 500 }
+        axisLabel: { color: '#1E293B', fontSize: 11, fontWeight: 500 }
       },
       series: [
         {
@@ -99,14 +99,14 @@ export const SpatialRankingBar: React.FC<SpatialRankingProps> = ({
             show: true,
             position: 'right',
             formatter: `{c}${unit}`,
-            fontSize: 9,
+            fontSize: 10,
             color: '#475569'
           },
           markLine: {
             silent: true,
             symbol: ['none', 'none'],
             lineStyle: { type: 'dashed', color: '#D55E00', width: 1.8 },
-            label: { formatter: `Nasional: {c}${unit}`, position: 'end', color: '#D55E00', fontSize: 10 },
+            label: { formatter: `Nasional: {c}${unit}`, position: 'end', color: '#D55E00', fontSize: 11 },
             data: [{ xAxis: nationalAvg }]
           }
         }

@@ -20,7 +20,42 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
 
   // Active policy recommendation item from matrix
-  const activePolicy = policyMatrix.find(p => p.code === selectedQuadrantCode) || policyMatrix[4];
+  const activePolicy = selectedQuadrantCode === 'ALL'
+    ? null
+    : (policyMatrix.find(p => p.code === selectedQuadrantCode) || null);
+
+  const handleSelectQuadrant = (code: string) => {
+    setSelectedQuadrantCode(code);
+    if (activeCasePin !== 'none') {
+      setActiveCasePin('none');
+    }
+  };
+
+  const handleSelectDistrict = (d: District) => {
+    setSelectedDistrict(d);
+    if (d.vulnerability_quadrant.startsWith('Kuadran I')) {
+      setSelectedQuadrantCode('Q1');
+    } else if (d.vulnerability_quadrant.startsWith('Kuadran II')) {
+      setSelectedQuadrantCode('Q2');
+    } else if (d.vulnerability_quadrant.startsWith('Kuadran III')) {
+      setSelectedQuadrantCode('Q3');
+    } else if (d.vulnerability_quadrant.startsWith('Kuadran IV')) {
+      setSelectedQuadrantCode('Q4');
+    }
+  };
+
+  // Filtered districts for table based on selected quadrant
+  const displayedDistricts = React.useMemo(() => {
+    if (selectedQuadrantCode === 'ALL') return districts;
+    const qMap: Record<string, string> = {
+      Q1: 'Kuadran I',
+      Q2: 'Kuadran II',
+      Q3: 'Kuadran III',
+      Q4: 'Kuadran IV',
+    };
+    const prefix = qMap[selectedQuadrantCode];
+    return prefix ? districts.filter(d => d.vulnerability_quadrant.startsWith(prefix)) : districts;
+  }, [districts, selectedQuadrantCode]);
 
   return (
     <motion.div
@@ -37,7 +72,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
             <span>Babak 4: The Call to Action · Matriks 2x2 & Penapisan Portofolio</span>
           </div>
           <h2 className="text-xl font-extrabold text-ink-primary tracking-tight">
-            Matriks Skrining Kerentanan 2x2: Penapisan 514 Daerah Menuju Portofolio Kebijakan
+            Matriks Skrining Kerentanan 2x2: Penapisan Daerah Menuju Portofolio Kebijakan
           </h2>
           <p className="text-xs text-ink-muted mt-1 max-w-2xl">
             Memadukan kemiskinan moneter aktual (P0) dan indeks kerentanan fasilitas dasar (V_struc) dengan garis median nasional untuk diferensiasi intervensi spesifik.
@@ -54,7 +89,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
                 : 'text-slate-600 hover:text-ink-primary'
             }`}
           >
-            Semua (514)
+            Semua Daerah
           </button>
           <button
             onClick={() => setActiveCasePin('resource_curse')}
@@ -87,7 +122,8 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
           <VulnerabilityMatrix2x2
             districts={districts}
             activeCasePin={activeCasePin}
-            onSelectDistrict={(d) => setSelectedDistrict(d)}
+            activeQuadrantCode={selectedQuadrantCode}
+            onSelectDistrict={handleSelectDistrict}
           />
         </div>
 
@@ -97,60 +133,120 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
             <div>
               {/* Quadrant Selector Tabs */}
               <div className="flex items-center space-x-1 pb-3 border-b border-slate-100">
+                <button
+                  onClick={() => handleSelectQuadrant('ALL')}
+                  className={`py-1.5 px-2.5 rounded-lg text-xs font-bold text-center transition-all ${
+                    selectedQuadrantCode === 'ALL'
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  Semua
+                </button>
                 {QUADRANTS.map(q => (
                   <button
                     key={q.code}
-                    onClick={() => setSelectedQuadrantCode(q.code)}
-                    className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold text-center transition-all ${
+                    onClick={() => handleSelectQuadrant(q.code)}
+                    className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-bold text-center transition-all ${
                       selectedQuadrantCode === q.code
                         ? 'bg-slate-900 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    {q.code}
+                    {q.code} <span className="text-xs opacity-75">({q.count})</span>
                   </button>
                 ))}
               </div>
 
               {/* Quadrant Policy Content */}
-              {activePolicy && (
+              {activePolicy ? (
                 <div className="mt-4 space-y-3 text-xs">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Rekomendasi Kebijakan Terpadu
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Rekomendasi Kebijakan Terpadu ({activePolicy.code})
                     </span>
                     <h3 className="text-sm font-extrabold text-ink-primary mt-0.5 leading-snug">
                       {activePolicy.name}
                     </h3>
-                    <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                      {activePolicy.working_hypothesis}
-                    </p>
                   </div>
 
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                  <div className="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-2.5">
+                    {/* 1. Akar Masalah */}
+                    <div className="flex items-start space-x-2">
+                      <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                      <div>
+                        <strong className="text-slate-800">Akar Masalah:</strong>
+                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.working_hypothesis}</p>
+                      </div>
+                    </div>
+
+                    {/* 2. Jalur Intervensi Utama */}
                     <div className="flex items-start space-x-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-okabe-blue shrink-0 mt-0.5" />
                       <div>
                         <strong className="text-slate-800">Jalur Intervensi Utama:</strong>
-                        <p className="text-slate-600 mt-0.5">{activePolicy.primary_policy_track}</p>
+                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.primary_policy_track}</p>
                       </div>
                     </div>
 
+                    {/* 3. Rekomendasi Alokasi APBN/DAK */}
                     <div className="flex items-start space-x-2">
                       <Briefcase className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-slate-800">Instrumen Fiskal (APBN &amp; TKD):</strong>
-                        <p className="text-slate-600 mt-0.5">{activePolicy.fiscal_instruments}</p>
+                        <strong className="text-slate-800">Rekomendasi Alokasi APBN &amp; DAK:</strong>
+                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.fiscal_instruments}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-start space-x-2">
-                      <Building className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-slate-800">OPD &amp; K/L Pengampu:</strong>
-                        <p className="text-slate-600 mt-0.5">{activePolicy.lead_agencies}</p>
+                    {/* Accordion: Detail Regulasi & OPD Pelaksana */}
+                    <details className="mt-2 group border border-slate-200 rounded-lg bg-white overflow-hidden text-xs transition-all">
+                      <summary className="px-3 py-2 cursor-pointer font-semibold text-slate-700 hover:text-slate-900 flex justify-between items-center select-none bg-slate-50/60">
+                        <span className="flex items-center space-x-1.5">
+                          <Building className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Lihat Detail Regulasi &amp; OPD Pelaksana</span>
+                        </span>
+                        <span className="text-slate-400 text-xs transition-transform group-open:rotate-180">▼</span>
+                      </summary>
+                      <div className="p-3 border-t border-slate-200 space-y-2 text-slate-600 leading-relaxed bg-white">
+                        <div>
+                          <strong className="text-slate-800">OPD &amp; K/L Pengampu:</strong>
+                          <p className="mt-0.5 text-slate-700">{activePolicy.lead_agencies}</p>
+                        </div>
+                        <div className="text-xs text-slate-500 pt-1 border-t border-slate-100">
+                          Rujukan: Kerangka Kerja Penapisan SDGs Kemendagri &amp; Bappenas 2026.
+                        </div>
                       </div>
-                    </div>
+                    </details>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3 text-xs">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Penapisan Portofolio Kebijakan Nasional
+                    </span>
+                    <h3 className="text-sm font-extrabold text-ink-primary mt-0.5 leading-snug">
+                      Matriks Relatif 2x2: Diferensiasi Portofolio Intervensi
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      Penapisan memisahkan kemiskinan moneter konsumsi (Sumbu X) dan defisit fasilitas fisik (Sumbu Y). Pilih tab kuadran (Q1–Q4) untuk menelaah intervensi spesifik tiap kelompok.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    {QUADRANTS.map(q => (
+                      <button
+                        key={q.code}
+                        onClick={() => handleSelectQuadrant(q.code)}
+                        className="text-left p-2.5 rounded-lg border border-slate-200 bg-slate-50/70 hover:bg-slate-100 hover:border-slate-300 transition-all"
+                      >
+                        <div className="flex items-center space-x-1.5">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: q.color }}></span>
+                          <span className="font-bold text-slate-800 text-xs">{q.code}</span>
+                          <span className="text-xs text-slate-400 font-normal">({q.count})</span>
+                        </div>
+                        <p className="text-xs text-slate-600 font-medium mt-1 line-clamp-1">{q.label.split(':')[1]?.trim()}</p>
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
@@ -170,8 +266,8 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
                     Tutup
                   </button>
                 </div>
-                <div className="mt-1 text-[11px] text-slate-600">
-                  Provinsi: {selectedDistrict.provinsi} | P0: {selectedDistrict.poverty_rate_p0.toFixed(2)}% | V_struc: {selectedDistrict.vulnerability_score.toFixed(4)}
+                <div className="mt-1 text-xs text-slate-600">
+                  Provinsi: {selectedDistrict.provinsi} | P0: {selectedDistrict.poverty_rate_p0.toFixed(2)}% | V_struc: {selectedDistrict.vulnerability_score.toFixed(4)} | {selectedDistrict.vulnerability_quadrant}
                 </div>
               </div>
             )}
@@ -184,22 +280,26 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
         title={activeCasePin === 'resource_curse' ? "ANOMALI KUTUKAN SUMBER DAYA" : (activeCasePin === 'madura' ? "ANOMALI DISPARITAS MADURA" : "PENAPISAN BEBAN GANDA KUADRAN I")}
         insight={
           activeCasePin === 'resource_curse'
-            ? PARADOXES.resourceCurse.insightCallout
+            ? "29 daerah tambang jumbo (PDRB ≥ Rp 25 Triliun) mengalami paradoks kemiskinan di atas median nasional akibat distorsi enclave economy ekstraktif yang minim menyerap tenaga kerja lokal."
             : (activeCasePin === 'madura'
-                ? PARADOXES.maduraDisparity.insightCallout
-                : "Kuadran I (162 daerah / 31.5%) mencakup wilayah yang menanggung beban ganda: kemiskinan moneter konsumsi tinggi sekaligus ketiadaan sarana air dan sanitasi dasar. Penanganan di wilayah ini menuntut konvergensi ganda antara bantalan sosial tunai (PKH/BLT) dan belanja modal fisik infrastruktur dasar.")
+                ? "Hanya terpisah 5.4 km Suramadu, Surabaya berpendidikan tinggi dan sejahtera, sementara Madura terjebak kemiskinan hingga 23.8% akibat defisit modal manusia dan sanitasi."
+                : "Matriks 2x2 mendiferensiasikan intervensi: wilayah beban ganda (Kuadran I) wajib memadukan bansos tunai dan belanja modal fisik, sedangkan daerah defisit moneter murni cukup perluasan kerja formal dan subsidi.")
         }
         evidence={
           activeCasePin === 'resource_curse'
             ? PARADOXES.resourceCurse.evidence
-            : (activeCasePin === 'madura' ? PARADOXES.maduraDisparity.evidence : "N_Kuadran_I = 162 daerah, seluruhnya memerlukan intervensi simultan.")
+            : (activeCasePin === 'madura' ? PARADOXES.maduraDisparity.evidence : "N_Kuadran_I = 162 daerah, Kuadran II = 95 daerah, Kuadran III = 94 daerah, Kuadran IV = 163 daerah.")
         }
       />
 
       {/* Filtered Screening Table */}
       <DataTable
-        districts={districts}
-        title="Daftar Skrining Wilayah Penapisan Kebijakan"
+        districts={displayedDistricts}
+        title={
+          selectedQuadrantCode === 'ALL'
+            ? "Daftar Skrining Wilayah Penapisan Kebijakan (Semua Daerah)"
+            : `Daftar Skrining Wilayah Penapisan Kebijakan (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
+        }
         subtitle="Data tersaring yang siap diekspor ke format CSV untuk analisis Bappeda."
         defaultSortField="vulnerability_score"
         defaultSortAsc={false}

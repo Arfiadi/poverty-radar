@@ -13,7 +13,7 @@ export const ClusterBadge: React.FC<ClusterBadgeProps> = ({ clusterId, clusterNa
 
   return (
     <span 
-      className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border"
+      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
       style={{
         backgroundColor: `${color}15`,
         borderColor: `${color}40`,
@@ -35,7 +35,7 @@ export const QuadrantBadge: React.FC<QuadrantBadgeProps> = ({ quadrantName }) =>
 
   return (
     <span 
-      className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border"
+      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
       style={{
         backgroundColor: `${color}15`,
         borderColor: `${color}40`,
@@ -51,7 +51,7 @@ export const QuadrantBadge: React.FC<QuadrantBadgeProps> = ({ quadrantName }) =>
 export const AnomalyBadge: React.FC<{ isAnomaly: boolean }> = ({ isAnomaly }) => {
   if (!isAnomaly) return null;
   return (
-    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
       Anomali 3T / Kota
     </span>
   );

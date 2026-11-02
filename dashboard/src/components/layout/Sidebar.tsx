@@ -35,14 +35,14 @@ export const Sidebar: React.FC = () => {
                 <span className="font-extrabold text-sm tracking-tight text-ink-primary">PovertyRadar</span>
                 <span className="bg-sdg text-white font-mono text-[9px] font-bold px-1 py-0.5 rounded leading-none">SDG 1</span>
               </div>
-              <p className="text-[10px] text-ink-muted leading-tight font-medium">BPS 2021 Socioeconomic Radar</p>
+              <p className="text-xs text-ink-muted leading-tight font-medium">Socioeconomic Radar</p>
             </div>
           </div>
         </div>
 
         {/* Narrative Navigation Section */}
         <div className="px-3 py-4">
-          <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="px-3 pb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
             Alur Cerita 5 Babak
           </div>
           <nav className="space-y-1">
@@ -62,7 +62,7 @@ export const Sidebar: React.FC = () => {
                   <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-okabe-blue" : "text-slate-400"}`} />
                   <div className="truncate">
                     <div className="text-xs leading-tight truncate">{item.label}</div>
-                    <div className="text-[10px] text-slate-400 font-normal truncate mt-0.5">{item.sub}</div>
+                    <div className="text-xs text-slate-400 font-normal truncate mt-0.5">{item.sub}</div>
                   </div>
                 </button>
               );
@@ -73,11 +73,11 @@ export const Sidebar: React.FC = () => {
 
       {/* Sidebar Footer Metadata */}
       <div className="p-4 border-t border-slate-100 bg-slate-50/60">
-        <div className="flex items-center space-x-2 text-[11px] text-ink-muted">
+        <div className="flex items-center space-x-2 text-xs text-ink-muted">
           <Database className="w-3.5 h-3.5 text-slate-400" />
           <span className="font-medium">Data: BPS 2021 (N=514)</span>
         </div>
-        <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+        <p className="text-xs text-slate-400 mt-1 leading-snug">
           Unsupervised Clustering · Bebas Target Leakage
         </p>
       </div>
