@@ -52,7 +52,7 @@ flowchart LR
    Menjelajahi dimensi spasial 34 provinsi dan menyingkap dua paradoks mendasar: **The Great Dualism** (kabupaten 1.8x lebih miskin dari kota, namun kota 1.8x lebih menganggur) serta paradoks **The Working Poor** (korelasi positif $P_0$ vs TPAK $r = +0.462$, di mana warga miskin 3T wajib bekerja subsistensi bertahan hidup sehingga TPT tercatat mendekati $0.00\%$).
 3. **Babak 3 — *The Archetypes* (`03. Regional Profiles`):**  
    *Pertanyaan yang Dijawab:* Apa karakteristik setiap kelompok daerah dan apa yang membedakannya?  
-   Menjawab profil pembeda melalui visualisasi **Small Multiples Bar Charts (Z-Score)** dan **Heatmap Matrix** yang menunjukkan bahwa akses fasilitas fisik dan layanan dasar (sanitasi bivariat  = -0.56$) beriringan kuat dengan kemiskinan mendampingi PDRB nominal skala asli ( = -0.24$), serta menyajikan paradoks **The Educated Poor** di kepulauan terpencil (RLS tinggi namun kemiskinan tetap kritis).
+   Menjawab profil pembeda melalui visualisasi **Small Multiples Bar Charts (Z-Score)** dan **Heatmap Matrix** yang menunjukkan bahwa akses fasilitas fisik dan layanan dasar (sanitasi bivariat $r = -0.56$) beriringan kuat dengan kemiskinan mendampingi PDRB nominal skala asli ($r = -0.24$), serta menyajikan paradoks **The Educated Poor** di kepulauan terpencil (RLS tinggi namun kemiskinan tetap kritis).
 4. **Babak 4 — *The Call to Action* (`04. Priority & Implications`):**  
    *Pertanyaan yang Dijawab:* Wilayah mana yang layak dianalisis lebih lanjut berdasarkan kondisi yang teramati?  
    Puncak rekomendasi praktis melalui **Matriks Kuadran 2x2** ($P_0$ Aktual vs Indeks Kerentanan Struktural $V_{struc}$) dilengkapi fitur **Interactive Case-Study Pins** (Kutukan Sumber Daya Enclave dan Disparitas Madura) untuk menguji efektivitas penapisan intervensi.
@@ -365,7 +365,7 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1–2 kalimat bertanda �
        $$\text{Class 1} \iff (P_0 > 20.0\%) \lor (\text{Pengeluaran} \le 6.25 \text{ Juta} \land \text{Sanitasi} \le 56.0\%)$$
      * Akurasi rekonstruksi formula terhadap 514 data: **98.8%** (508 dari 514 daerah identik).
      * Memberikan bukti empiris kuat mengapa label biner Kaggle ditolak untuk mencegah *target leakage* dan *circular reasoning*.
-  4. *Tab 3: Ekonometrika Multivariat OLS & Koefisien Regresi Terstandarisasi Baku ($eta$):*
+  4. *Tab 3: Ekonometrika Multivariat OLS & Koefisien Regresi Terstandarisasi Baku ($\beta$):*
      * Horizontal Bar Chart koefisien regresi linier berganda terstandarisasi baku ($\beta$):
        * Pengeluaran Riil ($\beta = -0.317$, $t = -5.82$, $p < 0.0001$)
        * Akses Sanitasi Layak ($\beta = -0.209$, $t = -4.66$, $p < 0.0001$)
