@@ -23,6 +23,9 @@ export interface KpiCardProps {
   };
   range?: KpiRange;
   accentColor?: string;
+  onClick?: () => void;
+  className?: string;
+  isActive?: boolean;
 }
 
 export const KpiCard: React.FC<KpiCardProps> = ({
@@ -34,6 +37,9 @@ export const KpiCard: React.FC<KpiCardProps> = ({
   badge,
   range,
   accentColor,
+  onClick,
+  className = '',
+  isActive = false,
 }) => {
   const getBadgeStyle = () => {
     switch (badge?.type) {
@@ -62,8 +68,17 @@ export const KpiCard: React.FC<KpiCardProps> = ({
 
   return (
     <article
-      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle hover:shadow-card transition-shadow flex flex-col justify-between h-full"
-      role="region"
+      onClick={onClick}
+      className={`bg-surface rounded-xl p-4 shadow-subtle transition-all flex flex-col justify-between h-full ${
+        onClick ? 'cursor-pointer hover:shadow-card hover:-translate-y-0.5' : 'hover:shadow-card'
+      } ${
+        isActive 
+          ? 'border-2 border-okabe-blue ring-2 ring-okabe-blue/20 bg-blue-50/20' 
+          : 'border border-slate-200/90'
+      } ${className}`}
+      role={onClick ? "button" : "region"}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
       aria-label={`${label}: ${value} ${unit || ''}`}
     >
       <dl className="flex flex-col justify-between h-full space-y-2.5 m-0">

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
+import { EPISTEMIC_DISCLAIMER } from '../../constants/paradoxes';
 
 interface WorkingPoorProps {
   districts: District[];
@@ -72,10 +73,10 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
     return {
       title: {
         text: 'The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan',
-        subtext: `Korelasi positif (r = +${r.toFixed(3)}): warga wilayah miskin wajib bekerja subsistensi demi bertahan hidup.`,
+        subtext: `Korelasi positif (r = +${r.toFixed(3)}): warga wilayah miskin dominan bekerja subsistensi bertahan hidup.\n${EPISTEMIC_DISCLAIMER}`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 12, color: '#64748B' }
+        subtextStyle: { fontSize: 10.5, color: '#64748B', lineHeight: 15 }
       },
       tooltip: {
         trigger: 'item',
@@ -93,12 +94,13 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
               <div>TPAK: <strong>${d.labor_participation_tpak.toFixed(2)}%</strong></div>
               <div>Kemiskinan P0: <strong style="color: #D55E00;">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
               <div>Pengangguran TPT: <strong>${d.unemployment_rate_tpt.toFixed(2)}%</strong></div>
+              <div style="font-size: 10px; color: #94A3B8; margin-top: 3px;">Asosiasi bivariat linier, bukan kausalitas.</div>
             </div>
           `;
         }
       },
       grid: {
-        top: 65,
+        top: 75,
         right: 30,
         bottom: 45,
         left: 55
@@ -135,7 +137,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
             silent: true,
             symbol: ['none', 'none'],
             label: {
-              formatter: `Garis Tren OLS (r = ${r >= 0 ? '+' : ''}${r.toFixed(3)})`,
+              formatter: `Garis Tren OLS (r = ${r >= 0 ? '+' : ''}${r.toFixed(3)}, Asosiasi Linier)`,
               position: 'insideEndTop',
               color: '#0072B2',
               fontWeight: 'bold',
@@ -155,7 +157,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
 
   return (
     <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '320px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+      <ReactECharts option={option} style={{ height: '330px', width: '100%' }} opts={{ renderer: 'canvas' }} />
     </div>
   );
 };

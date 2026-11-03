@@ -10,10 +10,11 @@ import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/form
 
 interface PageProps {
   districts: District[];
+  allDistricts?: District[];
   clusterSummary: ClusterSummary[];
 }
 
-export const RegionalProfiles: React.FC<PageProps> = ({ districts, clusterSummary }) => {
+export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts, clusterSummary }) => {
   const [viewMode, setViewMode] = useState<'small_multiples' | 'heatmap'>('small_multiples');
 
   return (
@@ -145,9 +146,9 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, clusterSummar
         </div>
 
         {viewMode === 'small_multiples' ? (
-          <SmallMultiplesZScore districts={districts} />
+          <SmallMultiplesZScore districts={districts} allDistricts={allDistricts} />
         ) : (
-          <ClusterHeatmap districts={districts} />
+          <ClusterHeatmap districts={districts} allDistricts={allDistricts} />
         )}
       </div>
 
@@ -160,3 +161,5 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, clusterSummar
     </motion.div>
   );
 };
+
+export default RegionalProfiles;

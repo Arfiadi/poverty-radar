@@ -5,6 +5,7 @@ import { District, OLSResult, BoundaryCase } from '../types';
 import { OLSCoefficientsBar } from '../components/charts/OLSCoefficientsBar';
 import { TukeyBoxplot } from '../components/charts/TukeyBoxplot';
 import { NarrativeCallout } from '../components/common/NarrativeCallout';
+import { KpiCard } from '../components/common/KpiCard';
 import { PARADOXES } from '../constants/paradoxes';
 
 interface PageProps {
@@ -46,6 +47,80 @@ export const MethodologyAudit: React.FC<PageProps> = ({
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Row 1: 4 Data Science & Integrity Audit KPI Cards Strip */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          label="Integritas Target Leakage"
+          value="0% Kebocoran"
+          benchmarkText="100% Label Biner Bawaan Dibuang"
+          contextText="Menolak klasifikasi terawasi artifisial · Murni Unsupervised K-Means"
+          badge={{ text: "Metodologi Valid", type: "positive" }}
+          range={{
+            min: 0,
+            max: 100,
+            current: 0,
+            target: 0,
+            minLabel: "0% (Bebas)",
+            maxLabel: "100%",
+            targetLabel: "Target: 0%",
+            unit: "%",
+          }}
+          accentColor="#009E73"
+        />
+
+        <KpiCard
+          label="Dekonstruksi Label Kaggle"
+          value="98.83% Cocok"
+          benchmarkText="508 dari 514 Daerah Identik Formula"
+          contextText="Formula deterministik sederhana terbukti merekonstruksi label bawaan uploader"
+          badge={{ text: "Terbukti Heuristik", type: "critical" }}
+          range={{
+            min: 0,
+            max: 100,
+            current: 98.83,
+            minLabel: "0%",
+            maxLabel: "100%",
+            unit: "%",
+          }}
+          accentColor="#0072B2"
+        />
+
+        <KpiCard
+          label="Stabilitas Partisi Klaster"
+          value="ARI = 0.9803"
+          benchmarkText="Adjusted Rand Index (k = 4)"
+          contextText="Mengukur ketahanan partisi K-Means terhadap perturbasi acak multi-seed"
+          badge={{ text: "Stabilitas Tinggi", type: "positive" }}
+          range={{
+            min: 0.0,
+            max: 1.0,
+            current: 0.9803,
+            target: 1.0,
+            minLabel: "0.0",
+            maxLabel: "1.0",
+            targetLabel: "Maks: 1.0",
+          }}
+          accentColor="#009E73"
+        />
+
+        <KpiCard
+          label="Daya Jelas Model OLS (R²)"
+          value="R² = 51.64%"
+          benchmarkText="R² Terkoreksi: 51.07% (p < 0.001)"
+          contextText="6 indikator struktural dasar menjelaskan mayoritas variasi kemiskinan moneter"
+          badge={{ text: "Ekonometrika Solid", type: "default" }}
+          range={{
+            min: 0,
+            max: 100,
+            current: 51.64,
+            minLabel: "0%",
+            maxLabel: "100%",
+            unit: "%",
+          }}
+          accentColor="#0F172A"
+        />
       </div>
 
       {/* 4 Navigation Tabs */}
@@ -96,6 +171,12 @@ export const MethodologyAudit: React.FC<PageProps> = ({
       {activeTab === 'ols' && (
         <div className="space-y-4">
           <OLSCoefficientsBar olsResults={olsResults} />
+          <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-start space-x-2.5">
+            <span className="font-bold shrink-0 text-amber-800">[Asosiasi Statistik]:</span>
+            <span className="leading-relaxed">
+              Koefisien regresi terstandarisasi baku (β) merepresentasikan estimasi <strong>asosiasi multivariat linier relatif</strong> dalam kondisi <em>ceteris paribus</em>, bukan hubungan sebab-akibat deterministik langsung (*correlation does not imply causation*). Seluruh variabel dianalisis dalam kerangka komparasi struktural.
+            </span>
+          </div>
           <NarrativeCallout
             title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
             insight={PARADOXES.olsStandardizedBeta.insightCallout}
@@ -262,3 +343,5 @@ export const MethodologyAudit: React.FC<PageProps> = ({
     </motion.div>
   );
 };
+
+export default MethodologyAudit;

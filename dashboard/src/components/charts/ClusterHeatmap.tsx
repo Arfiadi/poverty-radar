@@ -4,9 +4,10 @@ import { District } from '../../types';
 
 interface HeatmapProps {
   districts: District[];
+  allDistricts?: District[];
 }
 
-export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts }) => {
+export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts }) => {
   const features = useMemo(() => [
     { key: 'sanitation_access_pct', label: 'Sanitasi' },
     { key: 'clean_water_access_pct', label: 'Air Bersih' },
@@ -24,11 +25,14 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts }) => {
     "Klaster 4 (3T Akut)"
   ];
 
-  // Compute z-scores for 28 cells [featureIdx, clusterIdx, zScore]
+  // Compute baseline mean & std using full national dataset (anchors Z=0 to national population)
+  const baselineDistricts = (allDistricts && allDistricts.length > 0) ? allDistricts : districts;
+
+  // Compute z-scores for 28 cells [featureIdx, clusterIdx, zScore] against anchored national baseline
   const data = useMemo(() => {
     const s: Record<string, { mean: number; std: number }> = {};
     features.forEach(f => {
-      const vals = districts.map(d => Number(d[f.key as keyof District]));
+      const vals = baselineDistricts.map(d => Number(d[f.key as keyof District]));
       const mean = vals.reduce((a, b) => a + b, 0) / (vals.length || 1);
       const variance = vals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (vals.length || 1);
       s[f.key] = { mean, std: Math.sqrt(variance) || 1 };
@@ -39,19 +43,19 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts }) => {
       const cDistricts = districts.filter(d => d.cluster_id === c);
       features.forEach((f, fIdx) => {
         const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
-        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : 0;
+        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : s[f.key].mean;
         const z = (cMean - s[f.key].mean) / s[f.key].std;
         matrix.push([fIdx, 3 - c, Number(z.toFixed(2))]); // invert Y so Klaster 1 is on top
       });
     }
     return matrix;
-  }, [districts, features]);
+  }, [districts, baselineDistricts, features]);
 
   const option = useMemo(() => {
     return {
       title: {
         text: 'Matriks Karakteristik Klaster (28 Sel Z-Score Divergen)',
-        subtext: 'Biru = Di atas rata-rata nasional (Unggul), Oranye/Merah = Di bawah rata-rata (Defisit kritis).',
+        subtext: 'Biru (#0072B2) = Unggul di atas rata-rata nasional, Vermillion (#D55E00) = Defisit kritis di bawah rata-rata (Palet Okabe-Ito).',
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
         subtextStyle: { fontSize: 11, color: '#64748B' }
@@ -70,7 +74,7 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts }) => {
             <div style="font-weight: 700;">${cName}</div>
             <div style="color: #64748B; font-size: 11px;">Indikator: ${fName}</div>
             <div style="margin-top: 4px; border-top: 1px solid #F1F5F9; padding-top: 4px;">
-              Z-Score: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong>
+              Z-Score vs Acuan Nasional: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong>
             </div>
           `;
         }
@@ -101,7 +105,7 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts }) => {
         left: 'center',
         bottom: 0,
         inRange: {
-          color: ['#D55E00', '#FDE047', '#F8FAFC', '#38BDF8', '#0072B2']
+          color: ['#D55E00', '#E69F00', '#F8FAFC', '#56B4E9', '#0072B2']
         },
         text: ['+1.8σ Unggul', '-2.8σ Defisit'],
         textStyle: { color: '#64748B', fontSize: 10 }

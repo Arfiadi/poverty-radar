@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { OLSResult } from '../../types';
+import { EPISTEMIC_DISCLAIMER } from '../../constants/paradoxes';
 
 interface OLSProps {
   olsResults: OLSResult[];
@@ -16,10 +17,10 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
     return {
       title: {
         text: 'Koefisien Regresi Terstandarisasi Baku OLS (Multivariat)',
-        subtext: 'Menjelaskan kontribusi relatif indikator terhadap persentase kemiskinan (P0). Seluruh variabel telah distandarisasi (Mean=0, SD=1).',
+        subtext: `Asosiasi relatif indikator terhadap variasi persentase kemiskinan (P0). Seluruh variabel distandarisasi (Mean=0, SD=1).\n${EPISTEMIC_DISCLAIMER}`,
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
+        subtextStyle: { fontSize: 10.5, color: '#64748B', lineHeight: 15 }
       },
       tooltip: {
         trigger: 'axis',
@@ -33,13 +34,14 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
           const raw = sorted[item.dataIndex];
           return `
             <div style="font-weight: 700;">${raw.label}</div>
-            <div style="color: ${item.color}; margin-top: 4px;">Koefisien Terstandarisasi (β): <strong>${raw.beta > 0 ? '+' : ''}${raw.beta}</strong></div>
+            <div style="color: ${item.color}; margin-top: 4px;">Asosiasi Relatif Baku (β): <strong>${raw.beta > 0 ? '+' : ''}${raw.beta}</strong></div>
             <div style="font-size: 11px; color: #64748B;">Nilai t: ${raw.t_stat} | p-value: ${raw.p_val < 0.001 ? '< 0.001' : raw.p_val.toFixed(4)} (${raw.significance})</div>
+            <div style="font-size: 10px; color: #94A3B8; margin-top: 3px;">Asosiasi statistik linier multivariat, bukan hubungan sebab-akibat.</div>
           `;
         }
       },
       grid: {
-        top: 65,
+        top: 75,
         right: 45,
         bottom: 30,
         left: 210
@@ -90,7 +92,7 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
 
   return (
     <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '320px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+      <ReactECharts option={option} style={{ height: '330px', width: '100%' }} opts={{ renderer: 'canvas' }} />
     </div>
   );
 };

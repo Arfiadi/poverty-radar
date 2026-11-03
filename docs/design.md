@@ -387,7 +387,7 @@ Setiap visualisasi utama disertai kotak anotasi ringkas 1â€“2 kalimat bertanda ð
        * Rata-rata Lama Sekolah ($\beta = -0.118$, $t = -2.36$, $p = 0.0186$)
        * Pengangguran Terbuka TPT ($\beta = +0.093$, $t = +2.04$, $p = 0.0415$)
   5. *Inspeksi Outlier Teknis & Kamus Data:*
-     * Boxplot Tukey 1.5x IQR untuk memeriksa 36 pencilan numerik.
+     * Boxplot Tukey 1.5x IQR untuk memeriksa 35 pencilan numerik.
      * Tabel kamus data interaktif dan tombol unduh file bersih [`data/interim/poverty_data_cleaned.csv`](../data/interim/poverty_data_cleaned.csv).
 
 ---

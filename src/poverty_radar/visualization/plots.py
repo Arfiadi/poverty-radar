@@ -585,3 +585,53 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     return fig
+
+
+# ==============================================================================
+# FIGURE 10: OLS STANDARDIZED BETA BAR (GRIDLESS)
+# ==============================================================================
+def plot_ols_standardized_beta(save_path: Optional[Path] = None) -> plt.Figure:
+    """Figure 10: Horizontal Bar Chart of OLS Standardized Beta Coefficients (Gridless Canvas)."""
+    fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=300)
+
+    variables = [
+        'Akses Air Minum Layak (ns)',
+        'Pengangguran Terbuka / TPT (*)',
+        'Lama Sekolah / RLS (*)',
+        'Partisipasi Kerja / TPAK (***)',
+        'log10(PDRB) Riil (***)',
+        'Akses Sanitasi Layak (***)',
+        'Pengeluaran Riil Daya Beli (***)'
+    ]
+    betas = [0.0507, 0.0928, -0.1182, 0.1826, -0.1970, -0.2090, -0.3167]
+
+    colors = ['#888888' if b > 0 and 'Air' in v else '#0072B2' if b < 0 else '#D55E00' for v, b in zip(variables, betas)]
+
+    bars = ax.barh(variables, betas, color=colors, height=0.55, edgecolor='none')
+    ax.axvline(0, color='#333333', linewidth=1.1, linestyle='-')
+
+    # Gridless canvas as requested
+    ax.grid(False)
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#888888')
+    ax.spines['bottom'].set_color('#888888')
+
+    ax.set_title('Koefisien Beta Terstandarisasi Baku Model OLS (R² = 0,5180, N = 514)',
+                 fontsize=12, fontweight='bold', pad=15, color='#111111')
+    ax.set_xlabel('Koefisien Regresi Terstandarisasi (Beta / β)',
+                  fontsize=10, fontweight='semibold', labelpad=8, color='#222222')
+
+    for bar, beta in zip(bars, betas):
+        offset = 0.012 if beta >= 0 else -0.012
+        ha = 'left' if beta >= 0 else 'right'
+        ax.text(beta + offset, bar.get_y() + bar.get_height() / 2,
+                f'{beta:+.4f}', va='center', ha=ha, fontsize=9.0, fontweight='bold', color='#111111')
+
+    ax.set_xlim(-0.40, 0.28)
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    return fig

@@ -5,9 +5,10 @@ import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
 
 interface SmallMultiplesProps {
   districts: District[];
+  allDistricts?: District[];
 }
 
-export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts }) => {
+export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts, allDistricts }) => {
   const features = useMemo(() => [
     { key: 'sanitation_access_pct', label: 'Sanitasi Layak' },
     { key: 'clean_water_access_pct', label: 'Air Terlindung' },
@@ -18,26 +19,27 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts 
     { key: 'unemployment_rate_tpt', label: 'Pengangguran (TPT)' },
   ], []);
 
-  // Compute overall mean & std for each feature
+  // Compute baseline mean & std using full national dataset (anchors Z=0 to national population)
+  const baselineDistricts = (allDistricts && allDistricts.length > 0) ? allDistricts : districts;
   const stats = useMemo(() => {
     const s: Record<string, { mean: number; std: number }> = {};
     features.forEach(f => {
-      const vals = districts.map(d => Number(d[f.key as keyof District]));
+      const vals = baselineDistricts.map(d => Number(d[f.key as keyof District]));
       const mean = vals.reduce((a, b) => a + b, 0) / (vals.length || 1);
       const variance = vals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (vals.length || 1);
       s[f.key] = { mean, std: Math.sqrt(variance) || 1 };
     });
     return s;
-  }, [districts, features]);
+  }, [baselineDistricts, features]);
 
-  // Compute z-scores for each of the 4 clusters
+  // Compute z-scores for each of the 4 clusters against the anchored national baseline
   const clusterZScores = useMemo(() => {
     const res: Record<number, number[]> = { 0: [], 1: [], 2: [], 3: [] };
     for (let c = 0; c < 4; c++) {
       const cDistricts = districts.filter(d => d.cluster_id === c);
       features.forEach(f => {
         const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
-        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : 0;
+        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : stats[f.key].mean;
         const z = (cMean - stats[f.key].mean) / stats[f.key].std;
         res[c].push(Number(z.toFixed(2)));
       });
@@ -45,12 +47,19 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts 
     return res;
   }, [districts, features, stats]);
 
-  const clusterNames = [
-    "Klaster 1: Perkotaan Modern & Formal (N=78)",
-    "Klaster 2: Kab. Penyangga Mapan (N=187)",
-    "Klaster 3: Perdesaan Agraris Rentan (N=216)",
-    "Klaster 4: Wilayah 3T Deprivasi Akut (N=33)"
-  ];
+  // Dynamic cluster legend with runtime counts
+  const clusterNames = useMemo(() => {
+    const baseNames = [
+      "Klaster 1: Perkotaan Modern & Formal",
+      "Klaster 2: Kab. Penyangga Mapan",
+      "Klaster 3: Perdesaan Agraris Rentan",
+      "Klaster 4: Wilayah 3T Deprivasi Akut"
+    ];
+    return baseNames.map((name, c) => {
+      const cDistricts = districts.filter(d => d.cluster_id === c);
+      return `${name} (N=${cDistricts.length})`;
+    });
+  }, [districts]);
 
   const option = useMemo(() => {
     const featureLabels = features.map(f => f.label);
@@ -58,10 +67,10 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts 
     return {
       title: {
         text: 'Profil Pembeda 4 Klaster Sosio-Ekonomi: Small Multiples Bar Charts (Z-Score)',
-        subtext: 'Deviasi terstandarisasi (Z-Score) tiap indikator terhadap rata-rata nasional (Z = 0).',
+        subtext: 'Deviasi terstandarisasi (Z-Score) tiap indikator terhadap acuan rata-rata populasi nasional (Z = 0, N=514).',
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 12, color: '#64748B' }
+        subtextStyle: { fontSize: 11, color: '#64748B' }
       },
       tooltip: {
         trigger: 'axis',
@@ -73,7 +82,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts 
         formatter: (params: any) => {
           const item = params[0];
           const zVal = item.value;
-          const status = zVal >= 0 ? 'Di atas rata-rata' : 'Di bawah rata-rata (Defisit)';
+          const status = zVal >= 0 ? 'Di atas rata-rata nasional' : 'Di bawah rata-rata nasional (Defisit)';
           return `
             <div style="font-weight: 700;">${item.name}</div>
             <div style="color: ${item.color}; margin-top: 4px;">Z-Score: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong></div>

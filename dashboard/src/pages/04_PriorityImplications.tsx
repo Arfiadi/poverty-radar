@@ -5,6 +5,7 @@ import { District, PolicyRecommendation } from '../types';
 import { VulnerabilityMatrix2x2 } from '../components/charts/VulnerabilityMatrix2x2';
 import { DataTable } from '../components/common/DataTable';
 import { NarrativeCallout } from '../components/common/NarrativeCallout';
+import { KpiCard } from '../components/common/KpiCard';
 import { useFilterStore } from '../store/useFilterStore';
 import { QUADRANTS } from '../constants/benchmarks';
 import { PARADOXES } from '../constants/paradoxes';
@@ -56,6 +57,20 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
     const prefix = qMap[selectedQuadrantCode];
     return prefix ? districts.filter(d => d.vulnerability_quadrant.startsWith(prefix)) : districts;
   }, [districts, selectedQuadrantCode]);
+
+  const quadrantStats = React.useMemo(() => {
+    const q1 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran I')).length;
+    const q2 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran II')).length;
+    const q3 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran III')).length;
+    const q4 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran IV')).length;
+    const total = districts.length || 514;
+    return {
+      q1: { count: q1, pct: (q1 / total) * 100 },
+      q2: { count: q2, pct: (q2 / total) * 100 },
+      q3: { count: q3, pct: (q3 / total) * 100 },
+      q4: { count: q4, pct: (q4 / total) * 100 },
+    };
+  }, [districts]);
 
   return (
     <motion.div
@@ -114,6 +129,97 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
             <span>Pin: Disparitas Madura</span>
           </button>
         </div>
+      </div>
+
+      {/* Row 1: 4 Interactive Quadrant KPI Cards Strip (Click-to-Filter) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          label="Kuadran I: Prioritas Beban Ganda"
+          value={`${quadrantStats.q1.count} Daerah (${quadrantStats.q1.pct.toFixed(1)}%)`}
+          benchmarkText="Kriteria: P0 ≥ 10.46% & V_struc ≥ 0.272"
+          contextText="Kemiskinan konsumsi tinggi & defisit fisik parah · Prioritas DAK Fisik & Bansos"
+          badge={{
+            text: selectedQuadrantCode === 'Q1' ? "Aktif Terpilih" : "Prioritas Utama",
+            type: selectedQuadrantCode === 'Q1' ? "filter" : "critical",
+          }}
+          range={{
+            min: 0,
+            max: districts.length || 514,
+            current: quadrantStats.q1.count,
+            minLabel: "0",
+            maxLabel: `${districts.length} daerah`,
+            unit: " daerah",
+          }}
+          accentColor="#D55E00"
+          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q1' ? 'ALL' : 'Q1')}
+          isActive={selectedQuadrantCode === 'Q1'}
+        />
+
+        <KpiCard
+          label="Kuadran II: Kerentanan Tersembunyi"
+          value={`${quadrantStats.q2.count} Daerah (${quadrantStats.q2.pct.toFixed(1)}%)`}
+          benchmarkText="Kriteria: P0 < 10.46% & V_struc ≥ 0.272"
+          contextText="Moneter tampak aman, sanitasi/air rapuh · Intervensi preventif infrastruktur dasar"
+          badge={{
+            text: selectedQuadrantCode === 'Q2' ? "Aktif Terpilih" : "Rentan Fisik",
+            type: selectedQuadrantCode === 'Q2' ? "filter" : "warning",
+          }}
+          range={{
+            min: 0,
+            max: districts.length || 514,
+            current: quadrantStats.q2.count,
+            minLabel: "0",
+            maxLabel: `${districts.length} daerah`,
+            unit: " daerah",
+          }}
+          accentColor="#E69F00"
+          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q2' ? 'ALL' : 'Q2')}
+          isActive={selectedQuadrantCode === 'Q2'}
+        />
+
+        <KpiCard
+          label="Kuadran III: Kantong Daya Beli"
+          value={`${quadrantStats.q3.count} Daerah (${quadrantStats.q3.pct.toFixed(1)}%)`}
+          benchmarkText="Kriteria: P0 ≥ 10.46% & V_struc < 0.272"
+          contextText="Fasilitas dasar baik, daya beli lemah · Stimulus pasar kerja & padat karya"
+          badge={{
+            text: selectedQuadrantCode === 'Q3' ? "Aktif Terpilih" : "Defisit Moneter",
+            type: selectedQuadrantCode === 'Q3' ? "filter" : "default",
+          }}
+          range={{
+            min: 0,
+            max: districts.length || 514,
+            current: quadrantStats.q3.count,
+            minLabel: "0",
+            maxLabel: `${districts.length} daerah`,
+            unit: " daerah",
+          }}
+          accentColor="#CC79A7"
+          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q3' ? 'ALL' : 'Q3')}
+          isActive={selectedQuadrantCode === 'Q3'}
+        />
+
+        <KpiCard
+          label="Kuadran IV: Wilayah Terbina / Mapan"
+          value={`${quadrantStats.q4.count} Daerah (${quadrantStats.q4.pct.toFixed(1)}%)`}
+          benchmarkText="Kriteria: P0 < 10.46% & V_struc < 0.272"
+          contextText="Layanan dasar lengkap & konsumsi stabil · Perluasan kemandirian fiskal PAD"
+          badge={{
+            text: selectedQuadrantCode === 'Q4' ? "Aktif Terpilih" : "Wilayah Mapan",
+            type: selectedQuadrantCode === 'Q4' ? "filter" : "positive",
+          }}
+          range={{
+            min: 0,
+            max: districts.length || 514,
+            current: quadrantStats.q4.count,
+            minLabel: "0",
+            maxLabel: `${districts.length} daerah`,
+            unit: " daerah",
+          }}
+          accentColor="#0072B2"
+          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q4' ? 'ALL' : 'Q4')}
+          isActive={selectedQuadrantCode === 'Q4'}
+        />
       </div>
 
       {/* Grid: 2x2 Scatterplot (7-Col) & Policy Recommendation Panel (5-Col) */}
@@ -288,7 +394,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
         evidence={
           activeCasePin === 'resource_curse'
             ? PARADOXES.resourceCurse.evidence
-            : (activeCasePin === 'madura' ? PARADOXES.maduraDisparity.evidence : "N_Kuadran_I = 162 daerah, Kuadran II = 95 daerah, Kuadran III = 94 daerah, Kuadran IV = 163 daerah.")
+            : (activeCasePin === 'madura' ? PARADOXES.maduraDisparity.evidence : "N_Kuadran_I = 162 daerah, Kuadran II = 95 daerah, Kuadran III = 95 daerah, Kuadran IV = 162 daerah.")
         }
       />
 
@@ -307,3 +413,5 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
     </motion.div>
   );
 };
+
+export default PriorityImplications;

@@ -25,6 +25,20 @@ interface FilterStore {
 
 const DEFAULT_P0_RANGE: [number, number] = [2.0, 42.0];
 
+const getInitialAct = (): number => {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const act = params.get('act');
+    if (act !== null) {
+      const parsed = parseInt(act, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed <= 4) {
+        return parsed;
+      }
+    }
+  }
+  return 0;
+};
+
 export const useFilterStore = create<FilterStore>((set, get) => ({
   selectedIsland: 'Semua Wilayah',
   selectedProvince: 'Semua Provinsi',
@@ -33,7 +47,7 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
   searchQuery: '',
   p0Range: DEFAULT_P0_RANGE,
   activeCasePin: 'none',
-  activeAct: 0,
+  activeAct: getInitialAct(),
 
   setSelectedIsland: (island) => set({ selectedIsland: island, selectedProvince: 'Semua Provinsi' }),
   setSelectedProvince: (prov) => set({ selectedProvince: prov }),
@@ -42,7 +56,14 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setP0Range: (range) => set({ p0Range: range }),
   setActiveCasePin: (pin) => set({ activeCasePin: pin }),
-  setActiveAct: (act) => set({ activeAct: act }),
+  setActiveAct: (act) => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('act', act.toString());
+      window.history.replaceState({}, '', url.toString());
+    }
+    set({ activeAct: act });
+  },
 
   resetFilters: () => set({
     selectedIsland: 'Semua Wilayah',

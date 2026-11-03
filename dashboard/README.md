@@ -50,6 +50,7 @@ Buka browser pada alamat: `http://127.0.0.1:5173` (atau port yang dimunculkan Vi
 
 ### 2. Membangun untuk Produksi (Production Build)
 ```bash
+cd dashboard
 npm run build
 npm run preview
 ```
@@ -82,10 +83,10 @@ Skrip ini akan memvalidasi integritas 514 kabupaten/kota dan mengekspor 6 file J
    - Diagnostik Tanpa Supervisi: Evaluasi K-Means ($k=4$) vs Hierarchical & DBSCAN.
    - *Small Multiples Z-Score Bar Charts* & *Divergent Heatmap Matrix* 28 sel.
    - 4 Kartu Persona Klaster:
-     - Klaster 0: *Agraris Tradisional & Perdesaan Tertinggal* (248 daerah, 48.2%)
-     - Klaster 1: *Urban Maju & Pusat Jasa/Industri* (133 daerah, 25.9%)
-     - Klaster 2: *Industrialis Menengah & Transisi* (74 daerah, 14.4%)
-     - Klaster 3: *Deprivasi Multidimensi 3T* (59 daerah, 11.5%)
+     - Klaster 1: *Perkotaan Modern & Formal* (78 daerah, 15.2%)
+     - Klaster 2: *Kabupaten Penyangga Mapan* (187 daerah, 36.4%)
+     - Klaster 3: *Perdesaan Agraris Rentan* (216 daerah, 42.0%)
+     - Klaster 4: *Wilayah 3T Deprivasi Akut* (33 daerah, 6.4%)
 
 4. **Babak 4 — Skrining Kerentanan & Matriks Kebijakan (`/kebijakan`)**:
    - *Interactive 2x2 Relative Vulnerability Matrix*: $P_0$ Aktual vs Indeks Kerentanan Struktural Relatif ($V_{\text{struc}}$).
@@ -98,17 +99,17 @@ Skrip ini akan memvalidasi integritas 514 kabupaten/kota dan mengekspor 6 file J
    - Tab 1: Dekonstruksi Aturan Heuristik Kaggle (98.83% akurasi dari aturan deterministik sederhana).
    - Tab 2: Regresi Multivariat OLS (Standardized $\beta$, signifikansi statistik $p < 0.001$).
    - Tab 3: Verifikasi Kasus Batas 0.00% (Daerah 3T di Papua).
-   - Audit Pencilan: *Tukey Boxplot* 1.5x IQR (36 pencilan multivariate dipertahankan demi prinsip *Leave No One Behind*).
+   - Audit Pencilan: *Tukey Boxplot* 1.5x IQR (35 pencilan multivariate dipertahankan demi prinsip *Leave No One Behind*).
 
 ---
 
 ## 🎨 Standar Desain & Pencegahan "AI Slop"
 
 - **Palet Warna Ramah Buta Warna (Okabe-Ito)**:
-  - Klaster 0: Amber (`#E69F00`)
   - Klaster 1: Dark Blue (`#0072B2`)
-  - Klaster 2: Green (`#009E73`)
-  - Klaster 3: Vermillion / Terracotta (`#D55E00`)
+  - Klaster 2: Amber (`#E69F00`)
+  - Klaster 3: Green (`#009E73`)
+  - Klaster 4: Vermillion / Terracotta (`#D55E00`)
   - Aksentuasi Kuadran: Reddish Purple (`#CC79A7`) & Sky Blue (`#56B4E9`)
 - **Tipografi**: `Plus Jakarta Sans` (editorial sans-serif) dan `JetBrains Mono` (`tabular-nums` untuk angka statistik).
 - **Zero Radar Chart & Zero Boxplot on Primary Screens**: Mengikuti aturan AGENTS.md.

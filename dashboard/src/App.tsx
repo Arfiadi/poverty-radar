@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useFilteredDistricts } from './hooks/useFilteredDistricts';
 import { useFilterStore } from './store/useFilterStore';
 import { Sidebar } from './components/layout/Sidebar';
 import { TopBar } from './components/layout/TopBar';
+import { GlobalFilterBar } from './components/layout/GlobalFilterBar';
 import { SkeletonCard, EmptyResultState, SmallSampleWarning } from './components/common/DefensiveStates';
 
-import { PovertyLandscape } from './pages/01_PovertyLandscape';
-import { IndicatorMap } from './pages/02_IndicatorMap';
-import { RegionalProfiles } from './pages/03_RegionalProfiles';
-import { PriorityImplications } from './pages/04_PriorityImplications';
-import { MethodologyAudit } from './pages/05_MethodologyAudit';
+// Dynamic code-splitting with React.lazy
+const PovertyLandscape = lazy(() => import('./pages/01_PovertyLandscape'));
+const IndicatorMap = lazy(() => import('./pages/02_IndicatorMap'));
+const RegionalProfiles = lazy(() => import('./pages/03_RegionalProfiles'));
+const PriorityImplications = lazy(() => import('./pages/04_PriorityImplications'));
+const MethodologyAudit = lazy(() => import('./pages/05_MethodologyAudit'));
+
+const PageLoadingFallback: React.FC = () => (
+  <div className="space-y-6">
+    <SkeletonCard height="h-24" />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <SkeletonCard height="h-32" />
+      <SkeletonCard height="h-32" />
+      <SkeletonCard height="h-32" />
+    </div>
+    <SkeletonCard height="h-96" />
+  </div>
+);
 
 export const App: React.FC = () => {
   const { districts, clusterSummary, policyMatrix, olsResults, benchmarks, boundaryCases, loading, error } = useDashboardData();
@@ -61,20 +75,44 @@ export const App: React.FC = () => {
       return <EmptyResultState />;
     }
 
+    let pageComponent;
     switch (activeAct) {
       case 0:
-        return <PovertyLandscape districts={filteredDistricts} benchmarks={benchmarks} />;
+        pageComponent = <PovertyLandscape districts={filteredDistricts} benchmarks={benchmarks} />;
+        break;
       case 1:
-        return <IndicatorMap districts={filteredDistricts} />;
+        pageComponent = <IndicatorMap districts={filteredDistricts} />;
+        break;
       case 2:
-        return <RegionalProfiles districts={filteredDistricts} clusterSummary={clusterSummary} />;
+        pageComponent = (
+          <RegionalProfiles
+            districts={filteredDistricts}
+            allDistricts={districts}
+            clusterSummary={clusterSummary}
+          />
+        );
+        break;
       case 3:
-        return <PriorityImplications districts={filteredDistricts} policyMatrix={policyMatrix} />;
+        pageComponent = <PriorityImplications districts={filteredDistricts} policyMatrix={policyMatrix} />;
+        break;
       case 4:
-        return <MethodologyAudit districts={filteredDistricts} olsResults={olsResults} boundaryCases={boundaryCases} />;
+        pageComponent = (
+          <MethodologyAudit
+            districts={filteredDistricts}
+            olsResults={olsResults}
+            boundaryCases={boundaryCases}
+          />
+        );
+        break;
       default:
-        return <PovertyLandscape districts={filteredDistricts} benchmarks={benchmarks} />;
+        pageComponent = <PovertyLandscape districts={filteredDistricts} benchmarks={benchmarks} />;
     }
+
+    return (
+      <Suspense fallback={<PageLoadingFallback />}>
+        {pageComponent}
+      </Suspense>
+    );
   };
 
   return (
@@ -85,6 +123,7 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar totalDistricts={districts.length} filteredCount={filteredDistricts.length} />
+        <GlobalFilterBar />
 
         <main className="flex-1 p-6 sm:p-8 max-w-[1400px] w-full mx-auto">
           <SmallSampleWarning count={filteredDistricts.length} />

@@ -51,6 +51,9 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
   const acuteCount = acuteDistricts.length;
   const acutePct = districts.length > 0 ? (acuteCount / districts.length) * 100 : 0;
 
+  const targetRpjmnCount = districts.filter(d => d.poverty_rate_p0 <= 7.0).length;
+  const targetRpjmnPct = districts.length > 0 ? (targetRpjmnCount / districts.length) * 100 : 0;
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 8 }}
@@ -74,8 +77,8 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         </div>
       </div>
 
-      {/* Row 1: KPI Cards Strip (3 Dual-State Cards with Stephen Few Micro Bullet Graphs) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Row 1: KPI Cards Strip (4 Dual-State Cards with Stephen Few Micro Bullet Graphs) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label={isFilterActive ? "Tingkat Kemiskinan Median Wilayah" : "Tingkat Kemiskinan Median Nasional"}
           value={formatPercent(isFilterActive ? dynamicMedianP0 : nationalMedianP0)}
@@ -188,6 +191,32 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
               : "#E69F00"
           }
         />
+
+        <KpiCard
+          label={isFilterActive ? "Ketercapaian Target RPJMN (P0 ≤ 7%)" : "Target Kemiskinan Nasional RPJMN"}
+          value={`${targetRpjmnCount} Daerah (${targetRpjmnPct.toFixed(1)}%)`}
+          benchmarkText="Sasaran RPJMN 2024: 6.5%–7.0%"
+          contextText={
+            isFilterActive
+              ? `${districts.length - targetRpjmnCount} daerah terpilih masih di atas target RPJMN`
+              : "391 daerah (76.1%) masih tertinggal di atas sasaran nasional"
+          }
+          badge={{
+            text: targetRpjmnPct >= 50 ? "Target Prima" : (targetRpjmnCount > 0 ? "Sasaran Nasional" : "Belum Capai Target"),
+            type: targetRpjmnPct >= 50 ? "positive" : (targetRpjmnCount > 0 ? "default" : "warning"),
+          }}
+          range={{
+            min: 0,
+            max: districts.length || 514,
+            current: targetRpjmnCount,
+            target: districts.length || 514,
+            minLabel: "0",
+            maxLabel: `${districts.length} daerah`,
+            targetLabel: "Target: 100%",
+            unit: " daerah",
+          }}
+          accentColor="#009E73"
+        />
       </div>
 
       {/* Row 2: Charts Grid (Histogram 5-Col & Strip Plot 7-Col) */}
@@ -279,3 +308,5 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
     </motion.div>
   );
 };
+
+export default PovertyLandscape;

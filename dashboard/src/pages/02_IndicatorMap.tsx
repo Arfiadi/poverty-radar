@@ -123,8 +123,8 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         </div>
       </div>
 
-      {/* Row 1: Active Indicator KPI Cards Strip (3 Cards with Stephen Few Micro Bullet Graph) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Row 1: Active Indicator KPI Cards Strip (4 Cards with Stephen Few Micro Bullet Graph) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label={`Median: ${activeOption.label}`}
           value={formatIndicatorVal(medianVal)}
@@ -164,7 +164,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
           benchmarkText={minRegion ? `${minRegion.kab_kota} (${minRegion.provinsi})` : "—"}
           contextText={
             disparityRatio !== null
-              ? `Rasio kesenjangan: ${disparityRatio.toFixed(1)}x lipat (Rentang disparitas: ${formatIndicatorVal(disparitySpan)})`
+              ? `Rasio kesenjangan: ${disparityRatio.toFixed(1)}x lipat`
               : `Rentang disparitas absolut: ${formatIndicatorVal(disparitySpan)}`
           }
           badge={{ text: "Nilai Minimum", type: "warning" }}
@@ -177,6 +177,32 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
             unit: activeOption.unit,
           }}
           accentColor="#D55E00"
+        />
+
+        <KpiCard
+          label="Disparitas Antardaerah"
+          value={disparityRatio !== null ? `${disparityRatio.toFixed(2)}x Lipat` : formatIndicatorVal(disparitySpan)}
+          benchmarkText={`Rentang Spasial: ${formatIndicatorVal(disparitySpan)}`}
+          contextText={
+            minRegion && maxRegion
+              ? `Kesenjangan antara ${minRegion.kab_kota} dan ${maxRegion.kab_kota}`
+              : "Variasi sebaran indikator antardaerah"
+          }
+          badge={{
+            text: disparityRatio && disparityRatio >= 3.0 ? "Disparitas Tinggi" : "Kesenjangan Spasial",
+            type: disparityRatio && disparityRatio >= 3.0 ? "warning" : "default",
+          }}
+          range={{
+            min: 1.0,
+            max: Math.max(disparityRatio || 1, 10.0),
+            current: disparityRatio || 1.0,
+            target: 1.0,
+            minLabel: "1.0x (Seragam)",
+            maxLabel: `${Math.max(disparityRatio || 1, 10.0).toFixed(0)}x`,
+            targetLabel: "Target: 1.0x",
+            unit: "x",
+          }}
+          accentColor="#E69F00"
         />
       </div>
 
@@ -212,3 +238,5 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
     </motion.div>
   );
 };
+
+export default IndicatorMap;

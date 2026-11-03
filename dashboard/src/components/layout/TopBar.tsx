@@ -47,7 +47,7 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
       <div className="flex items-center space-x-3">
         <div>
           <h1 className="text-sm font-bold text-ink-primary tracking-tight">
-            {currentItem.label} <span className="text-slate-400 font-normal">| {currentItem.sub}</span>
+            {currentItem.label} <span className="text-slate-600 font-medium">| {currentItem.sub}</span>
           </h1>
           <div className="flex items-center space-x-2 mt-0.5">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">

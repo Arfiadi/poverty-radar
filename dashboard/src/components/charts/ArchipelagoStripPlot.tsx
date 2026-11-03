@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
@@ -19,11 +19,7 @@ interface IslandStat {
 }
 
 export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) => {
-  // 'combined' = Clean Dot Runway + Range Whisker + Median
-  // 'summary'  = Pure Knaflic Range Bar & Median Whisker (Zero Clutter)
-  const [viewMode, setViewMode] = useState<'combined' | 'summary'>('combined');
-
-  // Compute stats and rank islands descending by median poverty
+  // Compute distribution metrics and rank islands descending by median poverty rate
   const islandStats = useMemo<IslandStat[]>(() => {
     const rawIslands = [
       "Maluku & Papua",
@@ -59,11 +55,10 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         p25,
         p75
       };
-    }).sort((a, b) => b.median - a.median); // Highest median on top
+    }).sort((a, b) => b.median - a.median);
   }, [districts]);
 
-  // Ranked island names (from index 0 at top to bottom)
-  // For ECharts category Y-axis: bottom-to-top, so reverse for display
+  // Reverse order for ECharts Cartesian Y-axis so highest median appears at the top
   const yAxisCategories = useMemo(() => {
     return [...islandStats].reverse().map(s => s.name);
   }, [islandStats]);
@@ -75,40 +70,36 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
   }, [islandStats]);
 
   const option = useMemo(() => {
-    const nIslands = yAxisCategories.length;
     const nationalMedian = 10.46;
 
-    // 1. Min-Max Range Lines for each island track
+    // 1. Min-Max Range whisker lines
     const rangeLinesData: any[] = [];
-    // 2. IQR (P25 - P75) Core Box Lines
+    // 2. Interquartile Range (IQR, P25–P75) core bands
     const iqrLinesData: any[] = [];
-    // 3. Median Markers
+    // 3. Median marker points
     const medianPointsData: any[] = [];
 
     yAxisCategories.forEach((islName, yIdx) => {
       const stat = statsMap.get(islName);
       if (!stat || stat.count === 0) return;
 
-      // Min-Max whisker line
       rangeLinesData.push([
         { coord: [stat.min, yIdx] },
         { coord: [stat.max, yIdx] }
       ]);
 
-      // IQR Core band
       iqrLinesData.push([
         { coord: [stat.p25, yIdx] },
         { coord: [stat.p75, yIdx] }
       ]);
 
-      // Median Marker
-      const isExtreme = stat.median >= 20.0;
+      const isHighPriority = stat.median >= 20.0;
       medianPointsData.push({
         name: stat.name,
         value: [stat.median, yIdx],
         stat,
         itemStyle: {
-          color: isExtreme ? '#D55E00' : '#0F172A',
+          color: isHighPriority ? '#D55E00' : '#0F172A',
           borderColor: '#FFFFFF',
           borderWidth: 2,
         },
@@ -119,18 +110,16 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           formatter: `${stat.median.toFixed(1)}%`,
           fontSize: 11,
           fontWeight: 'bold',
-          color: isExtreme ? '#D55E00' : '#1E293B',
+          color: isHighPriority ? '#D55E00' : '#1E293B',
         }
       });
     });
 
-    // 4. Clamped District Scatter Points (Strictly within row bounds, max jitter +-0.12)
+    // 4. District points clamped strictly within row tracks (+-0.12)
     const scatterPointsData = districts.map((d, i) => {
       const yIdx = yAxisCategories.indexOf(d.region_pulau);
       if (yIdx === -1) return null;
 
-      // Clamped deterministic pseudo-jitter strictly within [-0.12, +0.12]
-      // Row gap is 1.0, so this leaves 0.76 of clear margin between rows!
       const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.24 - 0.12;
 
       return {
@@ -139,7 +128,7 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         rawDistrict: d,
         itemStyle: {
           color: CLUSTER_COLORS[d.cluster_id] || '#0072B2',
-          opacity: 0.65,
+          opacity: 0.6,
           borderColor: '#FFFFFF',
           borderWidth: 0.5,
         },
@@ -147,94 +136,13 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
       };
     }).filter(Boolean);
 
-    const seriesList: any[] = [
-      // Whisker: Min - Max Range
-      {
-        name: 'Rentang Min-Maks',
-        type: 'lines',
-        coordinateSystem: 'cartesian2d',
-        z: 2,
-        lineStyle: {
-          color: '#CBD5E1',
-          width: 3,
-          cap: 'round',
-        },
-        silent: true,
-        data: rangeLinesData,
-      },
-      // Core Bar: IQR (P25 - P75)
-      {
-        name: 'Rentang IQR (50% Tengah)',
-        type: 'lines',
-        coordinateSystem: 'cartesian2d',
-        z: 3,
-        lineStyle: {
-          color: '#94A3B8',
-          width: 8,
-          cap: 'round',
-        },
-        silent: true,
-        data: iqrLinesData,
-      },
-      // Median Points with Direct Text Label
-      {
-        name: 'Median Regional',
-        type: 'scatter',
-        coordinateSystem: 'cartesian2d',
-        z: 5,
-        symbol: 'diamond',
-        symbolSize: 14,
-        data: medianPointsData,
-        tooltip: {
-          formatter: (params: any) => {
-            const s: IslandStat = params.data?.stat;
-            if (!s) return '';
-            return `
-              <div style="font-weight: 700; margin-bottom: 2px;">Kawasan ${s.name}</div>
-              <div style="color: #64748B; font-size: 11px; margin-bottom: 4px;">Total: ${s.count} Kabupaten/Kota</div>
-              <div style="border-top: 1px solid #F1F5F9; padding-top: 4px; font-size: 11px;">
-                <div>Median: <strong style="color: #D55E00;">${s.median.toFixed(2)}%</strong></div>
-                <div>IQR (P25–P75): <strong>${s.p25.toFixed(2)}% – ${s.p75.toFixed(2)}%</strong></div>
-                <div>Rentang Ekstrem: <strong>${s.min.toFixed(2)}% – ${s.max.toFixed(2)}%</strong></div>
-              </div>
-            `;
-          }
-        }
-      }
-    ];
-
-    // Conditionally include individual district dots in 'combined' mode
-    if (viewMode === 'combined') {
-      seriesList.push({
-        name: 'Kabupaten/Kota',
-        type: 'scatter',
-        coordinateSystem: 'cartesian2d',
-        z: 4,
-        data: scatterPointsData,
-        tooltip: {
-          formatter: (params: any) => {
-            const d: District = params.data?.rawDistrict;
-            if (!d) return '';
-            return `
-              <div style="font-weight: 700;">${d.tipe_wilayah} ${d.kab_kota}</div>
-              <div style="color: #64748B; font-size: 11px;">${d.provinsi} · ${d.region_pulau}</div>
-              <div style="border-top: 1px solid #F1F5F9; margin-top: 4px; padding-top: 4px; font-size: 11px;">
-                <div>Kemiskinan P0: <strong style="color: #D55E00;">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
-                <div>Klaster: <strong style="color: ${CLUSTER_COLORS[d.cluster_id]};">${d.cluster_name.split(':')[0]}</strong></div>
-              </div>
-            `;
-          }
-        }
-      });
-    }
-
     return {
       title: {
-        text: 'Disparitas Kemiskinan Moneter (P0) di 6 Kawasan Kepulauan Besar',
-        subtext: 'Kawasan Timur menampung konsentrasi sebaran kemiskinan tertinggi di tanah air.',
+        text: 'Disparitas Kemiskinan Moneter (P0) di 6 Kawasan Kepulauan',
+        subtext: 'Urutan menurun berdasarkan median wilayah. Garis tebal menunjukkan rentang antarkuartil (IQR), titik mewakili 514 kabupaten/kota.',
         left: 'left',
         textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 12, color: '#64748B' }
+        subtextStyle: { fontSize: 11, color: '#64748B' }
       },
       tooltip: {
         trigger: 'item',
@@ -246,7 +154,7 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         extraCssText: 'box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border-radius: 8px;',
       },
       grid: {
-        top: 65,
+        top: 60,
         right: 40,
         bottom: 45,
         left: 145
@@ -290,8 +198,82 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         }
       },
       series: [
-        ...seriesList,
-        // National Median Benchmark Reference Line (Runs vertically across all lanes)
+        // Whisker: Min - Max Range
+        {
+          name: 'Rentang Min-Maks',
+          type: 'lines',
+          coordinateSystem: 'cartesian2d',
+          z: 2,
+          lineStyle: {
+            color: '#CBD5E1',
+            width: 3,
+            cap: 'round',
+          },
+          silent: true,
+          data: rangeLinesData,
+        },
+        // Core Band: IQR (P25 - P75)
+        {
+          name: 'Rentang Antarkuartil (IQR)',
+          type: 'lines',
+          coordinateSystem: 'cartesian2d',
+          z: 3,
+          lineStyle: {
+            color: '#94A3B8',
+            width: 8,
+            cap: 'round',
+          },
+          silent: true,
+          data: iqrLinesData,
+        },
+        // Individual District Scatter Points
+        {
+          name: 'Kabupaten/Kota',
+          type: 'scatter',
+          coordinateSystem: 'cartesian2d',
+          z: 4,
+          data: scatterPointsData,
+          tooltip: {
+            formatter: (params: any) => {
+              const d: District = params.data?.rawDistrict;
+              if (!d) return '';
+              return `
+                <div style="font-weight: 700;">${d.tipe_wilayah} ${d.kab_kota}</div>
+                <div style="color: #64748B; font-size: 11px;">${d.provinsi} · ${d.region_pulau}</div>
+                <div style="border-top: 1px solid #F1F5F9; margin-top: 4px; padding-top: 4px; font-size: 11px;">
+                  <div>Kemiskinan P0: <strong style="color: #D55E00;">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
+                  <div>Klaster: <strong style="color: ${CLUSTER_COLORS[d.cluster_id]};">${d.cluster_name.split(':')[0]}</strong></div>
+                </div>
+              `;
+            }
+          }
+        },
+        // Median Markers
+        {
+          name: 'Median Regional',
+          type: 'scatter',
+          coordinateSystem: 'cartesian2d',
+          z: 5,
+          symbol: 'diamond',
+          symbolSize: 14,
+          data: medianPointsData,
+          tooltip: {
+            formatter: (params: any) => {
+              const s: IslandStat = params.data?.stat;
+              if (!s) return '';
+              return `
+                <div style="font-weight: 700; margin-bottom: 2px;">Kawasan ${s.name}</div>
+                <div style="color: #64748B; font-size: 11px; margin-bottom: 4px;">Cakupan: ${s.count} Kabupaten/Kota</div>
+                <div style="border-top: 1px solid #F1F5F9; padding-top: 4px; font-size: 11px;">
+                  <div>Median Regional: <strong style="color: #D55E00;">${s.median.toFixed(2)}%</strong></div>
+                  <div>Rentang IQR (P25–P75): <strong>${s.p25.toFixed(2)}% – ${s.p75.toFixed(2)}%</strong></div>
+                  <div>Rentang Ekstrem (Min–Maks): <strong>${s.min.toFixed(2)}% – ${s.max.toFixed(2)}%</strong></div>
+                </div>
+              `;
+            }
+          }
+        },
+        // National Median Benchmark Reference Line
         {
           name: 'Baseline Nasional',
           type: 'line',
@@ -315,45 +297,15 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         }
       ]
     };
-  }, [districts, yAxisCategories, statsMap, viewMode]);
+  }, [districts, yAxisCategories, statsMap]);
 
   return (
     <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      {/* View Mode Toggle (Explanatory Knaflic vs Combined Dot View) */}
-      <div className="flex justify-between items-center mb-1">
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Tampilan Distribusi Regional
-          </span>
-        </div>
-        <div className="flex items-center space-x-1 p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-          <button
-            onClick={() => setViewMode('combined')}
-            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-              viewMode === 'combined'
-                ? 'bg-white text-ink-primary shadow-xs'
-                : 'text-slate-600 hover:text-ink-primary'
-            }`}
-          >
-            Sebaran Titik
-          </button>
-          <button
-            onClick={() => setViewMode('summary')}
-            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-              viewMode === 'summary'
-                ? 'bg-white text-ink-primary shadow-xs'
-                : 'text-slate-600 hover:text-ink-primary'
-            }`}
-          >
-            Ringkas (Knaflic IQR)
-          </button>
-        </div>
-      </div>
-
       <ReactECharts
         option={option}
         style={{ height: '370px', width: '100%' }}
         opts={{ renderer: 'canvas' }}
+        notMerge={true}
       />
     </div>
   );
