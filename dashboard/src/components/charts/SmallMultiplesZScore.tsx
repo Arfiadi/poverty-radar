@@ -126,7 +126,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
           data: clusterZScores[c].map(val => ({
             value: val,
             itemStyle: {
-              color: val >= 0 ? color : (c === 3 ? '#B33000' : '#E69F00'),
+              color: color,
               borderRadius: val >= 0 ? [0, 3, 3, 0] : [3, 0, 0, 3]
             }
           })),

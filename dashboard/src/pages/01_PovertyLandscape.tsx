@@ -59,26 +59,23 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-6"
+      className="space-y-4"
     >
-      {/* Action Hero Banner */}
-      <div className="bg-surface rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-subtle relative overflow-hidden">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-3">
-            <span className="w-2 h-2 rounded-full bg-sdg"></span>
-            <span>Babak 1: The Hook · Lanskap Makro Kemiskinan Daerah</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-ink-primary tracking-tight leading-snug">
-            Jurang Disparitas Ekstrem {nationalDisparityRatio.toFixed(2)}x Lipat Membelah Lanskap Kemiskinan Antardaerah
+      {/* Editorial Headline Strip */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-0.5">
+        <div>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-sdg shrink-0"></span>
+            <span>Jurang Disparitas Ekstrem {nationalDisparityRatio.toFixed(2)}x Lipat Membelah Lanskap Kemiskinan</span>
           </h2>
-          <p className="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
-            Data resmi BPS 2021 menyingkap polarisasi spasial yang tajam: pusat kemakmuran perkotaan di kawasan barat berbanding terbalik dengan konsentrasi deprivasi akut di kawasan kepulauan timur.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Polarisasi spasial tajam antara pusat perkotaan barat dan kantong deprivasi kepulauan timur (BPS Susenas 2021, N=514 daerah).
           </p>
         </div>
       </div>
 
       {/* Row 1: KPI Cards Strip (4 Dual-State Cards with Stephen Few Micro Bullet Graphs) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard
           label={isFilterActive ? "Tingkat Kemiskinan Median Wilayah" : "Tingkat Kemiskinan Median Nasional"}
           value={formatPercent(isFilterActive ? dynamicMedianP0 : nationalMedianP0)}
@@ -102,11 +99,11 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             current: isFilterActive ? dynamicMedianP0 : nationalMedianP0,
             target: isFilterActive ? nationalMedianP0 : 6.5,
             minLabel: isFilterActive && minDistrict 
-              ? `${minDistrict.kab_kota} (${formatPercent(minDistrict.poverty_rate_p0)})`
-              : `${benchmarks?.min_p0_region ?? "Sawahlunto"} (2.38%)`,
+              ? `${minDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${minDistrict.poverty_rate_p0.toFixed(1)}%)`
+              : `${(benchmarks?.min_p0_region ?? "Sawahlunto").replace(/^(Kabupaten|Kota)\s+/, '')} (2.4%)`,
             maxLabel: isFilterActive && maxDistrict 
-              ? `${maxDistrict.kab_kota} (${formatPercent(maxDistrict.poverty_rate_p0)})`
-              : `${benchmarks?.max_p0_region ?? "Intan Jaya"} (41.66%)`,
+              ? `${maxDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${maxDistrict.poverty_rate_p0.toFixed(1)}%)`
+              : `${(benchmarks?.max_p0_region ?? "Intan Jaya").replace(/^(Kabupaten|Kota)\s+/, '')} (41.7%)`,
             targetLabel: isFilterActive ? `Ref: ${formatPercent(nationalMedianP0)}` : "Target: 6.5%",
             unit: "%",
           }}
@@ -136,9 +133,9 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             max: Math.max(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio, 20.0),
             current: isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio,
             target: 1.0,
-            minLabel: "1.0x (Seragam)",
-            maxLabel: `${Math.max(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio, 20.0).toFixed(0)}x`,
-            targetLabel: "Keseimbangan: 1.0x",
+            minLabel: "1.0x (Ideal)",
+            maxLabel: `${Math.max(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio, 20.0).toFixed(0)}x Lipat`,
+            targetLabel: "Target 1.0x",
             unit: "x",
           }}
           accentColor={
@@ -149,12 +146,13 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         />
 
         <KpiCard
-          label={isFilterActive ? "Kantong Kemiskinan Akut (P0 ≥ 20%)" : "Konsentrasi Kantong Akut (P0 ≥ 20%)"}
+          label={isFilterActive ? "Kantong Kemiskinan Akut (P0 ≥ 20%)" : "Konsentrasi Kantong Akut"}
           value={
             isFilterActive
-              ? `${acuteCount} Daerah (${acutePct.toFixed(1)}%)`
-              : `${easternAcutePct.toFixed(1)}% di Kawasan Timur`
+              ? `${acuteCount} Daerah`
+              : `${easternAcutePct.toFixed(1)}%`
           }
+          unit={isFilterActive ? `(${acutePct.toFixed(1)}%)` : "di Kawasan Timur"}
           benchmarkText={
             isFilterActive
               ? `Rujukan nasional: ${totalAcute} kantong akut`
@@ -219,12 +217,12 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         />
       </div>
 
-      {/* Row 2: Charts Grid (Histogram 5-Col & Strip Plot 7-Col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-5">
+      {/* Row 2: Charts Grid (Histogram 4-Col & Strip Plot 8-Col) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-4">
           <DistributionHistogram districts={districts} />
         </div>
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-8">
           <ArchipelagoStripPlot districts={districts} />
         </div>
       </div>

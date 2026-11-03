@@ -43,14 +43,14 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
       grid: {
         top: 75,
         right: 45,
-        bottom: 30,
-        left: 210
+        bottom: 45,
+        left: 250
       },
       xAxis: {
         type: 'value',
         name: 'Koefisien Baku (β)',
         nameLocation: 'middle',
-        nameGap: 24,
+        nameGap: 28,
         splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
         axisLabel: { color: '#64748B' }
       },

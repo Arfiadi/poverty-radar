@@ -26,31 +26,23 @@ export const MethodologyAudit: React.FC<PageProps> = ({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-6"
+      className="space-y-4"
     >
-      {/* Integrity Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-elevated">
-        <div className="flex items-start space-x-3.5">
-          <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl shrink-0 mt-0.5">
-            <ShieldAlert className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-emerald-400 mb-1">
-              <span>Scientific Rigor &amp; Anti-Target-Leakage</span>
-            </div>
-            <h2 className="text-xl font-bold tracking-tight">
-              Integritas Metodologi: Murni Unsupervised, Nol Kebocoran Target, &amp; Dekonstruksi Model Biner
-            </h2>
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed max-w-3xl">
-              Proyek PovertyRadar SDGs secara tegas menolak pemodelan klasifikasi terawasi (*supervised classification*). 
-              Kolom label biner bawaan dataset dibuang karena bukan merupakan *ground truth* resmi BPS, melainkan aturan heuristik sederhana yang memicu penalaran melingkar (*circular reasoning*).
-            </p>
-          </div>
+      {/* Editorial Headline Strip */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-0.5">
+        <div>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
+            <span>Integritas Metodologi &amp; Sains Data: Nol Kebocoran Target</span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            PovertyRadar secara ketat menolak klasifikasi terawasi dan mendekonstruksi label bawaan untuk menjamin transparansi ilmiah.
+          </p>
         </div>
       </div>
 
       {/* Row 1: 4 Data Science & Integrity Audit KPI Cards Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard
           label="Integritas Target Leakage"
           value="0% Kebocoran"

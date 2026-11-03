@@ -4,7 +4,6 @@ import { useFilteredDistricts } from './hooks/useFilteredDistricts';
 import { useFilterStore } from './store/useFilterStore';
 import { Sidebar } from './components/layout/Sidebar';
 import { TopBar } from './components/layout/TopBar';
-import { GlobalFilterBar } from './components/layout/GlobalFilterBar';
 import { SkeletonCard, EmptyResultState, SmallSampleWarning } from './components/common/DefensiveStates';
 
 // Dynamic code-splitting with React.lazy
@@ -34,7 +33,7 @@ export const App: React.FC = () => {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-canvas">
-        <div className="w-60 min-w-[240px] bg-surface border-r border-slate-200/80 p-5 hidden md:block">
+        <div className="w-[232px] min-w-[232px] max-w-[232px] bg-surface border-r border-slate-200/80 p-4 hidden md:block">
           <SkeletonCard height="h-64" />
         </div>
         <div className="flex-1 p-8 space-y-6">
@@ -117,15 +116,14 @@ export const App: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-canvas text-ink-primary">
-      {/* Sticky Left Sidebar (240px) */}
+      {/* Sticky Left Sidebar (232px) */}
       <Sidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar totalDistricts={districts.length} filteredCount={filteredDistricts.length} />
-        <GlobalFilterBar />
 
-        <main className="flex-1 p-6 sm:p-8 max-w-[1400px] w-full mx-auto">
+        <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 max-w-[1440px] w-full mx-auto space-y-4">
           <SmallSampleWarning count={filteredDistricts.length} />
           {renderActiveAct()}
         </main>
@@ -137,8 +135,8 @@ export const App: React.FC = () => {
             <span>·</span>
             <span>Sistem Klastering &amp; Skrining Kerentanan Relatif Daerah</span>
           </div>
-          <div className="text-xs text-slate-400">
-            Sumber Data: BPS Susenas &amp; Sakernas 2021 · Unsupervised Learning · MIT License
+          <div className="text-xs text-slate-500 font-medium">
+            Sumber Data: BPS Susenas &amp; Sakernas 2021
           </div>
         </footer>
       </div>

@@ -65,13 +65,15 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
       },
       grid: {
         top: 75,
-        right: 35,
-        bottom: 30,
-        left: 120
+        right: 45,
+        bottom: 45,
+        left: 155
       },
       xAxis: {
         type: 'value',
         name: 'Rata-Rata Persentase (%)',
+        nameLocation: 'middle',
+        nameGap: 28,
         nameTextStyle: { color: '#64748B', fontSize: 11 },
         splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
         axisLabel: { formatter: '{value}%', color: '#64748B' }

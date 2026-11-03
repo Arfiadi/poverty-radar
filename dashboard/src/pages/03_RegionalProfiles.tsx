@@ -22,55 +22,39 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-6"
+      className="space-y-4"
     >
-      {/* Header & Model Diagnostics Bar */}
-      <div className="bg-surface rounded-2xl border border-slate-200/80 p-6 shadow-subtle">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
-              <span className="w-2 h-2 rounded-full bg-okabe-teal"></span>
-              <span>Babak 3: The Archetypes · Profil 4 Klaster Sosio-Ekonomi</span>
-            </div>
-            <h2 className="text-xl font-extrabold text-ink-primary tracking-tight">
-              Arketipe Profil Daerah: Konfigurasi Defisit Layanan Dasar Bebas Target Leakage
-            </h2>
-            <p className="text-xs text-ink-muted mt-1 max-w-2xl">
-              Model Unsupervised K-Means membagi daerah ke dalam 4 persona berdasarkan 7 indikator struktural dasar (tanpa menyertakan P0 pada fitur klaster).
-            </p>
-          </div>
-
-          {/* Model Diagnostics Pill Badges */}
-          <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-            <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 font-bold">
-              k = 4 Klaster
-            </span>
-            <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
-              Silhouette: <strong>0.2028</strong>
-            </span>
-            <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
-              DBI: <strong>1.4522</strong>
-            </span>
-            <span className="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-lg border border-emerald-200 font-bold">
-              Stabilitas ARI: 0.9803
-            </span>
-          </div>
+      {/* Editorial Headline & Model Diagnostics Strip */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2 pb-0.5">
+        <div>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-okabe-teal shrink-0"></span>
+            <span>Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi</span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Model K-Means memetakan konfigurasi defisit fasilitas dasar (sanitasi, air, RLS) bebas target leakage.
+          </p>
         </div>
 
-        {/* Kaufman & Rousseeuw Methodological Reflection (Collapsible Accordion) */}
-        <details className="mt-3 group border border-slate-200/80 rounded-xl bg-slate-50/60 overflow-hidden transition-all text-xs">
-          <summary className="flex items-center justify-between px-3.5 py-2 cursor-pointer font-semibold text-slate-600 hover:text-slate-900 select-none">
-            <span>📖 Catatan Metodologi &amp; Evaluasi Siluet (Kaufman &amp; Rousseeuw)</span>
-            <span className="text-slate-400 text-xs transition-transform group-open:rotate-180">▼</span>
-          </summary>
-          <div className="px-3.5 pb-3 text-xs text-slate-600 leading-relaxed border-t border-slate-200/60 pt-2.5">
-            <strong>Refleksi Kejujuran Ilmiah (Kaufman &amp; Rousseeuw, 1990):</strong> Nilai Silhouette 0.2028 mencerminkan realitas empiris bahwa disparitas sosial-ekonomi daerah Indonesia membentuk kontinum gradasi alami, bukan klaster bola yang terpisah mutlak. Oleh karena itu, klastering difungsikan secara tepat sebagai instrumen diskretisasi tipologi profiling yang stabil (ARI 0.9803).
-          </div>
-        </details>
+        {/* Model Diagnostics Pill Badges */}
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs shrink-0">
+          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 font-bold text-[11px]">
+            k = 4 Klaster
+          </span>
+          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 text-[11px]">
+            Siluet: <strong>0.2028</strong>
+          </span>
+          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 text-[11px]">
+            DBI: <strong>1.4522</strong>
+          </span>
+          <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-200 font-bold text-[11px]">
+            ARI: 0.9803
+          </span>
+        </div>
       </div>
 
       {/* 4 Cluster Persona Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {CLUSTERS.map((c) => {
           const summary = clusterSummary.find(s => s.cluster_id === c.id);
           const cDistricts = districts.filter(d => d.cluster_id === c.id);

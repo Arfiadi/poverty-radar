@@ -66,11 +66,14 @@ export const KpiCard: React.FC<KpiCardProps> = ({
     ? Math.min(Math.max(((range.target - range.min) / rangeSpan) * 100, 0), 100)
     : null;
 
+  const fullTooltip = `${label}: ${value} ${unit || ''} | ${benchmarkText}${contextText ? ' · ' + contextText : ''}`;
+
   return (
     <article
       onClick={onClick}
-      className={`bg-surface rounded-xl p-4 shadow-subtle transition-all flex flex-col justify-between h-full ${
-        onClick ? 'cursor-pointer hover:shadow-card hover:-translate-y-0.5' : 'hover:shadow-card'
+      title={fullTooltip}
+      className={`bg-surface rounded-xl p-3 sm:p-3.5 shadow-2xs transition-all flex flex-col justify-between ${
+        onClick ? 'cursor-pointer hover:shadow-subtle hover:-translate-y-0.5' : 'hover:shadow-subtle'
       } ${
         isActive 
           ? 'border-2 border-okabe-blue ring-2 ring-okabe-blue/20 bg-blue-50/20' 
@@ -81,37 +84,45 @@ export const KpiCard: React.FC<KpiCardProps> = ({
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
       aria-label={`${label}: ${value} ${unit || ''}`}
     >
-      <dl className="flex flex-col justify-between h-full space-y-2.5 m-0">
-        {/* Top Header: Label + Optional Badge */}
-        <div className="flex items-start justify-between gap-2">
-          <dt className="text-xs font-bold tracking-wide uppercase text-slate-700 leading-snug">
+      <dl className="flex flex-col justify-between h-full space-y-1.5 m-0">
+        {/* Top Header: Label + Optional Micro Badge */}
+        <div className="flex items-center justify-between gap-2">
+          <dt className="text-[11px] font-bold tracking-wider uppercase text-slate-500 leading-tight truncate">
             {label}
           </dt>
           {badge && (
-            <span className={`text-xs font-bold px-2 py-0.5 rounded border shrink-0 ${getBadgeStyle()}`}>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 leading-none ${getBadgeStyle()}`}>
               {badge.text}
             </span>
           )}
         </div>
 
-        {/* Main KPI Big Number (Tabular format, JetBrains/Mono styling) */}
-        <dd className="m-0 my-0.5">
-          <div className="flex items-baseline space-x-1.5">
-            <span
-              className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums font-mono"
-              style={{ color: accentColor || '#0F172A' }}
+        {/* Row 2: Main KPI Big Number & Benchmark Comparison */}
+        <dd className="m-0">
+          <div className="flex items-baseline justify-between gap-1.5">
+            <div className="flex items-baseline space-x-1 min-w-0">
+              <span
+                className="text-xl sm:text-2xl font-extrabold tracking-tight tabular-nums font-mono leading-none"
+                style={{ color: accentColor || '#0F172A' }}
+              >
+                {value}
+              </span>
+              {unit && <span className="text-xs font-semibold text-slate-500 truncate">{unit}</span>}
+            </div>
+            <span 
+              className="text-[11px] font-medium text-slate-500 truncate max-w-[52%] text-right shrink-0" 
+              title={benchmarkText}
             >
-              {value}
+              {benchmarkText}
             </span>
-            {unit && <span className="text-xs font-semibold text-slate-600">{unit}</span>}
           </div>
         </dd>
 
-        {/* Stephen Few Micro Bullet Graph (If range is provided) */}
-        {range && progressPct !== null && (
-          <dd className="m-0 py-1" aria-hidden="true">
+        {/* Row 3: Slim Micro Bullet Graph (If range is provided) */}
+        {range && progressPct !== null ? (
+          <dd className="m-0 pt-0.5" aria-hidden="true">
             <div
-              className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden"
+              className="relative h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"
               role="progressbar"
               aria-valuenow={range.current}
               aria-valuemin={range.min}
@@ -121,7 +132,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
                 className="absolute top-0 bottom-0 left-0 rounded-full transition-all duration-300"
                 style={{
                   width: `${progressPct}%`,
-                  backgroundColor: accentColor || '#0F172A',
+                  backgroundColor: accentColor || '#0072B2',
                 }}
               />
               {targetPct !== null && (
@@ -132,8 +143,8 @@ export const KpiCard: React.FC<KpiCardProps> = ({
                 />
               )}
             </div>
-            <div className="flex justify-between items-center text-xs text-slate-500 mt-1 font-mono">
-              <span className="truncate max-w-[42%]" title={range.minLabel || `${range.min}`}>
+            <div className="flex justify-between items-center text-[10px] text-slate-600 mt-1 font-mono leading-none">
+              <span className="truncate max-w-[45%]" title={range.minLabel || `${range.min}`}>
                 {range.minLabel || `${range.min}${range.unit || ''}`}
               </span>
               {range.targetLabel && (
@@ -141,24 +152,18 @@ export const KpiCard: React.FC<KpiCardProps> = ({
                   {range.targetLabel}
                 </span>
               )}
-              <span className="truncate max-w-[42%] text-right" title={range.maxLabel || `${range.max}`}>
+              <span className="truncate max-w-[45%] text-right" title={range.maxLabel || `${range.max}`}>
                 {range.maxLabel || `${range.max}${range.unit || ''}`}
               </span>
             </div>
           </dd>
-        )}
-
-        {/* Bottom Context & Benchmark (WCAG AA Compliant: text-slate-600 & text-slate-700, no clipping) */}
-        <dd className="m-0 border-t border-slate-100 pt-2 space-y-1">
-          <div className="text-xs font-semibold text-slate-700 leading-snug">
-            {benchmarkText}
-          </div>
-          {contextText && (
-            <div className="text-xs text-slate-600 leading-relaxed">
+        ) : (
+          contextText && (
+            <dd className="m-0 text-[10px] text-slate-600 truncate" title={contextText}>
               {contextText}
-            </div>
-          )}
-        </dd>
+            </dd>
+          )
+        )}
       </dl>
     </article>
   );

@@ -24,7 +24,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
   {
     id: 0,
     step: "01",
-    label: "01. Lanskap Makro",
+    label: "Lanskap Makro",
     sub: "The Hook · Disparitas 17.5x",
     icon: BarChart3,
     narrativeTheme: "Lanskap Makro Kemiskinan Daerah",
@@ -33,7 +33,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
   {
     id: 1,
     step: "02",
-    label: "02. Peta & Indikator",
+    label: "Peta & Indikator",
     sub: "The Geography · Dualisme",
     icon: MapPin,
     narrativeTheme: "Polarisasi Spasial 34 Provinsi",
@@ -42,7 +42,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
   {
     id: 2,
     step: "03",
-    label: "03. Profil Klaster",
+    label: "Profil Klaster",
     sub: "The Archetypes · 4 Persona",
     icon: Layers,
     narrativeTheme: "Arketipe 4 Klaster Sosio-Ekonomi",
@@ -51,7 +51,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
   {
     id: 3,
     step: "04",
-    label: "04. Matriks & Prioritas",
+    label: "Matriks & Prioritas",
     sub: "The Action · Skrining 2x2",
     icon: SlidersHorizontal,
     narrativeTheme: "Matriks Skrining Kerentanan 2x2",
@@ -60,7 +60,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
   {
     id: 4,
     step: "05",
-    label: "05. Metodologi & Data",
+    label: "Metodologi & Data",
     sub: "The Integrity · OLS & Audit",
     icon: ShieldCheck,
     narrativeTheme: "Integritas & Audit Metodologi",
@@ -70,45 +70,46 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const { activeAct, setActiveAct } = useFilterStore();
-  const currentActItem = ACT_NAV_ITEMS[activeAct] || ACT_NAV_ITEMS[0];
 
   return (
     <aside 
-      className="w-60 min-w-[240px] max-w-[240px] bg-surface border-r border-slate-200/80 flex flex-col justify-between h-screen sticky top-0 z-40 select-none overflow-y-auto"
+      className="w-[232px] min-w-[232px] max-w-[232px] bg-surface border-r border-slate-200/80 flex flex-col justify-between h-screen sticky top-0 z-40 select-none overflow-y-auto"
       aria-label="Navigasi Utama Alur Cerita PovertyRadar"
     >
-      {/* Top Block: Brand Header & Narrative Stepper Navigation */}
+      {/* Top Block: Brand Header & Refined Stepper Navigation */}
       <div>
-        {/* Brand Header */}
-        <div className="px-5 py-4.5 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-okabe-blue flex items-center justify-center text-white shadow-sm shrink-0">
+        {/* Brand Header: Balanced 2-line Subtitle (No collision with SDG 1 logo, zero truncation) */}
+        <div className="px-3 pt-5 pb-3.5 border-b border-slate-100 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 min-w-0 flex-1">
+            <div className="w-8 h-8 rounded-lg bg-[#0B3B60] flex items-center justify-center text-white shadow-xs shrink-0">
               <Compass className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm tracking-tight text-ink-primary">PovertyRadar</span>
-                <span className="bg-sdg text-white font-mono text-[9px] font-bold px-1 py-0.5 rounded leading-none shrink-0">SDG 1</span>
-              </div>
-              <p className="text-[11px] text-slate-600 leading-tight font-medium truncate mt-0.5">
-                Skrining Kerentanan Daerah
+            <div className="min-w-0 flex-1">
+              <h1 className="font-extrabold text-[14px] tracking-tight text-slate-900 leading-tight">
+                PovertyRadar
+              </h1>
+              <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 whitespace-nowrap">
+                Skrining Kerentanan
+              </p>
+              <p className="text-[10px] text-slate-500 font-medium leading-tight whitespace-nowrap">
+                Daerah
               </p>
             </div>
           </div>
+          {/* Official UN SDG 1 Square Icon */}
+          <img 
+            src="/sdg-1-no-poverty.png" 
+            alt="SDG 1: No Poverty" 
+            className="w-8 h-8 rounded-md shadow-2xs shrink-0 object-cover" 
+          />
         </div>
 
-        {/* Narrative Navigation Section with Vertical Timeline Stepper */}
-        <div className="px-3 pt-4 pb-2">
-          <div className="px-2.5 pb-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
-            <span>Alur Cerita 5 Babak</span>
-            <span className="text-[10px] font-mono text-slate-500 font-semibold">5 Babak</span>
-          </div>
-
-          {/* Stepper Container with Continuous Vertical Track */}
-          <nav className="relative space-y-1.5" aria-label="Daftar Babak Cerita">
-            {/* Continuous Vertical Rail Line */}
+        {/* Narrative Stepper Navigation (Slim, Crisp Alignment, Perfectly Sized) */}
+        <div className="px-2 pt-4 pb-3">
+          <nav className="relative space-y-2.5" aria-label="Daftar Babak Cerita">
+            {/* Continuous Vertical Rail Line: exactly centered at 21px (node width 26px, button padding 8px) */}
             <div 
-              className="absolute left-[21px] top-3.5 bottom-3.5 w-0.5 bg-slate-200 z-0 pointer-events-none" 
+              className="absolute left-[20px] top-3.5 bottom-3.5 w-0.5 bg-slate-200 z-0 pointer-events-none" 
               aria-hidden="true" 
             />
 
@@ -121,32 +122,45 @@ export const Sidebar: React.FC = () => {
                   key={item.id}
                   onClick={() => setActiveAct(item.id)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`group relative z-10 w-full text-left p-2 rounded-xl flex items-center space-x-2.5 transition-all duration-150 ${
+                  className={`group relative z-10 w-full text-left px-2 py-2.5 rounded-xl flex items-center space-x-2 transition-all duration-200 ${
                     isActive
-                      ? 'bg-slate-100/95 text-okabe-blue shadow-2xs'
-                      : 'hover:bg-slate-50/90 text-ink-primary'
+                      ? 'bg-[#DCEDFC] shadow-2xs'
+                      : 'hover:bg-slate-50/80 text-ink-primary'
                   }`}
                 >
-                  {/* Step Node Indicator */}
+                  {/* Step Node Indicator (01 - 05) */}
                   <div
-                    className={`w-6.5 h-6.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[10px] font-bold transition-all ${
+                    className={`w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0 font-mono text-[10.5px] font-bold transition-all ${
                       isActive
-                        ? 'bg-okabe-blue text-white ring-4 ring-okabe-blue/15 shadow-xs'
-                        : 'bg-white border-2 border-slate-300 text-slate-600 group-hover:border-slate-400 group-hover:text-slate-800'
+                        ? 'bg-okabe-blue text-white shadow-xs ring-2 ring-white/90'
+                        : 'bg-white border border-slate-300 text-slate-700 group-hover:border-slate-400 group-hover:text-slate-900'
                     }`}
                   >
                     {item.step}
                   </div>
 
-                  {/* Text Information (WCAG 2.1 AA Compliant: text-slate-600 contrast > 5.5:1) */}
-                  <div className="min-w-0 flex-1">
+                  {/* Text Information Block: Row 1 = Icon + Title; Row 2 = Subtitle */}
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    {/* Row 1: Thematic Icon + Title */}
                     <div className="flex items-center space-x-1.5">
-                      <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-okabe-blue' : 'text-slate-500 group-hover:text-slate-700'}`} />
-                      <span className={`text-xs font-bold leading-tight truncate ${isActive ? 'text-okabe-blue' : 'text-ink-primary group-hover:text-okabe-blue'}`}>
+                      <Icon 
+                        className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                          isActive 
+                            ? 'text-okabe-blue' 
+                            : 'text-slate-600 group-hover:text-slate-900'
+                        }`} 
+                      />
+                      <span className="text-[12px] font-bold text-slate-900 leading-snug whitespace-nowrap">
                         {item.label}
                       </span>
                     </div>
-                    <div className={`text-[11px] leading-tight truncate mt-0.5 ${isActive ? 'text-slate-700 font-semibold' : 'text-slate-600 font-medium'}`}>
+
+                    {/* Row 2: Subtitle (No ellipsis truncation, comfortable reading) */}
+                    <div className={`text-[10px] leading-snug whitespace-nowrap ${
+                      isActive 
+                        ? 'text-slate-700 font-semibold' 
+                        : 'text-slate-500 font-normal group-hover:text-slate-600'
+                    }`}>
                       {item.sub}
                     </div>
                   </div>
@@ -157,54 +171,18 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Middle & Bottom Block: Narrative Progress Tracker & Official Footer */}
-      <div className="space-y-3 pb-3">
-        {/* Narrative Progress & Context Tracker (Eliminates dead whitespace) */}
-        <div className="mx-3 p-3 bg-slate-50/90 rounded-xl border border-slate-200/80 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
-              Progres Alur
-            </span>
-            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 text-okabe-blue">
-              Babak {activeAct + 1}/5
-            </span>
-          </div>
-
-          {/* Micro Progress Track Bar */}
-          <div 
-            className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden" 
-            role="progressbar" 
-            aria-valuenow={activeAct + 1} 
-            aria-valuemin={1} 
-            aria-valuemax={5}
-            aria-label={`Progres alur cerita babak ${activeAct + 1} dari 5`}
-          >
-            <div
-              className="bg-okabe-blue h-full rounded-full transition-all duration-300"
-              style={{ width: `${((activeAct + 1) / 5) * 100}%` }}
-            />
-          </div>
-
-          {/* Active Stage Narrative Context */}
-          <div className="pt-0.5">
-            <div className="text-[11px] font-bold text-ink-primary leading-tight">
-              {currentActItem.narrativeTheme}
-            </div>
-            <p className="text-[10px] text-slate-600 leading-snug mt-1">
-              {currentActItem.focusSummary}
+      {/* Sidebar Footer Metadata (Clean 2-Line Attribution, Zero Clipping) */}
+      <div className="p-3 border-t border-slate-100 bg-slate-50/60 mt-auto">
+        <div className="flex items-start space-x-2 text-slate-700">
+          <Database className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-[10.5px] text-slate-700 leading-tight whitespace-nowrap">
+              Sumber Data:
+            </p>
+            <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5 whitespace-nowrap">
+              BPS Susenas &amp; Sakernas 2021
             </p>
           </div>
-        </div>
-
-        {/* Sidebar Footer Metadata (Official & Non-defensive) */}
-        <div className="mx-3 p-3 border-t border-slate-100 bg-slate-50/60 rounded-xl">
-          <div className="flex items-center space-x-2 text-xs text-slate-700">
-            <Database className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span className="font-semibold text-[11px]">Basis Data: BPS Susenas 2021</span>
-          </div>
-          <p className="text-[10px] text-slate-600 pl-5.5 leading-snug mt-0.5">
-            514 Daerah · Disparitas Spasial Multidimensi
-          </p>
         </div>
       </div>
     </aside>

@@ -77,62 +77,59 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-6"
+      className="space-y-4"
     >
-      {/* Action Header */}
-      <div className="bg-surface rounded-2xl border border-slate-200/80 p-6 shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Editorial Headline & Case Study Pins Strip */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
         <div>
-          <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
-            <span className="w-2 h-2 rounded-full bg-okabe-vermillion"></span>
-            <span>Babak 4: The Call to Action · Matriks 2x2 & Penapisan Portofolio</span>
-          </div>
-          <h2 className="text-xl font-extrabold text-ink-primary tracking-tight">
-            Matriks Skrining Kerentanan 2x2: Penapisan Daerah Menuju Portofolio Kebijakan
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-okabe-vermillion shrink-0"></span>
+            <span>Matriks Skrining Kerentanan 2x2: Penapisan Portofolio Kebijakan</span>
           </h2>
-          <p className="text-xs text-ink-muted mt-1 max-w-2xl">
-            Memadukan kemiskinan moneter aktual (P0) dan indeks kerentanan fasilitas dasar (V_struc) dengan garis median nasional untuk diferensiasi intervensi spesifik.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas dasar (V_struc).
           </p>
         </div>
 
         {/* Case-Study Pins Toolbar */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200">
+        <div className="flex flex-wrap items-center gap-1.5 p-0.5 bg-slate-100 rounded-lg border border-slate-200 shrink-0">
           <button
             onClick={() => setActiveCasePin('none')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
               activeCasePin === 'none'
-                ? 'bg-white text-ink-primary shadow-xs'
+                ? 'bg-white text-ink-primary shadow-2xs'
                 : 'text-slate-600 hover:text-ink-primary'
             }`}
           >
-            Semua Daerah
+            Semua
           </button>
           <button
             onClick={() => setActiveCasePin('resource_curse')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
               activeCasePin === 'resource_curse'
-                ? 'bg-amber-600 text-white shadow-xs'
+                ? 'bg-amber-600 text-white shadow-2xs'
                 : 'text-slate-700 hover:text-amber-800'
             }`}
           >
             <Sparkles className="w-3 h-3" />
-            <span>Pin: Kutukan Tambang</span>
+            <span>Kutukan Tambang</span>
           </button>
           <button
             onClick={() => setActiveCasePin('madura')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
               activeCasePin === 'madura'
-                ? 'bg-amber-600 text-white shadow-xs'
+                ? 'bg-amber-600 text-white shadow-2xs'
                 : 'text-slate-700 hover:text-amber-800'
             }`}
           >
             <Sparkles className="w-3 h-3" />
-            <span>Pin: Disparitas Madura</span>
+            <span>Disparitas Madura</span>
           </button>
         </div>
       </div>
 
       {/* Row 1: 4 Interactive Quadrant KPI Cards Strip (Click-to-Filter) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard
           label="Kuadran I: Prioritas Beban Ganda"
           value={`${quadrantStats.q1.count} Daerah (${quadrantStats.q1.pct.toFixed(1)}%)`}
