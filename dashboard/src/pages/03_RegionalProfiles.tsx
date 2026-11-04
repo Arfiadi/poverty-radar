@@ -4,8 +4,8 @@ import { District, ClusterSummary } from '../types';
 import { SmallMultiplesZScore } from '../components/charts/SmallMultiplesZScore';
 import { ClusterHeatmap } from '../components/charts/ClusterHeatmap';
 import { CLUSTERS } from '../constants/benchmarks';
-import { PARADOXES } from '../constants/paradoxes';
 import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
+import { BarChart3, Grid, Filter, RotateCcw, Check } from 'lucide-react';
 
 interface PageProps {
   districts: District[];
@@ -15,6 +15,7 @@ interface PageProps {
 
 export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts, clusterSummary }) => {
   const [viewMode, setViewMode] = useState<'small_multiples' | 'heatmap'>('small_multiples');
+  const [selectedClusterId, setSelectedClusterId] = useState<number | null>(null);
 
   const baselineDistricts = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
   const isFiltered = districts.length < baselineDistricts.length;
@@ -33,29 +34,78 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
   const natMeanRls = getMean('avg_school_years');
   const natMeanExp = getMean('expenditure_per_capita');
 
+  const CLUSTER_SUBTITLES: Record<number, string> = {
+    0: "Modal manusia & konsumsi tertinggi; pengangguran terbuka perkotaan",
+    1: "Kemandirian penyangga baik; akses sarana dasar mendekati standar",
+    2: "Mayoritas agraris; penyerapan subsistensi rentan defisit sanitasi",
+    3: "Deprivasi ganda akut: isolasi 3T, sanitasi 31.2% & kemiskinan ekstrem",
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-4"
+      className="space-y-3.5"
     >
-      {/* Editorial Headline Strip */}
-      <div className="pb-0.5">
-        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
-          Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi
-        </h2>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Mengelompokkan 514 daerah berdasarkan kesamaan 7 indikator struktural.
-        </p>
+      {/* Editorial Header & Interactive Reset Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-100">
+        <div>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+            Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
+            Pengelompokan tanpa pengawasan (K-Means, k=4) terhadap 7 indikator struktural dasar (P0 dievaluasi eksternal).
+          </p>
+        </div>
+
+        <div className="flex items-center space-x-2 shrink-0">
+          {selectedClusterId !== null && (
+            <button
+              onClick={() => setSelectedClusterId(null)}
+              className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all"
+              title="Reset sorotan klaster ke semua data"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset Sorotan</span>
+            </button>
+          )}
+
+          {/* Profiling View Switcher */}
+          <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
+            <button
+              onClick={() => setViewMode('small_multiples')}
+              className={`inline-flex items-center space-x-1 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                viewMode === 'small_multiples'
+                  ? 'bg-white text-okabe-blue shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Kisi Z-Score</span>
+            </button>
+            <button
+              onClick={() => setViewMode('heatmap')}
+              className={`inline-flex items-center space-x-1 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                viewMode === 'heatmap'
+                  ? 'bg-white text-okabe-blue shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Grid className="w-3.5 h-3.5" />
+              <span>Matriks Heatmap</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* 4 Cluster Persona Cards */}
+      {/* 4 Clean Executive Cluster Archetype Cards (High Data-Ink, Clickable) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {CLUSTERS.map((c) => {
           const summary = clusterSummary.find(s => s.cluster_id === c.id);
           const cDistricts = districts.filter(d => d.cluster_id === c.id);
           const hasData = cDistricts.length > 0;
+          const isSelected = selectedClusterId === c.id;
 
           const totalRegions = isFiltered ? cDistricts.length : (summary?.total_regions ?? c.count);
           const pctNational = isFiltered 
@@ -82,71 +132,96 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
 
           return (
             <div 
-              key={c.id} 
-              className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle flex flex-col justify-between"
+              key={c.id}
+              onClick={() => setSelectedClusterId(isSelected ? null : c.id)}
+              className={`bg-white rounded-xl border p-3.5 shadow-2xs transition-all cursor-pointer flex flex-col justify-between ${
+                isSelected 
+                  ? 'ring-2 ring-slate-900 border-slate-900 shadow-sm' 
+                  : 'border-slate-200/80 hover:border-slate-300 hover:shadow-subtle'
+              }`}
               style={{ borderTop: `3px solid ${c.color}` }}
             >
               <div>
+                {/* Header: Cluster ID & Region Count */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Klaster {c.id + 1}</span>
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                    N = {totalRegions} ({pctNational.toFixed(1)}%)
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Klaster {c.id + 1}
+                    </span>
+                    {isSelected && (
+                      <span className="inline-flex items-center text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-slate-900 text-white font-mono">
+                        Fokus
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-50 text-slate-600 border border-slate-100">
+                    N={totalRegions} ({pctNational.toFixed(0)}%)
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-ink-primary mt-1.5 leading-snug">{c.name.split(':')[1]?.trim() || c.name}</h3>
+
+                {/* Cluster Name & Subtitle */}
+                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-1 leading-snug">
+                  {c.name.split(':')[1]?.trim() || c.name}
+                </h3>
+                <p className="text-[10.5px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  {CLUSTER_SUBTITLES[c.id]}
+                </p>
               </div>
 
               {!hasData ? (
-                <div className="mt-4 pt-4 border-t border-slate-100 text-center py-4 text-xs text-slate-400">
-                  <p className="font-semibold text-slate-500">Tidak Ada Wilayah Terfilter</p>
-                  <p className="text-[10px] text-slate-400 mt-1">Klaster ini tidak memiliki perwakilan pada seleksi saat ini.</p>
+                <div className="mt-3 pt-2 border-t border-slate-100 text-center py-2 text-[11px] text-slate-400">
+                  Tidak ada daerah terfilter
                 </div>
               ) : (
-                <div className="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs">
-                  <div className="flex justify-between items-center gap-1">
-                    <span className="text-slate-500 font-medium">Kemiskinan P0:</span>
-                    <div className="flex items-center space-x-1.5 shrink-0">
-                      <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
-                      <span 
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaP0 > 0 ? 'bg-red-50 text-red-700 border-red-200/80' : 'bg-emerald-50 text-emerald-800 border-emerald-200/80'}`}
-                        title={`Deviasi ${deltaP0 >= 0 ? '+' : ''}${deltaP0.toFixed(1)}% vs Rata-Rata Nasional (${formatPercent(natMeanP0)})`}
-                      >
+                /* Clean High Data-Ink Metrics (Clean typography, no 16 colored box pills) */
+                <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1.5 text-xs">
+                  {/* Metric 1: Kemiskinan Moneter P0 */}
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-[11px] text-slate-500">Kemiskinan P0:</span>
+                    <div className="flex items-baseline space-x-1.5">
+                      <strong className="text-xs font-extrabold text-slate-900 tabular-nums">
+                        {formatPercent(meanP0)}
+                      </strong>
+                      <span className={`text-[10px] font-mono font-semibold ${deltaP0 > 0 ? 'text-okabe-vermillion' : 'text-emerald-700'}`}>
                         {deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center gap-1">
-                    <span className="text-slate-500 font-medium">Akses Sanitasi:</span>
-                    <div className="flex items-center space-x-1.5 shrink-0">
-                      <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
-                      <span 
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaSan >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
-                        title={`Deviasi ${deltaSan >= 0 ? '+' : ''}${deltaSan.toFixed(1)}% vs Rata-Rata Nasional (${formatPercent(natMeanSan)})`}
-                      >
+
+                  {/* Metric 2: Akses Sanitasi Layak */}
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-[11px] text-slate-500">Akses Sanitasi:</span>
+                    <div className="flex items-baseline space-x-1.5">
+                      <span className="text-xs font-semibold text-slate-800 tabular-nums">
+                        {formatPercent(meanSan)}
+                      </span>
+                      <span className={`text-[10px] font-mono font-semibold ${deltaSan >= 0 ? 'text-emerald-700' : 'text-okabe-vermillion'}`}>
                         {deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center gap-1">
-                    <span className="text-slate-500 font-medium">Rata-Rata RLS:</span>
-                    <div className="flex items-center space-x-1.5 shrink-0">
-                      <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
-                      <span 
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaRls >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
-                        title={`Deviasi ${deltaRls >= 0 ? '+' : ''}${deltaRls.toFixed(1)} thn vs Rata-Rata Nasional (${formatYears(natMeanRls)})`}
-                      >
+
+                  {/* Metric 3: Rata-Rata Lama Sekolah */}
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-[11px] text-slate-500">Lama Sekolah (RLS):</span>
+                    <div className="flex items-baseline space-x-1.5">
+                      <span className="text-xs font-semibold text-slate-800 tabular-nums">
+                        {formatYears(meanRls)}
+                      </span>
+                      <span className={`text-[10px] font-mono font-semibold ${deltaRls >= 0 ? 'text-emerald-700' : 'text-okabe-vermillion'}`}>
                         {deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)}th
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center gap-1">
-                    <span className="text-slate-500 font-medium">Pengeluaran:</span>
-                    <div className="flex items-center space-x-1.5 shrink-0">
-                      <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
-                      <span 
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaExp >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
-                        title={`Deviasi ${deltaExp >= 0 ? '+' : ''}Rp${(deltaExp / 1000).toFixed(1)}jt vs Rata-Rata Nasional`}
-                      >
+
+                  {/* Metric 4: Pengeluaran Riil */}
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-[11px] text-slate-500">Pengeluaran Riil:</span>
+                    <div className="flex items-baseline space-x-1.5">
+                      <span className="text-xs font-semibold text-slate-800 tabular-nums">
+                        {formatCurrencyMillion(meanExp)}
+                      </span>
+                      <span className={`text-[10px] font-mono font-semibold ${deltaExp >= 0 ? 'text-emerald-700' : 'text-okabe-vermillion'}`}>
                         {deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt
                       </span>
                     </div>
@@ -158,44 +233,39 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
         })}
       </div>
 
-      {/* Visual Profiling View Switcher & Chart */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between gap-2 pb-0.5">
-          <div className="flex items-center space-x-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
-            <span className="text-xs font-bold text-slate-800 tracking-tight">
-              Visualisasi Karakteristik Struktural 4 Klaster:
-            </span>
+      {/* Visual Profiling Centerpiece */}
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3.5 sm:p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+          <div>
+            <h3 className="text-xs font-bold text-slate-900 tracking-tight">
+              {viewMode === 'small_multiples'
+                ? "Profil Standar Z-Score 7 Indikator Struktural terhadap Rata-Rata Nasional (Z = 0)"
+                : "Matriks Heatmap Multidimensi: 4 Klaster × 7 Indikator Struktural"}
+            </h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Nilai Z &gt; 0 menunjukkan keunggulan di atas rata-rata nasional; Z &lt; 0 menunjukkan defisit fasilitas/modal dasar.
+            </p>
           </div>
 
-          <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
-            <button
-              onClick={() => setViewMode('small_multiples')}
-              className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                viewMode === 'small_multiples'
-                  ? 'bg-white text-okabe-blue shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Kisi Batang (Z-Score)
-            </button>
-            <button
-              onClick={() => setViewMode('heatmap')}
-              className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                viewMode === 'heatmap'
-                  ? 'bg-white text-okabe-blue shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Matriks Heatmap (28 Sel)
-            </button>
-          </div>
+          {selectedClusterId !== null && (
+            <div className="inline-flex items-center space-x-1 text-xs text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+              <Filter className="w-3 h-3 text-okabe-blue" />
+              <span>Fokus: Klaster {selectedClusterId + 1}</span>
+            </div>
+          )}
         </div>
 
         {viewMode === 'small_multiples' ? (
-          <SmallMultiplesZScore districts={districts} allDistricts={allDistricts} />
+          <SmallMultiplesZScore 
+            districts={districts} 
+            allDistricts={allDistricts} 
+            selectedClusterId={selectedClusterId}
+          />
         ) : (
-          <ClusterHeatmap districts={districts} allDistricts={allDistricts} />
+          <ClusterHeatmap 
+            districts={districts} 
+            allDistricts={allDistricts} 
+          />
         )}
       </div>
     </motion.div>

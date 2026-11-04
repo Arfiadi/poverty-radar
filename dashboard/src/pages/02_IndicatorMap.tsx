@@ -5,11 +5,9 @@ import { IndonesiaChoroplethMap } from '../components/charts/IndonesiaChoropleth
 import { SpatialRankingBar } from '../components/charts/SpatialRankingBar';
 import { TheGreatDualismBar } from '../components/charts/TheGreatDualismBar';
 import { WorkingPoorScatter } from '../components/charts/WorkingPoorScatter';
-import { KpiCard } from '../components/common/KpiCard';
-import { NarrativeCallout } from '../components/common/NarrativeCallout';
 import { PARADOXES } from '../constants/paradoxes';
 import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
-import { Map, BarChart3, Split } from 'lucide-react';
+import { Map, BarChart3, Split, ChevronDown, AlertCircle, CheckCircle2, TrendingUp, Layers } from 'lucide-react';
 
 interface PageProps {
   districts: District[];
@@ -55,82 +53,66 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
   // Policy thresholds for active indicator
   const THRESHOLD_MAP: Record<string, {
     criticalLabel: string;
-    criticalBenchmark: string;
-    criticalContext: string;
+    criticalRule: string;
     isCritical: (v: number) => boolean;
     primeLabel: string;
-    primeBenchmark: string;
-    primeContext: string;
+    primeRule: string;
     isPrime: (v: number) => boolean;
   }> = {
     poverty_rate_p0: {
-      criticalLabel: "Kemiskinan Kritis (P0 ≥ 20%)",
-      criticalBenchmark: "Ambang batas kemiskinan kritis: P0 ≥ 20.0%",
-      criticalContext: "Prioritas intervensi bansos & infrastruktur dasar",
+      criticalLabel: "Kemiskinan Kritis",
+      criticalRule: "P0 ≥ 20.0%",
       isCritical: (v) => v >= 20.0,
       primeLabel: "Target RPJMN Tercapai",
-      primeBenchmark: "Sasaran RPJMN 2024: P0 ≤ 7.0%",
-      primeContext: "Wilayah berhasil menekan kemiskinan di bawah target",
+      primeRule: "P0 ≤ 7.0%",
       isPrime: (v) => v <= 7.0,
     },
     sanitation_access_pct: {
       criticalLabel: "Defisit Sanitasi Kritis",
-      criticalBenchmark: "Ambang defisit parah: Akses < 60.0%",
-      criticalContext: "Wilayah darurat sanitasi layak & jamban higienis",
+      criticalRule: "Akses < 60.0%",
       isCritical: (v) => v < 60.0,
       primeLabel: "Standar Layak Terpenuhi",
-      primeBenchmark: "Standar Pelayanan Minimal: Akses ≥ 80.0%",
-      primeContext: "Mayoritas rumah tangga memiliki sanitasi higienis",
+      primeRule: "Akses ≥ 80.0% (SPM)",
       isPrime: (v) => v >= 80.0,
     },
     clean_water_access_pct: {
-      criticalLabel: "Defisit Air Bersih",
-      criticalBenchmark: "Ambang krisis air terlindung: Akses < 60.0%",
-      criticalContext: "Ketergantungan pada sumber air tak terlindung",
+      criticalLabel: "Defisit Air Terlindung",
+      criticalRule: "Akses < 60.0%",
       isCritical: (v) => v < 60.0,
       primeLabel: "Akses Air Terlindung Baik",
-      primeBenchmark: "Target cakupan air terlindung: Akses ≥ 80.0%",
-      primeContext: "Keamanan pasokan air minum terlindung memadai",
+      primeRule: "Akses ≥ 80.0%",
       isPrime: (v) => v >= 80.0,
     },
     avg_school_years: {
-      criticalLabel: "Di Bawah Lulusan SD",
-      criticalBenchmark: "Ambang tertinggal: RLS < 7.0 Tahun",
-      criticalContext: "Kualifikasi modal manusia di bawah jenjang dasar",
+      criticalLabel: "Di Bawah Tamat SD",
+      criticalRule: "RLS < 7.0 Tahun",
       isCritical: (v) => v < 7.0,
       primeLabel: "Tuntas Wajib Belajar",
-      primeBenchmark: "Standar Wajib Belajar 9 Tahun: RLS ≥ 9.0 Thn",
-      primeContext: "Rata-rata penduduk menamatkan jenjang SMP sederajat",
+      primeRule: "RLS ≥ 9.0 Tahun (SMP)",
       isPrime: (v) => v >= 9.0,
     },
     expenditure_per_capita: {
       criticalLabel: "Daya Beli Rendah",
-      criticalBenchmark: "Kuartil bawah: < Rp8,50 Juta/tahun",
-      criticalContext: "Kapasitas konsumsi riil penduduk sangat terbatas",
+      criticalRule: "< Rp8,5 Jt/thn",
       isCritical: (v) => v < 8500,
       primeLabel: "Konsumsi Mapan",
-      primeBenchmark: "Kuartil atas: ≥ Rp12,00 Juta/tahun",
-      primeContext: "Daya beli riil masyarakat tergolong tinggi",
+      primeRule: "≥ Rp12,0 Jt/thn",
       isPrime: (v) => v >= 12000,
     },
     unemployment_rate_tpt: {
       criticalLabel: "Pengangguran Tinggi",
-      criticalBenchmark: "Ambang friksional tinggi: TPT ≥ 7.0%",
-      criticalContext: "Tantangan penyerapan tenaga kerja perkotaan",
+      criticalRule: "TPT ≥ 7.0%",
       isCritical: (v) => v >= 7.0,
       primeLabel: "Pasar Kerja Stabil",
-      primeBenchmark: "Ambang stabil pengangguran: TPT < 4.5%",
-      primeContext: "Daya serap aktivitas ekonomi lokal terjaga",
+      primeRule: "TPT < 4.5%",
       isPrime: (v) => v < 4.5,
     },
     labor_participation_tpak: {
-      criticalLabel: "Tekanan Partisipasi Tinggi",
-      criticalBenchmark: "Ambang partisipasi tinggi: TPAK ≥ 75.0%",
-      criticalContext: "Dominasi penyerapan di sektor informal & subsistensi",
+      criticalLabel: "Tekanan Subsistensi Tinggi",
+      criticalRule: "TPAK ≥ 75.0%",
       isCritical: (v) => v >= 75.0,
-      primeLabel: "Struktur Kerja Seimbang",
-      primeBenchmark: "Proporsi sektor formal terjaga: TPAK < 68.0%",
-      primeContext: "Didukung peluang pendidikan & kesempatan formal",
+      primeLabel: "Struktur Formal Seimbang",
+      primeRule: "TPAK < 68.0%",
       isPrime: (v) => v < 68.0,
     },
   };
@@ -152,200 +134,232 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-4"
+      className="space-y-3.5"
     >
-      {/* Editorial Headline & Controls Strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
+      {/* Editorial Header & Unified Controls Toolbar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-1 border-b border-slate-100">
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
             {activeSubTab === 'spatial'
               ? "Polarisasi Spasial 34 Provinsi & Disparitas Indikator Daerah"
               : "Dua Paradoks Sosio-Ekonomi: PDRB, Ketenagakerjaan, & Kemiskinan"}
           </h2>
-          <p className="text-xs text-slate-600 mt-0.5 font-medium">
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
             {activeSubTab === 'spatial'
-              ? "Menjelajahi sebaran spasial 34 provinsi: disparitas wilayah kabupaten–kota dan capaian indikator kunci."
-              : "Menelaah anomali struktural: mengapa tingginya PDRB tambang dan partisipasi kerja agraris tidak otomatis menekan kemiskinan?"}
+              ? "Menjelajahi sebaran geografis 514 kabupaten–kota di 34 provinsi dengan indikator struktural terpilih."
+              : "Menelaah anomali struktural: disparitas wilayah kabupaten–kota dan paradoks tenaga kerja agraris."}
           </p>
         </div>
 
-        {/* View Switcher Sub-Tabs & Controls */}
+        {/* View Mode & Sub-Tab Switcher */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Main Sub-Tab Pill Switcher */}
           <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
             <button
               onClick={() => setActiveSubTab('spatial')}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                 activeSubTab === 'spatial'
                   ? 'bg-white text-okabe-blue shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Map className="w-3.5 h-3.5" />
-              <span>Sebaran Spasial (34 Provinsi)</span>
+              <span>Sebaran Spasial</span>
             </button>
             <button
               onClick={() => setActiveSubTab('paradox')}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                 activeSubTab === 'paradox'
                   ? 'bg-white text-okabe-vermillion shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Split className="w-3.5 h-3.5" />
-              <span>Dua Paradoks Sosio-Ekonomi</span>
+              <span>Dua Paradoks</span>
             </button>
           </div>
 
-          {/* Controls visible only in Spatial Sub-Tab */}
+          {/* Spatial Mode Controls (Peta vs Peringkat + Indicator Selector) */}
           {activeSubTab === 'spatial' && (
-            <>
-              {/* View Mode Toggle: Peta vs Peringkat */}
+            <div className="flex items-center gap-2">
               <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition ${
+                  className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     viewMode === 'map'
                       ? 'bg-white text-okabe-blue shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
+                  title="Tampilan Peta Choropleth 34 Provinsi"
                 >
                   <Map className="w-3.5 h-3.5" />
                   <span>Peta</span>
                 </button>
                 <button
                   onClick={() => setViewMode('ranking')}
-                  className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition ${
+                  className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     viewMode === 'ranking'
                       ? 'bg-white text-okabe-blue shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
+                  title="Tampilan Peringkat Bar Horizontal"
                 >
                   <BarChart3 className="w-3.5 h-3.5" />
                   <span>Peringkat</span>
                 </button>
               </div>
 
-              {/* Indicator Layer Selector */}
-              <select
-                value={selectedIndicator}
-                onChange={(e) => setSelectedIndicator(e.target.value as keyof District)}
-                aria-label="Pilih Indikator Spasial"
-                className="border border-slate-300 rounded-lg px-2.5 py-1 text-xs bg-white text-slate-900 font-medium focus:ring-1 focus:ring-okabe-blue focus:outline-hidden"
-              >
-                {indicatorOptions.map(opt => (
-                  <option key={opt.key} value={opt.key}>{opt.label}</option>
-                ))}
-              </select>
-            </>
+              {/* Indicator Dropdown */}
+              <div className="relative">
+                <select
+                  value={selectedIndicator}
+                  onChange={(e) => setSelectedIndicator(e.target.value as keyof District)}
+                  aria-label="Pilih Indikator Spasial"
+                  className="appearance-none bg-white border border-slate-300 rounded-lg pl-3 pr-7 py-1 text-xs text-slate-800 font-semibold focus:ring-1 focus:ring-okabe-blue focus:outline-hidden cursor-pointer shadow-2xs"
+                >
+                  {indicatorOptions.map(opt => (
+                    <option key={opt.key} value={opt.key}>{opt.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
           )}
         </div>
       </div>
 
       {activeSubTab === 'spatial' ? (
-        <>
-          {/* Section Header: Contextual Indicator Title */}
-          <div className="flex items-center justify-between pt-0.5">
-            <div className="flex items-center space-x-1.5">
-              <span className="text-xs font-bold text-slate-800 tracking-tight">
-                Ringkasan Spasial Indikator: <span className="text-okabe-blue">{activeOption.label}</span>
+        <div className="space-y-3">
+          {/* High Data-Ink Ratio Micro-KPI Context Strip (1 Sleek Bar) */}
+          <div className="bg-white rounded-xl border border-slate-200/80 p-3 shadow-2xs grid grid-cols-2 md:grid-cols-4 gap-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+            {/* Metric 1: Median Nasional */}
+            <div className="pt-1 md:pt-0 md:px-2 first:px-0">
+              <span className="text-[11px] font-medium text-slate-500 block">Median 514 Daerah</span>
+              <div className="flex items-baseline space-x-1.5 mt-0.5">
+                <span className="text-base font-extrabold text-slate-900 tabular-nums">
+                  {formatIndicatorVal(medianVal)}
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  ({validDistricts.length} Kab/Kota)
+                </span>
+              </div>
+              <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate">
+                Titik tengah sebaran indikator
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">({activeOption.unit || 'Skala Relatif'})</span>
+            </div>
+
+            {/* Metric 2: Defisit Kritis */}
+            <div className="pt-2 md:pt-0 md:px-3">
+              <div className="flex items-center space-x-1">
+                <span className="w-2 h-2 rounded-full bg-okabe-vermillion"></span>
+                <span className="text-[11px] font-semibold text-slate-700">{activeThreshold.criticalLabel}</span>
+              </div>
+              <div className="flex items-baseline space-x-1.5 mt-0.5">
+                <span className="text-base font-extrabold text-okabe-vermillion tabular-nums">
+                  {criticalCount}
+                </span>
+                <span className="text-xs font-semibold text-slate-600">
+                  ({criticalPct.toFixed(1)}%)
+                </span>
+              </div>
+              <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate font-mono">
+                Kriteria: {activeThreshold.criticalRule}
+              </span>
+            </div>
+
+            {/* Metric 3: Capaian Standar */}
+            <div className="pt-2 md:pt-0 md:px-3">
+              <div className="flex items-center space-x-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                <span className="text-[11px] font-semibold text-slate-700">{activeThreshold.primeLabel}</span>
+              </div>
+              <div className="flex items-baseline space-x-1.5 mt-0.5">
+                <span className="text-base font-extrabold text-emerald-700 tabular-nums">
+                  {primeCount}
+                </span>
+                <span className="text-xs font-semibold text-slate-600">
+                  ({primePct.toFixed(1)}%)
+                </span>
+              </div>
+              <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate font-mono">
+                Standar: {activeThreshold.primeRule}
+              </span>
+            </div>
+
+            {/* Metric 4: Rasio Disparitas */}
+            <div className="pt-2 md:pt-0 md:px-3 last:pr-0">
+              <span className="text-[11px] font-medium text-slate-500 block">Disparitas Tertinggi vs Terendah</span>
+              <div className="flex items-baseline space-x-1.5 mt-0.5">
+                <span className="text-base font-extrabold text-okabe-blue tabular-nums">
+                  {disparityRatio !== null ? `${disparityRatio.toFixed(1)}x` : formatIndicatorVal(disparitySpan)}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {disparityRatio !== null ? "Kesenjangan" : "Rentang"}
+                </span>
+              </div>
+              <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate" title={minRegion && maxRegion ? `${minRegion.kab_kota} vs ${maxRegion.kab_kota}` : ''}>
+                {minRegion && maxRegion ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} ↔ ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')}` : `Rentang: ${formatIndicatorVal(disparitySpan)}`}
+              </span>
             </div>
           </div>
 
-          {/* Row 1: Active Indicator KPI Cards Strip (4 Clean 3-Tier Executive Cards) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <KpiCard
-              label="Median Indikator"
-              value={formatIndicatorVal(medianVal)}
-              benchmarkText="Titik tengah sebaran spasial"
-              contextText={`Cakupan ${validDistricts.length} daerah · Rentang ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
-              badge={{ text: `${validDistricts.length} Daerah`, type: "default" }}
-            />
-
-            <KpiCard
-              label={activeThreshold.criticalLabel}
-              value={`${criticalCount} Daerah`}
-              unit={`(${criticalPct.toFixed(1)}%)`}
-              benchmarkText={activeThreshold.criticalBenchmark}
-              contextText={activeThreshold.criticalContext}
-              badge={{
-                text: criticalCount > 0 ? "Defisit Kritis" : "Terkendali",
-                type: criticalCount > 0 ? "critical" : "positive",
-              }}
-              accentColor="#D55E00"
-            />
-
-            <KpiCard
-              label={activeThreshold.primeLabel}
-              value={`${primeCount} Daerah`}
-              unit={`(${primePct.toFixed(1)}%)`}
-              benchmarkText={activeThreshold.primeBenchmark}
-              contextText={activeThreshold.primeContext}
-              badge={{
-                text: primePct >= 50 ? "Mayoritas Capai" : "Sebagian Capai",
-                type: primePct >= 50 ? "positive" : "warning",
-              }}
-              accentColor="#009E73"
-            />
-
-            <KpiCard
-              label="Disparitas Wilayah"
-              value={disparityRatio !== null ? `${disparityRatio.toFixed(2)}x` : formatIndicatorVal(disparitySpan)}
-              unit={disparityRatio !== null ? "Lipat" : ""}
-              benchmarkText={
-                minRegion && maxRegion
-                  ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} vs ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')}`
-                  : `Rentang Spasial: ${formatIndicatorVal(disparitySpan)}`
-              }
-              contextText={`Rentang absolut: ${formatIndicatorVal(disparitySpan)}`}
-              badge={{
-                text: disparityRatio && disparityRatio >= 3.0 ? "Disparitas Tinggi" : "Kesenjangan",
-                type: disparityRatio && disparityRatio >= 3.0 ? "warning" : "default",
-              }}
-              accentColor={disparityRatio && disparityRatio >= 3.0 ? "#E69F00" : "#0072B2"}
-            />
+          {/* Primary Hero Visualization (Choropleth Map or Ranking Bar) */}
+          <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
+            {viewMode === 'map' ? (
+              <IndonesiaChoroplethMap
+                districts={districts}
+                indicator={selectedIndicator}
+                indicatorLabel={activeOption.label}
+                unit={activeOption.unit}
+              />
+            ) : (
+              <SpatialRankingBar
+                districts={districts}
+                indicator={selectedIndicator}
+                indicatorLabel={activeOption.label}
+                unit={activeOption.unit}
+              />
+            )}
           </div>
-
-          {/* Primary Spatial Visualization: Map or Ranking Bar */}
-          {viewMode === 'map' ? (
-            <IndonesiaChoroplethMap
-              districts={districts}
-              indicator={selectedIndicator}
-              indicatorLabel={activeOption.label}
-              unit={activeOption.unit}
-            />
-          ) : (
-            <SpatialRankingBar
-              districts={districts}
-              indicator={selectedIndicator}
-              indicatorLabel={activeOption.label}
-              unit={activeOption.unit}
-            />
-          )}
-        </>
+        </div>
       ) : (
-        <div className="space-y-4">
-          {/* Dualism & Working Poor Grid (2 Columns) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <TheGreatDualismBar districts={districts} />
-            <WorkingPoorScatter districts={districts} />
+        /* Mode B: Dua Paradoks Sosio-Ekonomi */
+        <div className="space-y-3">
+          {/* Inline Analytical Callouts Banner */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-blue-50/70 border border-blue-200/70 rounded-xl p-3 flex items-start space-x-2.5">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200 shrink-0 mt-0.5 font-mono">
+                [Fakta Terverifikasi]
+              </span>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Dualisme Wilayah: Kesenjangan Fasilitas Fisik Dasar</h4>
+                <p className="text-[11.5px] text-slate-600 mt-0.5 leading-relaxed">
+                  Kemiskinan di kabupaten (11.5%) hampir dua kali lipat kota (6.9%). Kesenjangan terbesar berada pada akses sanitasi layak (82.4% di kota vs 64.1% di kabupaten).
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50/70 border border-amber-200/70 rounded-xl p-3 flex items-start space-x-2.5">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 shrink-0 mt-0.5 font-mono">
+                [Asosiasi Empiris]
+              </span>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Paradoks The Working Poor: Subsistensi vs Pengangguran</h4>
+                <p className="text-[11.5px] text-slate-600 mt-0.5 leading-relaxed">
+                  TPAK berkorelasi positif dengan kemiskinan (r = +0.462) karena keharusan bertahan hidup di sektor agraris/informal, sedangkan TPT justru berkorelasi negatif (r = -0.401).
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Contextual Narrative Insights for Both Paradoxes */}
+          {/* Symmetrical 2-Column Paradox Visualizations Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <NarrativeCallout
-              title="DUALISME WILAYAH: KABUPATEN VS KOTA"
-              epistemicBadge="Asosiasi Spasial Empiris"
-              insight={PARADOXES.greatDualism.insightCallout}
-              evidence={PARADOXES.greatDualism.evidence}
-            />
-            <NarrativeCallout
-              title="PARADOKS THE WORKING POOR: SUBSISTENSI VS PENGANGGURAN"
-              epistemicBadge="Korelasi Pearson (r = +0.462)"
-              insight={PARADOXES.workingPoor.insightCallout}
-              evidence={PARADOXES.workingPoor.evidence}
-            />
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
+              <TheGreatDualismBar districts={districts} />
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
+              <WorkingPoorScatter districts={districts} />
+            </div>
           </div>
         </div>
       )}

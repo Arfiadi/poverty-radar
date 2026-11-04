@@ -7,9 +7,10 @@ import { Download } from 'lucide-react';
 interface SmallMultiplesProps {
   districts: District[];
   allDistricts?: District[];
+  selectedClusterId?: number | null;
 }
 
-export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts, allDistricts }) => {
+export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts, allDistricts, selectedClusterId }) => {
   const features = useMemo(() => [
     { key: 'sanitation_access_pct', label: 'Sanitasi Layak' },
     { key: 'clean_water_access_pct', label: 'Air Terlindung' },
@@ -82,25 +83,41 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
           text: `Klaster 1: Perkotaan Modern (N=${n0})`,
           top: 6,
           left: 135,
-          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[0] }
+          textStyle: { 
+            fontSize: 11, 
+            fontWeight: 'bold', 
+            color: selectedClusterId != null && selectedClusterId !== 0 ? '#94A3B8' : CLUSTER_COLORS[0] 
+          }
         },
         {
           text: `Klaster 2: Penyangga Mapan (N=${n1})`,
           top: 6,
           left: '60%',
-          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[1] }
+          textStyle: { 
+            fontSize: 11, 
+            fontWeight: 'bold', 
+            color: selectedClusterId != null && selectedClusterId !== 1 ? '#94A3B8' : CLUSTER_COLORS[1] 
+          }
         },
         {
           text: `Klaster 3: Perdesaan Agraris (N=${n2})`,
           top: '52%',
           left: 135,
-          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[2] }
+          textStyle: { 
+            fontSize: 11, 
+            fontWeight: 'bold', 
+            color: selectedClusterId != null && selectedClusterId !== 2 ? '#94A3B8' : CLUSTER_COLORS[2] 
+          }
         },
         {
           text: `Klaster 4: 3T Deprivasi Akut (N=${n3})`,
           top: '52%',
           left: '60%',
-          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[3] }
+          textStyle: { 
+            fontSize: 11, 
+            fontWeight: 'bold', 
+            color: selectedClusterId != null && selectedClusterId !== 3 ? '#94A3B8' : CLUSTER_COLORS[3] 
+          }
         },
       ],
       tooltip: {
@@ -143,6 +160,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
         { gridIndex: 3, type: 'category', data: featureLabels, show: false }
       ],
       series: [0, 1, 2, 3].map(c => {
+        const isSelected = selectedClusterId == null || selectedClusterId === c;
         const color = CLUSTER_COLORS[c];
         return {
           name: clusterNames[c],
@@ -153,6 +171,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
             value: val,
             itemStyle: {
               color: color,
+              opacity: isSelected ? 1 : 0.22,
               borderRadius: val >= 0 ? [0, 3, 3, 0] : [3, 0, 0, 3]
             }
           })),
@@ -166,7 +185,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
         };
       })
     };
-  }, [clusterNames, clusterZScores, districts, features]);
+  }, [clusterNames, clusterZScores, districts, features, selectedClusterId]);
 
   const echartsRef = useRef<any>(null);
 

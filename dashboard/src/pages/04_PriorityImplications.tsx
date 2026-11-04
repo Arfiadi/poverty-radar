@@ -10,9 +10,11 @@ import {
   AlertTriangle, 
   ShieldAlert, 
   Target,
-  Landmark,
   LayoutGrid,
-  Table
+  Table,
+  X,
+  ExternalLink,
+  ChevronRight
 } from 'lucide-react';
 import { District, PolicyRecommendation } from '../types';
 import { VulnerabilityMatrix2x2 } from '../components/charts/VulnerabilityMatrix2x2';
@@ -21,7 +23,7 @@ import { PolicyBriefModal } from '../components/modals/PolicyBriefModal';
 import { PlanningCycleModal } from '../components/modals/PlanningCycleModal';
 import { useFilterStore } from '../store/useFilterStore';
 import { QUADRANTS } from '../constants/benchmarks';
-import { PARADOXES } from '../constants/paradoxes';
+import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
 
 interface PageProps {
   districts: District[];
@@ -154,30 +156,29 @@ export const PriorityImplications: React.FC<PageProps> = ({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="space-y-4"
+      className="space-y-3.5"
     >
-      {/* Editorial Headline, Sub-Tab Switcher, & Statutory Planning Modal CTA */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
+      {/* Editorial Header & Top Controls Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-100">
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
             {activeView === 'matrix'
               ? "Matriks Skrining Kerentanan 2x2: Penapisan Portofolio Kebijakan"
               : "Daftar Skrining Daerah & Advokasi Kebijakan (514 Kab/Kota)"}
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
             {activeView === 'matrix'
-              ? "Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas dasar (V_struc)."
-              : "Daftar rincian 514 kabupaten–kota siap tindak lanjut, penyusunan draf policy brief, dan pengusulan DAK/APBD."}
+              ? "Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas fisik (V_struc)."
+              : "Daftar rincian 514 kabupaten–kota siap tindak lanjut, draf policy brief, dan pengusulan DAK/APBD."}
           </p>
         </div>
 
-        {/* Action Toolbars: Sub-Tab View Toggle + Planning Cycle Guide + Case Study Pins */}
+        {/* Action Controls: Sub-Tab Toggle & SIPD-RI Modal CTA */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {/* Sub-Tab View Toggle: Matriks vs Tabel */}
           <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
             <button
               onClick={() => setActiveView('matrix')}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+              className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all ${
                 activeView === 'matrix'
                   ? 'bg-white text-okabe-vermillion shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -188,366 +189,297 @@ export const PriorityImplications: React.FC<PageProps> = ({
             </button>
             <button
               onClick={() => setActiveView('table')}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+              className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-bold transition-all ${
                 activeView === 'table'
                   ? 'bg-white text-okabe-blue shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Table className="w-3.5 h-3.5" />
-              <span>Tabel 514 Daerah</span>
+              <span>Tabel Daerah</span>
               <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700 font-mono">
                 {displayedDistricts.length}
               </span>
             </button>
           </div>
 
-          {/* Statutory Translation Guide Button */}
           <button
             onClick={() => setIsPlanningCycleOpen(true)}
             className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-all"
-            title="Buka panduan resmi 10 langkah penerjemahan data analitik ke dokumen perencanaan RKPD &amp; APBD"
+            title="Buka panduan resmi 10 langkah penerjemahan data analitik ke dokumen perencanaan RKPD & APBD"
           >
             <Calendar className="w-3.5 h-3.5 text-emerald-600" />
             <span className="hidden sm:inline">Panduan Alur SIPD-RI</span>
           </button>
-
-          {/* Case-Study Pins Strip (shown when in matrix view) */}
-          {activeView === 'matrix' && (
-            <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-              <button
-                onClick={() => setActiveCasePin('none')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                  activeCasePin === 'none'
-                    ? 'bg-white text-ink-primary shadow-2xs'
-                    : 'text-slate-600 hover:text-ink-primary'
-                }`}
-              >
-                Semua
-              </button>
-              <button
-                onClick={() => setActiveCasePin('resource_curse')}
-                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                  activeCasePin === 'resource_curse'
-                    ? 'bg-amber-600 text-white shadow-2xs'
-                    : 'text-slate-700 hover:text-amber-800'
-                }`}
-                title="Pin 29 daerah tambang jumbo (PDRB ≥ Rp 25T)"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Tambang</span>
-              </button>
-              <button
-                onClick={() => setActiveCasePin('madura')}
-                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                  activeCasePin === 'madura'
-                    ? 'bg-amber-600 text-white shadow-2xs'
-                    : 'text-slate-700 hover:text-amber-800'
-                }`}
-                title="Pin kesenjangan 5.4 km Suramadu"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Madura</span>
-              </button>
-              <button
-                onClick={() => setActiveCasePin('barito_kuala')}
-                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                  activeCasePin === 'barito_kuala'
-                    ? 'bg-amber-600 text-white shadow-2xs'
-                    : 'text-slate-700 hover:text-amber-800'
-                }`}
-                title="Pin studi kasus Kuadran II: Barito Kuala (P0 5.11% vs Sanitasi 55.29%)"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Barito Kuala</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {activeView === 'matrix' ? (
-        <>
-          {/* Contextual Action Subtitle & Benchmark Reference Strip */}
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
-        <div>
-          <h3 className="text-xs sm:text-sm font-bold text-slate-900">
-            {activeCasePin === 'resource_curse'
-              ? "Anomali Kutukan Sumber Daya: PDRB Tinggi, P0 & Kerentanan Ekstrem"
-              : activeCasePin === 'madura'
-              ? "Anomali Disparitas Madura: Kantong Kemiskinan Terisolasi di Jawa Timur"
-              : activeCasePin === 'barito_kuala'
-              ? "Kerentanan Tersembunyi Barito Kuala: Moneter Aman, Sanitasi Kritis"
-              : "Matriks Penapisan Beban Ganda 2x2: Memetakan 514 Daerah ke 4 Kuadran Intervensi"}
-          </h3>
-          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-            Garis ambang batas kuadran berbasis median nasional: <strong>Median P0 ({medianP0.toFixed(2)}%)</strong> &amp; <strong>Median V_struc ({medianVStruc.toFixed(3)})</strong>.
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0 text-[11px]">
-          <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-semibold" title="Kuadran I: Prioritas Beban Ganda">
-            Q1: {quadrantStats.q1.count} ({quadrantStats.q1.pct.toFixed(1)}%)
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold" title="Kuadran II: Kerentanan Tersembunyi">
-            Q2: {quadrantStats.q2.count} ({quadrantStats.q2.pct.toFixed(1)}%)
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded bg-pink-50 text-pink-800 border border-pink-200 font-semibold" title="Kuadran III: Kantong Daya Beli">
-            Q3: {quadrantStats.q3.count} ({quadrantStats.q3.pct.toFixed(1)}%)
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold" title="Kuadran IV: Wilayah Terbina">
-            Q4: {quadrantStats.q4.count} ({quadrantStats.q4.pct.toFixed(1)}%)
-          </span>
-        </div>
-      </div>
-
-      {/* Grid: 2x2 Scatterplot (7-Col) & Policy Recommendation Panel (5-Col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-7">
-          <VulnerabilityMatrix2x2
-            districts={allDistricts}
-            activeCasePin={activeCasePin}
-            activeQuadrantCode={selectedQuadrantCode}
-            onSelectDistrict={handleSelectDistrict}
-          />
-        </div>
-
-        {/* Policy Guidance & Quadrant Lookup Panel */}
-        <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
-          <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle h-full flex flex-col justify-between">
-            <div>
-              {/* Quadrant Selector Tabs with Counts & Pct */}
-              <div className="grid grid-cols-5 gap-1 pb-3 border-b border-slate-100">
-                <button
-                  onClick={() => handleSelectQuadrant('ALL')}
-                  className={`py-1.5 px-1 rounded-lg text-[11px] font-bold text-center transition-all ${
-                    selectedQuadrantCode === 'ALL'
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  Semua
-                  <span className="block text-[10px] font-normal opacity-75">514</span>
-                </button>
-                {QUADRANTS.map(q => {
-                  const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
-                  return (
-                    <button
-                      key={q.code}
-                      onClick={() => handleSelectQuadrant(q.code)}
-                      className={`py-1.5 px-1 rounded-lg text-[11px] font-bold text-center transition-all ${
-                        selectedQuadrantCode === q.code
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      {q.code}
-                      <span className="block text-[10px] font-normal opacity-75">{stats.count} ({stats.pct.toFixed(0)}%)</span>
-                    </button>
-                  );
-                })}
+        <div className="space-y-3">
+          {/* Rebalanced Split Grid: 8 Columns for 2x2 Matrix & 4 Columns for Executive Action Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Left 8 Columns: Hero 2x2 Scatterplot Canvas */}
+            <div className="lg:col-span-8 flex flex-col space-y-2.5">
+              {/* Preset Quick Case-Study Pins Strip */}
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-white rounded-xl border border-slate-200/80 px-3 py-2 shadow-2xs">
+                <div className="flex items-center space-x-1 text-xs text-slate-600 font-medium">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>Studi Kasus Penapisan:</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1">
+                  <button
+                    onClick={() => setActiveCasePin('none')}
+                    className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all ${
+                      activeCasePin === 'none'
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    Semua (514)
+                  </button>
+                  <button
+                    onClick={() => setActiveCasePin('barito_kuala')}
+                    className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
+                      activeCasePin === 'barito_kuala'
+                        ? 'bg-amber-600 text-white'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
+                    }`}
+                    title="Kuadran II: Moneter Aman, Sanitasi Kritis (P0 5.1% vs Sanitasi 55.3%)"
+                  >
+                    Barito Kuala (Q2)
+                  </button>
+                  <button
+                    onClick={() => setActiveCasePin('madura')}
+                    className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
+                      activeCasePin === 'madura'
+                        ? 'bg-amber-600 text-white'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
+                    }`}
+                    title="Kuadran I: Kantong Kemiskinan Terisolasi Jawa Timur"
+                  >
+                    Madura (Q1)
+                  </button>
+                  <button
+                    onClick={() => setActiveCasePin('resource_curse')}
+                    className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
+                      activeCasePin === 'resource_curse'
+                        ? 'bg-amber-600 text-white'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
+                    }`}
+                    title="Anomali PDRB Tambang Jumbo vs Kemiskinan Tinggi"
+                  >
+                    Tambang Jumbo
+                  </button>
+                </div>
               </div>
 
-              {/* Contextual Policy Misallocation Warning Alert for Active Quadrant */}
-              {activePolicy && (
-                <div className={`mt-3.5 p-3 rounded-xl border text-[11.5px] leading-relaxed ${
-                  selectedQuadrantCode === 'Q2'
-                    ? 'bg-amber-50/90 border-amber-300 text-amber-950'
-                    : selectedQuadrantCode === 'Q3'
-                    ? 'bg-rose-50/90 border-rose-300 text-rose-950'
-                    : selectedQuadrantCode === 'Q1'
-                    ? 'bg-blue-50/90 border-blue-300 text-blue-950'
-                    : 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
-                }`}>
-                  <div className="flex items-start space-x-2">
-                    <AlertTriangle className={`w-4 h-4 shrink-0 mt-0.5 ${
-                      selectedQuadrantCode === 'Q2' ? 'text-amber-600' :
-                      selectedQuadrantCode === 'Q3' ? 'text-rose-600' :
-                      selectedQuadrantCode === 'Q1' ? 'text-okabe-blue' : 'text-emerald-600'
-                    }`} />
+              {/* The 2x2 Scatterplot Component */}
+              <VulnerabilityMatrix2x2
+                districts={allDistricts}
+                activeCasePin={activeCasePin}
+                activeQuadrantCode={selectedQuadrantCode}
+                onSelectDistrict={handleSelectDistrict}
+              />
+
+              {/* Compact District Inspector Pill (appears when district is clicked) */}
+              {selectedDistrict && (
+                <div className="bg-blue-50/90 border border-blue-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-2xs">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-okabe-blue shrink-0"></span>
                     <div>
-                      <strong className="font-bold block text-slate-900">
-                        {selectedQuadrantCode === 'Q2' && "Arah Alokasi Anggaran Kuadran II: Prioritas Sarana Sanitasi Fisik"}
-                        {selectedQuadrantCode === 'Q3' && "Arah Alokasi Anggaran Kuadran III: Stimulus Daya Beli & Padat Karya"}
-                        {selectedQuadrantCode === 'Q1' && "Prinsip Alokasi Anggaran Kuadran I: Konvergensi Ganda Mandatori"}
-                        {selectedQuadrantCode === 'Q4' && "Fokus Anggaran Kuadran IV: Stabilitas Pasar Kerja & Pembinaan Rantai Pasok"}
-                      </strong>
-                      <p className="mt-1 text-slate-700">
-                        {selectedQuadrantCode === 'Q2' && "Kemiskinan konsumsi yang tampak rendah (P0 < 10.46%) menyamarkan defisit fasilitas fisik (44.7% warga belum bersanitasi layak). Prioritaskan DAK Fisik Sanitasi & Tangki Biofilter Pasang Surut, melengkapi bantuan sosial konsumsi."}
-                        {selectedQuadrantCode === 'Q3' && "Sarana fisik dasar telah memadai (V_struc < 0.2720); tantangan utama terletak pada daya beli rendah dan ketiadaan off-taker komoditas. Alokasi anggaran diprioritaskan ke subsidi pembiayaan mikro (UMi), penguatan BUMDes, dan Padat Karya Tunai."}
-                        {selectedQuadrantCode === 'Q1' && "Wajib memadukan bantalan sosial tunai jangka pendek (PKH/BLT) dengan belanja modal fisik infrastruktur dasar secara simultan demi memutus rantai kemiskinan antargenerasi."}
-                        {selectedQuadrantCode === 'Q4' && "Menjaga stabilitas daya beli dari inflasi pangan, penyerapan tenaga kerja formal, peremajaan permukiman kumuh, serta pembinaan rantai pasok bagi kabupaten penyangga."}
-                      </p>
+                      <div className="flex items-baseline space-x-1.5">
+                        <strong className="text-xs font-bold text-slate-900">
+                          {selectedDistrict.tipe_wilayah} {selectedDistrict.kab_kota}
+                        </strong>
+                        <span className="text-[11px] text-slate-500">({selectedDistrict.provinsi})</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-slate-600 mt-0.5 font-mono">
+                        <span>P0: <strong className="text-slate-900">{selectedDistrict.poverty_rate_p0.toFixed(2)}%</strong></span>
+                        <span>V_struc: <strong className="text-slate-900">{selectedDistrict.vulnerability_score.toFixed(3)}</strong></span>
+                        <span>Sanitasi: <strong className="text-slate-900">{selectedDistrict.sanitation_access_pct.toFixed(1)}%</strong></span>
+                        <span>Air: <strong className="text-slate-900">{selectedDistrict.clean_water_access_pct.toFixed(1)}%</strong></span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
 
-              {/* Quadrant Policy Content with Strict Epistemic Labeling */}
-              {activePolicy ? (
-                <div className="mt-3.5 space-y-3 text-xs">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Rekomendasi Kebijakan Terpadu ({activePolicy.code})
-                    </span>
-                    <h3 className="text-sm font-extrabold text-ink-primary mt-0.5 leading-snug">
-                      {activePolicy.name}
-                    </h3>
-                  </div>
-
-                  <div className="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-2.5">
-                    {/* 1. Hipotesis Masalah Struktural (Level 2 - Anti-Kausalitas Palsu) */}
-                    <div className="flex items-start space-x-2">
-                      <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <div>
-                        <div className="flex items-center space-x-1.5">
-                          <strong className="text-slate-800">Hipotesis Masalah Struktural:</strong>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                            Level 2
-                          </span>
-                        </div>
-                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.working_hypothesis}</p>
-                        <span className="text-[10px] text-slate-400 italic block mt-0.5">
-                          *Asosiasi pemodelan data sains; validasi lapangan disyaratkan sebelum komitmen pagu anggaran.
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 2. Syarat Verifikasi Bukti Langsung (Level 3 - Wajib Pemda) */}
-                    <div className="flex items-start space-x-2 pt-1 border-t border-slate-100">
-                      <CheckCircle2 className="w-4 h-4 text-okabe-blue shrink-0 mt-0.5" />
-                      <div>
-                        <div className="flex items-center space-x-1.5">
-                          <strong className="text-slate-800">Syarat Verifikasi Bukti Langsung:</strong>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-blue-100 text-okabe-blue border border-blue-200">
-                            Level 3
-                          </span>
-                        </div>
-                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.direct_evidence_required}</p>
-                        <span className="text-[10px] text-slate-500 font-medium block mt-0.5">
-                          Prinsip verifikasi lapangan berbasis bukti (Survei EHRA Dinkes &amp; DTSEN Desil 1–2).
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 3. Jalur Intervensi Utama */}
-                    <div className="flex items-start space-x-2 pt-1 border-t border-slate-100">
-                      <Target className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-slate-800">Jalur Intervensi Pokok:</strong>
-                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.primary_policy_track}</p>
-                      </div>
-                    </div>
-
-                    {/* 4. Rekomendasi Alokasi APBN/DAK */}
-                    <div className="flex items-start space-x-2 pt-1 border-t border-slate-100">
-                      <Briefcase className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-slate-800">Penyelarasan Fiskal Statuter (UU 1/2022 HKPD):</strong>
-                        <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.fiscal_instruments}</p>
-                      </div>
-                    </div>
-
-                    {/* Accordion: Detail Regulasi & OPD Pelaksana */}
-                    <details className="mt-2 group border border-slate-200 rounded-lg bg-white overflow-hidden text-xs transition-all">
-                      <summary className="px-3 py-2 cursor-pointer font-semibold text-slate-700 hover:text-slate-900 flex justify-between items-center select-none bg-slate-50/60">
-                        <span className="flex items-center space-x-1.5">
-                          <Building className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Lihat Detail Regulasi &amp; OPD Pelaksana (UU 23/2014)</span>
-                        </span>
-                        <span className="text-slate-400 text-xs transition-transform group-open:rotate-180">▼</span>
-                      </summary>
-                      <div className="p-3 border-t border-slate-200 space-y-2 text-slate-600 leading-relaxed bg-white">
-                        <div>
-                          <strong className="text-slate-800">OPD &amp; K/L Pengampu:</strong>
-                          <p className="mt-0.5 text-slate-700">{activePolicy.lead_agencies}</p>
-                        </div>
-                        <div className="text-xs text-slate-500 pt-1 border-t border-slate-100">
-                          Rujukan: Kerangka Kerja Penapisan SDGs Kemendagri &amp; Bappenas 2026.
-                        </div>
-                      </div>
-                    </details>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-4 space-y-3 text-xs">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Penapisan Portofolio Kebijakan Nasional
-                    </span>
-                    <h3 className="text-sm font-extrabold text-ink-primary mt-0.5 leading-snug">
-                      Matriks Relatif 2x2: Diferensiasi Portofolio Intervensi
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                      Penapisan memisahkan kemiskinan moneter konsumsi (Sumbu X) dan defisit fasilitas fisik (Sumbu Y). Pilih tab kuadran (Q1–Q4) untuk menelaah intervensi spesifik tiap kelompok.
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    {QUADRANTS.map(q => (
-                      <button
-                        key={q.code}
-                        onClick={() => handleSelectQuadrant(q.code)}
-                        className="text-left p-2.5 rounded-lg border border-slate-200 bg-slate-50/70 hover:bg-slate-100 hover:border-slate-300 transition-all"
-                      >
-                        <div className="flex items-center space-x-1.5">
-                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: q.color }}></span>
-                          <span className="font-bold text-slate-800 text-xs">{q.code}</span>
-                          <span className="text-xs text-slate-400 font-normal">({q.count})</span>
-                        </div>
-                        <p className="text-xs text-slate-600 font-medium mt-1 line-clamp-1">{q.label.split(':')[1]?.trim()}</p>
-                      </button>
-                    ))}
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <button
+                      onClick={() => setIsPolicyBriefOpen(true)}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-okabe-blue text-white hover:bg-blue-700 shadow-2xs transition-all"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>Draf Policy Brief</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedDistrict(null)}
+                      className="p-1 text-slate-400 hover:text-slate-600 rounded transition"
+                      title="Tutup penelusuran daerah"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Selected District Callout with Direct Policy Brief Action */}
-            {selectedDistrict && (
-              <div className="mt-3.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-xl text-xs space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-1.5">
-                    <strong className="text-okabe-blue font-bold text-[13px]">
-                      {selectedDistrict.tipe_wilayah} {selectedDistrict.kab_kota}
-                    </strong>
-                    <span className="text-slate-500">({selectedDistrict.provinsi})</span>
-                  </div>
-                  <button 
-                    onClick={() => setSelectedDistrict(null)}
-                    className="text-slate-400 hover:text-slate-600 text-xs px-1 font-bold"
-                    title="Tutup pilihan daerah"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px] text-slate-600 bg-white/80 p-2 rounded-lg border border-blue-100">
-                  <div>P0: <strong className="text-slate-900">{selectedDistrict.poverty_rate_p0.toFixed(2)}%</strong></div>
-                  <div>V_struc: <strong className="text-slate-900">{selectedDistrict.vulnerability_score.toFixed(4)}</strong></div>
-                  <div>Sanitasi: <strong className="text-slate-900">{selectedDistrict.sanitation_access_pct.toFixed(1)}%</strong></div>
-                  <div>Air Minum: <strong className="text-slate-900">{selectedDistrict.clean_water_access_pct.toFixed(1)}%</strong></div>
-                  <div>RLS: <strong className="text-slate-900">{selectedDistrict.avg_school_years.toFixed(1)} thn</strong></div>
-                  <div>UHH: <strong className="text-slate-900">{selectedDistrict.life_expectancy.toFixed(1)} thn</strong></div>
-                </div>
-                <div className="pt-1 flex items-center justify-between gap-2">
-                  <span className="text-[11px] text-slate-500 hidden sm:inline">
-                    Advokasi Bappeda &amp; DPRD TA 2026:
+            {/* Right 4 Columns: Single Unified Executive Policy Action Panel (Zero Box-in-a-Box) */}
+            <div className="lg:col-span-4 flex flex-col justify-between bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3.5">
+              <div className="space-y-3">
+                {/* Quadrant Selector Segmented Tabs */}
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                    Pilih Kuadran Penapisan
                   </span>
-                  <button
-                    onClick={() => setIsPolicyBriefOpen(true)}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-okabe-blue text-white hover:bg-blue-700 shadow-2xs transition-all w-full sm:w-auto justify-center"
-                    title="Buka templat Policy Brief resmi Bappeda untuk daerah ini"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Draf Policy Brief Daerah</span>
-                  </button>
+                  <div className="grid grid-cols-5 gap-1">
+                    <button
+                      onClick={() => handleSelectQuadrant('ALL')}
+                      className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
+                        selectedQuadrantCode === 'ALL'
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      Semua
+                      <span className="block text-[9.5px] font-normal opacity-80">514</span>
+                    </button>
+                    {QUADRANTS.map(q => {
+                      const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
+                      return (
+                        <button
+                          key={q.code}
+                          onClick={() => handleSelectQuadrant(q.code)}
+                          className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
+                            selectedQuadrantCode === q.code
+                              ? 'bg-slate-900 text-white shadow-xs'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {q.code}
+                          <span className="block text-[9.5px] font-normal opacity-80">{stats.count}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
+                {activePolicy ? (
+                  /* Active Quadrant Details (Clean Structured Layout, No Nested Boxes) */
+                  <div className="space-y-3">
+                    {/* Header: Name and Status */}
+                    <div className="border-b border-slate-100 pb-2.5">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded font-mono text-white" style={{
+                          backgroundColor: selectedQuadrantCode === 'Q1' ? '#0072B2' : selectedQuadrantCode === 'Q2' ? '#E69F00' : selectedQuadrantCode === 'Q3' ? '#D55E00' : '#009E73'
+                        }}>
+                          {activePolicy.code}
+                        </span>
+                        <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                          {activePolicy.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Subtle Strategic Focus Callout Banner */}
+                    <div className="border-l-3 border-amber-500 bg-amber-50/50 pl-2.5 pr-2 py-1.5 rounded-r text-[11px] leading-relaxed text-slate-700">
+                      <strong className="text-slate-900 block font-semibold">Arah Portofolio Fiskal:</strong>
+                      {selectedQuadrantCode === 'Q2' && "Kemiskinan konsumsi rendah (P0 < 10.46%) menyamarkan defisit jamban/air bersih. Prioritaskan DAK Fisik Sanitasi & Biofilter melengkapi bansos."}
+                      {selectedQuadrantCode === 'Q3' && "Sarana fisik telah memadai; tantangan utama ada pada daya beli rendah. Prioritaskan pembiayaan mikro (UMi), BUMDes, dan Padat Karya Tunai."}
+                      {selectedQuadrantCode === 'Q1' && "Konvergensi Ganda Mandatori: Wajib memadukan bantalan sosial tunai (PKH/BLT) dan belanja modal infrastruktur fisik dasar secara simultan."}
+                      {selectedQuadrantCode === 'Q4' && "Wilayah Terbina: Menjaga stabilitas daya beli dari inflasi pangan, penyerapan kerja formal, dan pembinaan rantai pasok daerah penyangga."}
+                    </div>
+
+                    {/* Structured Policy Pillars */}
+                    <div className="space-y-2 text-xs">
+                      {/* Pillar 1: Jalur Intervensi Utama */}
+                      <div className="space-y-0.5">
+                        <span className="text-[11px] font-bold text-slate-800 flex items-center space-x-1">
+                          <Target className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Jalur Intervensi Pokok:</span>
+                        </span>
+                        <p className="text-[11.5px] text-slate-600 pl-4.5 leading-relaxed">
+                          {activePolicy.primary_policy_track}
+                        </p>
+                      </div>
+
+                      {/* Pillar 2: Penyelarasan Fiskal Statuter */}
+                      <div className="space-y-0.5 pt-1.5 border-t border-slate-100">
+                        <span className="text-[11px] font-bold text-slate-800 flex items-center space-x-1">
+                          <Briefcase className="w-3.5 h-3.5 text-amber-600" />
+                          <span>Penyelarasan Fiskal (UU 1/2022 HKPD):</span>
+                        </span>
+                        <p className="text-[11.5px] text-slate-600 pl-4.5 leading-relaxed">
+                          {activePolicy.fiscal_instruments}
+                        </p>
+                      </div>
+
+                      {/* Pillar 3: Standar Verifikasi Lapangan */}
+                      <div className="space-y-0.5 pt-1.5 border-t border-slate-100">
+                        <span className="text-[11px] font-bold text-slate-800 flex items-center space-x-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-okabe-blue" />
+                          <span>Syarat Verifikasi Bukti Langsung:</span>
+                        </span>
+                        <p className="text-[11.5px] text-slate-600 pl-4.5 leading-relaxed">
+                          {activePolicy.direct_evidence_required}
+                        </p>
+                      </div>
+
+                      {/* Lead Agencies Tags */}
+                      <div className="pt-1.5 border-t border-slate-100">
+                        <span className="text-[10.5px] text-slate-400 block font-medium">OPD Pengampu:</span>
+                        <p className="text-[11px] text-slate-700 font-medium mt-0.5">
+                          {activePolicy.lead_agencies}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Overview State when 'Semua' is selected */
+                  <div className="space-y-2.5 py-1">
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Matriks 2x2 memisahkan 514 daerah berdasarkan persilangan garis median nasional: <strong>P0 ({medianP0.toFixed(2)}%)</strong> dan <strong>V_struc ({medianVStruc.toFixed(3)})</strong>.
+                    </p>
+                    <div className="space-y-1.5 text-xs">
+                      {QUADRANTS.map(q => (
+                        <div
+                          key={q.code}
+                          onClick={() => handleSelectQuadrant(q.code)}
+                          className="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer border border-slate-100 transition-all"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: q.color }}></span>
+                            <span className="font-bold text-slate-900">{q.code}</span>
+                            <span className="text-slate-600 text-[11px]">{q.label.split(':')[1]?.trim()}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-slate-400">({q.count})</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Direct CTAs at bottom of panel */}
+              <div className="pt-3 border-t border-slate-100 space-y-1.5">
+                <button
+                  onClick={() => setIsPolicyBriefOpen(true)}
+                  className="w-full inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-okabe-blue text-white hover:bg-blue-700 shadow-2xs transition-all"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>{selectedDistrict ? `Buka Draf Brief: ${selectedDistrict.kab_kota}` : "Buka Templat Draf Policy Brief"}</span>
+                </button>
+                <button
+                  onClick={() => setIsPlanningCycleOpen(true)}
+                  className="w-full inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Pelajari Siklus Perencanaan RKPD</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-        </>
       ) : (
-        /* Filtered Screening Table with Row Selection & Direct Policy Brief Action */
+        /* Full Width 514 District Screening Grid */
         <DataTable
           districts={displayedDistricts}
           title={
