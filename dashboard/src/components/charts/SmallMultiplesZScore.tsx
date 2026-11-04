@@ -150,14 +150,14 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
         type: 'value',
         min: -3.0,
         max: 2.2,
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { formatter: '{value}σ', fontSize: 10, color: '#64748B' }
       })),
       yAxis: [
-        { gridIndex: 0, type: 'category', data: featureLabels, axisLabel: { fontSize: 10, fontWeight: 600, color: '#1E293B' } },
-        { gridIndex: 1, type: 'category', data: featureLabels, show: false },
-        { gridIndex: 2, type: 'category', data: featureLabels, axisLabel: { fontSize: 10, fontWeight: 600, color: '#1E293B' } },
-        { gridIndex: 3, type: 'category', data: featureLabels, show: false }
+        { gridIndex: 0, type: 'category', data: featureLabels, splitLine: { show: false }, axisLabel: { fontSize: 10, fontWeight: 600, color: '#1E293B' } },
+        { gridIndex: 1, type: 'category', data: featureLabels, splitLine: { show: false }, show: false },
+        { gridIndex: 2, type: 'category', data: featureLabels, splitLine: { show: false }, axisLabel: { fontSize: 10, fontWeight: 600, color: '#1E293B' } },
+        { gridIndex: 3, type: 'category', data: featureLabels, splitLine: { show: false }, show: false }
       ],
       series: [0, 1, 2, 3].map(c => {
         const isSelected = selectedClusterId == null || selectedClusterId === c;

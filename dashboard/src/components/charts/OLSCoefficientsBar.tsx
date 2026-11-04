@@ -43,12 +43,13 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
         name: 'Koefisien Baku (β)',
         nameLocation: 'middle',
         nameGap: 28,
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { color: '#64748B' }
       },
       yAxis: {
         type: 'category',
         data: labels,
+        splitLine: { show: false },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
         axisLabel: { color: '#1E293B', fontSize: 11, fontWeight: 600 }
       },

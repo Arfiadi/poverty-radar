@@ -70,12 +70,13 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
         nameLocation: 'middle',
         nameGap: 28,
         nameTextStyle: { color: '#64748B', fontSize: 11 },
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { formatter: '{value}%', color: '#64748B' }
       },
       yAxis: {
         type: 'category',
         data: ['Tingkat Kemiskinan (P0)', 'Tingkat Pengangguran (TPT)'],
+        splitLine: { show: false },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
         axisLabel: { fontWeight: 'bold', color: '#1E293B', fontSize: 11 }
       },

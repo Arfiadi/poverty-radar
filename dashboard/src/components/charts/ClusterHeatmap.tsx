@@ -98,13 +98,15 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
       xAxis: {
         type: 'category',
         data: features.map(f => f.label),
-        splitArea: { show: true },
+        splitLine: { show: false },
+        splitArea: { show: false },
         axisLabel: { color: '#1E293B', fontWeight: 600, fontSize: 11 }
       },
       yAxis: {
         type: 'category',
         data: [...clusterLabels].reverse(),
-        splitArea: { show: true },
+        splitLine: { show: false },
+        splitArea: { show: false },
         axisLabel: { color: '#1E293B', fontWeight: 600, fontSize: 11 }
       },
       visualMap: {

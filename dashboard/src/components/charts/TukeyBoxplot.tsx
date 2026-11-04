@@ -72,13 +72,14 @@ export const TukeyBoxplot: React.FC<BoxplotProps> = ({ districts }) => {
       xAxis: {
         type: 'category',
         data: ['Distribusi Kemiskinan Moneter (P0 %)'],
+        splitLine: { show: false },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
         axisLabel: { fontWeight: 'bold', color: '#1E293B', fontSize: 11 }
       },
       yAxis: {
         type: 'value',
         name: 'Persentase Kemiskinan P0 (%)',
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { formatter: '{value}%', color: '#64748B' }
       },
       series: [

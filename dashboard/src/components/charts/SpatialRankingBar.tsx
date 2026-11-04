@@ -71,12 +71,13 @@ export const SpatialRankingBar: React.FC<SpatialRankingProps> = ({
       xAxis: {
         type: 'value',
         name: unit,
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { color: '#64748B' }
       },
       yAxis: {
         type: 'category',
         data: provNames,
+        splitLine: { show: false },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
         axisLabel: { color: '#1E293B', fontSize: 11, fontWeight: 500 }
       },

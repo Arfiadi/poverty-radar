@@ -196,6 +196,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
       xAxis: {
         type: 'category',
         data: binLabels,
+        splitLine: { show: false },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
         axisTick: { alignWithLabel: true },
         axisLabel: {
@@ -209,7 +210,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
         type: 'value',
         name: 'Jumlah Daerah',
         nameTextStyle: { color: '#64748B', fontSize: 9.5 },
-        splitLine: { lineStyle: { color: '#F1F5F9' } },
+        splitLine: { show: false },
         axisLabel: { color: '#64748B', fontSize: 9.5 },
       },
       series,

@@ -113,7 +113,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
         nameTextStyle: { color: '#64748B', fontSize: 11, fontWeight: 'bold' },
         min: 55,
         max: 100,
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+        splitLine: { show: false },
         axisLabel: { formatter: '{value}%', color: '#64748B' }
       },
       yAxis: {
@@ -124,7 +124,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
         nameTextStyle: { color: '#64748B', fontSize: 11, fontWeight: 'bold' },
         min: 0,
         max: 43,
-        splitLine: { lineStyle: { color: '#F1F5F9' } },
+        splitLine: { show: false },
         axisLabel: { formatter: '{value}%', color: '#64748B' }
       },
       series: [
