@@ -82,9 +82,12 @@ export const PriorityImplications: React.FC<PageProps> = ({
       const bk = districts.find(d => d.kab_kota.toLowerCase().includes('barito kuala'));
       if (bk) setSelectedDistrict(bk);
     } else if (activeCasePin === 'madura') {
+      const q1 = QUADRANTS.find(q => q.code === 'Q1');
+      if (q1) setSelectedQuadrant(q1.id);
       const sp = districts.find(d => d.kab_kota.toLowerCase().includes('sampang'));
       if (sp) setSelectedDistrict(sp);
     } else if (activeCasePin === 'resource_curse') {
+      setSelectedQuadrant('all');
       const mm = districts.find(d => d.kab_kota.toLowerCase().includes('mimika'));
       if (mm) setSelectedDistrict(mm);
     }
@@ -228,7 +231,11 @@ export const PriorityImplications: React.FC<PageProps> = ({
                 </div>
                 <div className="flex flex-wrap items-center gap-1">
                   <button
-                    onClick={() => setActiveCasePin('none')}
+                    onClick={() => {
+                      setActiveCasePin('none');
+                      setSelectedQuadrant('all');
+                      setSelectedDistrict(null);
+                    }}
                     className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all ${
                       activeCasePin === 'none'
                         ? 'bg-slate-900 text-white'
@@ -255,7 +262,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         ? 'bg-amber-600 text-white'
                         : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
                     }`}
-                    title="Kuadran I: Kantong Kemiskinan Terisolasi Jawa Timur"
+                    title="Kuadran I: 4 Kab. Madura Terisolasi (P0 15–24%) vs Kota Surabaya (P0 5.2%) Pembanding Suramadu"
                   >
                     Madura (Q1)
                   </button>
@@ -266,7 +273,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         ? 'bg-amber-600 text-white'
                         : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
                     }`}
-                    title="Anomali PDRB Tambang Jumbo vs Kemiskinan Tinggi"
+                    title="Anomali PDRB Tambang/Migas Jumbo (≥Rp25T) vs Kemiskinan di Atas Median (29 Daerah, cth: Mimika, Morowali)"
                   >
                     Tambang Jumbo
                   </button>
