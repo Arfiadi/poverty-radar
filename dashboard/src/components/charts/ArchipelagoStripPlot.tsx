@@ -124,12 +124,12 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
       'Intan Jaya': { label: 'Intan Jaya (41.7%)', position: 'left' },
     };
 
-    // 4. District points clamped strictly within row tracks (+-0.12)
+    // 4. District points clamped strictly within row tracks (+-0.10)
     const scatterPointsData = districts.map((d, i) => {
       const yIdx = yAxisCategories.indexOf(d.region_pulau);
       if (yIdx === -1) return null;
 
-      const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.24 - 0.12;
+      const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.20 - 0.10;
       const outlierCfg = OUTLIER_CONFIG[d.kab_kota];
 
       return {
@@ -138,24 +138,24 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         rawDistrict: d,
         itemStyle: {
           color: CLUSTER_COLORS[d.cluster_id] || '#0072B2',
-          opacity: outlierCfg ? 1 : 0.6,
+          opacity: outlierCfg ? 1 : 0.35,
           borderColor: outlierCfg ? '#0F172A' : '#FFFFFF',
-          borderWidth: outlierCfg ? 2 : 0.5,
+          borderWidth: outlierCfg ? 1.5 : 0.4,
         },
-        symbolSize: outlierCfg ? 9 : 6,
+        symbolSize: outlierCfg ? 8.5 : 4.5,
         label: outlierCfg ? {
           show: true,
           formatter: outlierCfg.label,
           position: outlierCfg.position,
-          distance: 6,
-          fontSize: 10,
+          distance: 5,
+          fontSize: 9.5,
           fontWeight: 'bold',
           color: '#0F172A',
-          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderColor: '#CBD5E1',
           borderWidth: 0.5,
           borderRadius: 4,
-          padding: [2, 5],
+          padding: [1.5, 4],
           shadowColor: 'rgba(0, 0, 0, 0.08)',
           shadowBlur: 3,
         } : undefined
@@ -222,8 +222,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           coordinateSystem: 'cartesian2d',
           z: 2,
           lineStyle: {
-            color: '#CBD5E1',
-            width: 3,
+            color: '#E2E8F0',
+            width: 2.5,
             cap: 'round',
           },
           silent: true,
@@ -236,8 +236,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           coordinateSystem: 'cartesian2d',
           z: 3,
           lineStyle: {
-            color: '#94A3B8',
-            width: 8,
+            color: '#CBD5E1',
+            width: 6,
             cap: 'round',
           },
           silent: true,
@@ -272,7 +272,7 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           coordinateSystem: 'cartesian2d',
           z: 5,
           symbol: 'diamond',
-          symbolSize: 14,
+          symbolSize: 12,
           data: medianPointsData,
           tooltip: {
             formatter: (params: any) => {
