@@ -105,7 +105,7 @@ export const PlanningCycleModal: React.FC<PlanningCycleModalProps> = ({ isOpen, 
           {/* Executive Intro */}
           <div className="p-3.5 bg-blue-50/70 rounded-xl border border-blue-200 text-blue-900">
             <p>
-              Data sains tidak boleh berhenti sebagai grafik di layar. Agar temuan <strong>PovertyRadar SDGs</strong> menjadi program nyata yang terbiayai di lapangan, analis perencana Bappeda wajib mengikuti <strong>Protokol Translasi 10 Langkah</strong> dan menyelaraskannya dengan <strong>4 Tahapan Statuter RKPD-APBD</strong>.
+              Menghubungkan temuan analitis <strong>PovertyRadar SDGs</strong> ke dalam alokasi anggaran riil daerah. Panduan ini memfasilitasi integrasi profil disparitas dan klaster ke dalam <strong>Protokol Translasi 10 Langkah</strong> yang selaras dengan <strong>4 Tahapan Statuter RKPD–APBD</strong>.
             </p>
           </div>
 
