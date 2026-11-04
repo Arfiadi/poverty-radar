@@ -31,9 +31,8 @@ export const MethodologyAudit: React.FC<PageProps> = ({
       {/* Editorial Headline Strip */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-0.5">
         <div>
-          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
-            <span>Transparansi Metodologi &amp; Validasi Pemodelan Ilmiah</span>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+            Transparansi Metodologi &amp; Validasi Pemodelan Ilmiah
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Dokumentasi pembuktian penolakan label biner buatan, pencegahan target leakage, dan validitas model statistik.
@@ -56,8 +55,8 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           label="Dekonstruksi Label Kaggle"
           value="98.83% Cocok"
           benchmarkText="508 dari 514 Daerah Identik Formula"
-          contextText="Formula deterministik sederhana terbukti merekonstruksi label bawaan uploader"
-          badge={{ text: "Terbukti Heuristik", type: "critical" }}
+          contextText="Formula deterministik sederhana merekonstruksi 98.83% label bawaan uploader"
+          badge={{ text: "Verifikasi Heuristik", type: "critical" }}
           accentColor="#0072B2"
         />
 
@@ -130,6 +129,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           <OLSCoefficientsBar olsResults={olsResults} />
           <NarrativeCallout
             title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
+            epistemicBadge="Asosiasi Statistik Multivariat"
             insight={PARADOXES.olsStandardizedBeta.insightCallout}
             evidence={PARADOXES.olsStandardizedBeta.evidence}
           />
@@ -211,140 +211,158 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         </div>
       )}
 
-      {/* Tab 4: Model Validation & Structural Vulnerability Formulation */}
+      {/* Tab 4: Checklist Integritas Ilmiah & Validasi Pemodelan */}
       {activeTab === 'principles' && (
         <div className="space-y-4">
-          {/* Top Row: Clustering Diagnostics & V_struc Mathematical Formulation */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Box 1: K-Means Clustering Validation Metrics */}
-            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3.5 text-xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-okabe-blue"></span>
-                  <h3 className="text-sm font-bold text-ink-primary">
-                    Validasi Diagnostik Model Klastering (k = 4)
-                  </h3>
+          {/* Header Summary Strip */}
+          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+            <div>
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900">
+                4 Pilar Integritas Sains Data &amp; Protokol Anti-Kebocoran Target (SDG 1)
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Standar metodologi ketat mencegah penalaran sirkular, distorsi multikolinearitas, dan penghapusan wilayah tertinggal 3T.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                100% Lolos Audit
+              </span>
+            </div>
+          </div>
+
+          {/* 4 Clean Checklist Cards Grid (2x2) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {/* Card 1: Zero Target Leakage */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="text-sm">1. Zero Target Leakage &amp; Tanpa Supervisi</span>
                 </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-100 text-okabe-blue border border-blue-200">
-                  Unsupervised K-Means
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Passed
                 </span>
               </div>
-              <p className="text-slate-600 leading-relaxed">
-                Pemilihan <strong>k = 4 klaster</strong> didasarkan pada optimasi multikriteria dari 20+ eksperimen pemodelan:
+              <p className="text-slate-600 leading-relaxed text-[11.5px]">
+                Penolakan mutlak terhadap model klasifikasi biner pada dataset asal untuk mencegah penalaran sirkular:
               </p>
-              
-              <div className="grid grid-cols-3 gap-2.5 text-center">
-                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Koefisien Siluet</span>
-                  <div className="text-base font-extrabold text-okabe-blue mt-0.5">0.2028</div>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">Struktur Riil Manifold</span>
-                </div>
-                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Davies-Bouldin</span>
-                  <div className="text-base font-extrabold text-amber-700 mt-0.5">1.4522</div>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">Rasio Separasi Klaster</span>
-                </div>
-                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Adjusted Rand (ARI)</span>
-                  <div className="text-base font-extrabold text-emerald-700 mt-0.5">0.9803</div>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">Stabilitas Multi-Seed</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5 text-slate-600">
-                <div className="font-semibold text-slate-800 flex items-center gap-1.5">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>Protokol Fitur Klastering &amp; Penskalaan:</span>
-                </div>
-                <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-600 pl-1">
-                  <li><strong>7 Fitur Input:</strong> Sanitasi, Air Minum, RLS, UHH, TPAK, TPT, dan log1p(PDRB).</li>
-                  <li><strong>Penskalaan Robust:</strong> Menggunakan <code>RobustScaler</code> (Median &amp; IQR) untuk meredam pencilan 3T tanpa membuang baris data.</li>
-                  <li><strong>Anti-Multikolinearitas:</strong> IPM komposit ($r &gt; 0.86$) dan kemiskinan moneter $P_0$ tidak disertakan dalam kalkulasi jarak Euclidean.</li>
-                </ul>
-              </div>
+              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                <li><strong>Label Biner Dibuang 100%:</strong> Kolom <code>Klasifikasi Kemiskinan</code> dieliminasi sepenuhnya dari proses modeling.</li>
+                <li><strong>Eksklusi P0 dari Fitur Jarak:</strong> Tingkat kemiskinan moneter $P_0$ tidak disertakan dalam ruang fitur K-Means, melainkan hanya difungsikan untuk evaluasi komparatif pasca-klastering.</li>
+                <li><strong>Model Murni Unsupervised:</strong> Pemetaan mengandalkan karakteristik struktural multidimensi wilayah.</li>
+              </ul>
             </div>
 
-            {/* Box 2: Structural Vulnerability Index (V_struc) Formulation */}
-            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3.5 text-xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                  <h3 className="text-sm font-bold text-ink-primary">
-                    Formulasi Indeks Kerentanan Struktural (V_struc)
-                  </h3>
+            {/* Card 2: Pencegahan Multikolinearitas */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="text-sm">2. Pencegahan Multikolinearitas &amp; Distorsi Bobot</span>
                 </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
-                  Ambang Batas: 0.2720
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Passed
                 </span>
               </div>
-              <p className="text-slate-600 leading-relaxed">
-                $V_{`\\text{struc}`}$ mengukur intensitas defisit sarana dasar &amp; modal manusia secara objektif, bebas dari ketergantungan metrik moneter:
+              <p className="text-slate-600 leading-relaxed text-[11.5px]">
+                Menghindari pembobotan ganda pada fitur komposit dalam perhitungan jarak Euclidean:
               </p>
+              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                <li><strong>Eksklusi IPM Komposit:</strong> IPM memiliki korelasi sangat tinggi ($r &gt; 0.86$) dengan komponennya (RLS, UHH, pengeluaran). Menggabungkan keduanya akan menggelembungkan bobot modal manusia hingga 2–3x lipat dibanding sanitasi/air.</li>
+                <li><strong>7 Fitur Independen Berimbang:</strong> Sanitasi, Air Minum, RLS, UHH, TPAK, TPT, dan PDRB.</li>
+                <li><strong>IPM Sebagai Validator Eksternal:</strong> Nilai IPM dipertahankan murni sebagai pembanding makro di luar algoritma klastering.</li>
+              </ul>
+            </div>
 
-              <div className="p-3 bg-slate-900 text-slate-100 font-mono text-[11px] rounded-lg overflow-x-auto shadow-inner space-y-1">
+            {/* Card 3: Preservasi 26 Anomali 3T */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="text-sm">3. Preservasi 26 Anomali 3T (Leave No One Behind)</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Passed
+                </span>
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[11.5px]">
+                Menolak pembuangan baris pencilan demi kepatuhan etis terhadap mandat UN SDG 1:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                <li><strong>0 Baris Dihapus:</strong> Seluruh 514 daerah dipertahankan penuh; anomali 3T (Nduga, Intan Jaya, Tambrauw) dan Megapolitan adalah fakta empiris disparitas nyata.</li>
+                <li><strong>Transformasi log1p(PDRB):</strong> Mengoreksi kemencengan ekstrem PDRB dari +5.85 menjadi +0.23 secara simetris.</li>
+                <li><strong>RobustScaler (Median &amp; IQR):</strong> Menstandarisasi skala seluruh fitur tanpa terdistorsi oleh nilai ekstrim pencilan.</li>
+              </ul>
+            </div>
+
+            {/* Card 4: Formulasi Objektif V_struc */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center space-x-2 text-ink-primary font-bold">
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="text-sm">4. Formulasi Objektif Indeks Kerentanan (V_struc)</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
+                  Ambang: 0.2720
+                </span>
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[11.5px]">
+                Skor defisit infrastruktur &amp; modal manusia non-moneter yang dinormalisasi Min-Max [0, 1]:
+              </p>
+              <div className="p-2.5 bg-slate-900 text-slate-100 font-mono text-[11px] rounded-lg shadow-inner">
                 <div className="text-amber-400 font-semibold">
                   V_struc = 0.25 × (D̃_sanitasi + D̃_air + D̃_RLS + D̃_UHH)
                 </div>
                 <div className="text-[10px] text-slate-400 font-sans mt-1">
-                  Di mana masing-masing defisit dinormalisasi Min-Max ke rentang [0, 1] terhadap 514 daerah:
-                </div>
-                <div className="text-[10px] text-slate-300">
-                  • D̃_sanitasi = MinMax(100% - Akses Sanitasi Layak) [Bobot 25%]<br />
-                  • D̃_air = MinMax(100% - Akses Air Minum Layak) [Bobot 25%]<br />
-                  • D̃_RLS = MinMax(max(RLS) - Rata-rata Lama Sekolah) [Bobot 25%]<br />
-                  • D̃_UHH = MinMax(max(UHH) - Usia Harapan Hidup) [Bobot 25%]
+                  Ambang skrining berbasis median nasional: V_struc ≥ 0.2720 memicu rekomendasi DAK Fisik &amp; Sanitasi.
                 </div>
               </div>
-
-              <div className="bg-amber-50/80 p-3 rounded-lg border border-amber-200 text-amber-950 space-y-1">
-                <div className="font-bold flex items-center gap-1.5 text-amber-900">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-                  <span>Kriteria Ambang Skrining Matriks 2x2:</span>
-                </div>
-                <p className="text-[11px] leading-relaxed text-amber-900">
-                  • <strong>V_struc ≥ 0.2720 (Median Nasional):</strong> Kerentanan struktural tinggi (Kuadran I &amp; II). Memerlukan intervensi modal fisik DAK &amp; sarana dasar.<br />
-                  • <strong>V_struc &lt; 0.2720:</strong> Kerentanan struktural rendah (Kuadran III &amp; IV). Fasilitas dasar memadai, intervensi difokuskan pada stimulus daya beli &amp; padat karya.
-                </p>
-              </div>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Membedakan intervensi daya beli jangka pendek (sumbu P0) dari investasi fasilitas publik jangka panjang (sumbu V_struc).
+              </p>
             </div>
           </div>
 
-          {/* Bottom Row: Design Principles & Unsupervised Integrity */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5 text-xs">
-              <div className="flex items-center space-x-2 text-ink-primary font-bold">
-                <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                <span className="text-sm">Mengapa Radar / Spider Chart Dilarang</span>
+          {/* Bottom Grid: Diagnostic Benchmark (k=4) & Larangan Spider Chart */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 text-xs">
+            {/* K-Means Diagnostics (7 Cols) */}
+            <div className="md:col-span-7 bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="font-bold text-ink-primary">
+                  <span className="text-xs sm:text-sm">Evaluasi Diagnostik Benchmark Model Klastering (k = 4)</span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-100 text-okabe-blue">
+                  Empirical Optimum
+                </span>
               </div>
-              <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
-                <li>
-                  <strong>Axis-Order Bias:</strong> Luas area poligon radar chart berubah drastis hanya dengan mengubah urutan sumbu, menghasilkan ilusi visual yang membiaskan persepsi pengambil kebijakan (Knaflic, Few).
-                </li>
-                <li>
-                  <strong>Asumsi Hubungan Melingkar Semu:</strong> Radar chart dirancang untuk dimensi melingkar (arah kompas, siklus jam). Menghubungkan variabel independen (sanitasi, RLS, pengeluaran) memunculkan keterkaitan geometris fiktif.
-                </li>
-                <li>
-                  <strong>Solusi Terpilih:</strong> Menggunakan <em>Small Multiples Bar Charts (Z-Score)</em> yang memiliki garis acuan nol nasional dan <em>Matriks Diverging Heatmap 28 Sel</em>.
-                </li>
-              </ul>
+              <div className="grid grid-cols-3 gap-2 text-center pt-1">
+                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Koefisien Siluet</span>
+                  <div className="text-sm font-extrabold text-okabe-blue mt-0.5">0.2028</div>
+                  <span className="text-[9px] text-slate-500 block mt-0.5">Struktur Riil Manifold</span>
+                </div>
+                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Davies-Bouldin</span>
+                  <div className="text-sm font-extrabold text-amber-700 mt-0.5">1.4522</div>
+                  <span className="text-[9px] text-slate-500 block mt-0.5">Separasi Klaster</span>
+                </div>
+                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">Adjusted Rand (ARI)</span>
+                  <div className="text-sm font-extrabold text-emerald-700 mt-0.5">0.9803</div>
+                  <span className="text-[9px] text-slate-500 block mt-0.5">Stabilitas Multi-Seed</span>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5 text-xs">
-              <div className="flex items-center space-x-2 text-ink-primary font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span className="text-sm">Filosofi Zero Target Leakage &amp; SDG 1</span>
+            {/* Larangan Spider Chart (5 Cols) */}
+            <div className="md:col-span-5 bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
+              <div className="font-bold text-ink-primary border-b border-slate-100 pb-2">
+                <span className="text-xs sm:text-sm">Larangan Radar / Spider Chart</span>
               </div>
-              <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
-                <li>
-                  <strong>Penolakan Klasifikasi Supervised:</strong> Label biner Kaggle dibuang 100% untuk mencegah penalaran melingkar (*circular reasoning*), karena terbukti merupakan formula artifisial.
-                </li>
-                <li>
-                  <strong>Eksklusi P0 dari Fitur Klastering:</strong> Tingkat kemiskinan moneter $P_0$ tidak disertakan dalam ruang fitur K-Means, melainkan difungsikan murni untuk profil evaluasi pasca-klastering.
-                </li>
-                <li>
-                  <strong>Prinsip "Leave No One Behind":</strong> 26 anomali ekstrim wilayah 3T tidak dibuang, melainkan ditransformasikan dengan <code>log1p</code> pada PDRB dan diskalakan via <code>RobustScaler</code> (berbasis median &amp; IQR).
-                </li>
-              </ul>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Radar chart dilarang karena memicu <em>Axis-Order Bias</em> (luas poligon berubah drastis hanya dengan menukar urutan sumbu) dan ilusi geometris fiktif antardimensi independen. Digantikan oleh <strong>Small Multiples Bar Charts (Z-Score)</strong> dan <strong>Matriks Heatmap</strong>.
+              </p>
             </div>
           </div>
         </div>

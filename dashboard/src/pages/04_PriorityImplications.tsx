@@ -10,7 +10,9 @@ import {
   AlertTriangle, 
   ShieldAlert, 
   Target,
-  Landmark
+  Landmark,
+  LayoutGrid,
+  Table
 } from 'lucide-react';
 import { District, PolicyRecommendation } from '../types';
 import { VulnerabilityMatrix2x2 } from '../components/charts/VulnerabilityMatrix2x2';
@@ -38,6 +40,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
     activeCasePin, 
     setActiveCasePin 
   } = useFilterStore();
+  const [activeView, setActiveView] = useState<'matrix' | 'table'>('matrix');
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
   const [isPolicyBriefOpen, setIsPolicyBriefOpen] = useState<boolean>(false);
   const [isPlanningCycleOpen, setIsPlanningCycleOpen] = useState<boolean>(false);
@@ -153,20 +156,52 @@ export const PriorityImplications: React.FC<PageProps> = ({
       transition={{ duration: 0.2 }}
       className="space-y-4"
     >
-      {/* Editorial Headline, Statutory Planning Modal CTA, & Case Study Pins */}
+      {/* Editorial Headline, Sub-Tab Switcher, & Statutory Planning Modal CTA */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-0.5">
         <div>
-          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-okabe-vermillion shrink-0"></span>
-            <span>Matriks Skrining Kerentanan 2x2: Penapisan Portofolio Kebijakan</span>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+            {activeView === 'matrix'
+              ? "Matriks Skrining Kerentanan 2x2: Penapisan Portofolio Kebijakan"
+              : "Daftar Skrining Daerah & Advokasi Kebijakan (514 Kab/Kota)"}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas dasar (V_struc).
+            {activeView === 'matrix'
+              ? "Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas dasar (V_struc)."
+              : "Daftar rincian 514 kabupaten–kota siap tindak lanjut, penyusunan draf policy brief, dan pengusulan DAK/APBD."}
           </p>
         </div>
 
-        {/* Action Toolbars: Planning Cycle Guide + Case Study Pins */}
+        {/* Action Toolbars: Sub-Tab View Toggle + Planning Cycle Guide + Case Study Pins */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Sub-Tab View Toggle: Matriks vs Tabel */}
+          <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
+            <button
+              onClick={() => setActiveView('matrix')}
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+                activeView === 'matrix'
+                  ? 'bg-white text-okabe-vermillion shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>Matriks Skrining 2x2</span>
+            </button>
+            <button
+              onClick={() => setActiveView('table')}
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition ${
+                activeView === 'table'
+                  ? 'bg-white text-okabe-blue shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Table className="w-3.5 h-3.5" />
+              <span>Tabel 514 Daerah</span>
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-700 font-mono">
+                {displayedDistricts.length}
+              </span>
+            </button>
+          </div>
+
           {/* Statutory Translation Guide Button */}
           <button
             onClick={() => setIsPlanningCycleOpen(true)}
@@ -174,75 +209,76 @@ export const PriorityImplications: React.FC<PageProps> = ({
             title="Buka panduan resmi 10 langkah penerjemahan data analitik ke dokumen perencanaan RKPD &amp; APBD"
           >
             <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Panduan Alur SIPD-RI</span>
+            <span className="hidden sm:inline">Panduan Alur SIPD-RI</span>
           </button>
 
-          {/* Case-Study Pins Strip */}
-          <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg border border-slate-200">
-            <button
-              onClick={() => setActiveCasePin('none')}
-              className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                activeCasePin === 'none'
-                  ? 'bg-white text-ink-primary shadow-2xs'
-                  : 'text-slate-600 hover:text-ink-primary'
-              }`}
-            >
-              Semua
-            </button>
-            <button
-              onClick={() => setActiveCasePin('resource_curse')}
-              className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                activeCasePin === 'resource_curse'
-                  ? 'bg-amber-600 text-white shadow-2xs'
-                  : 'text-slate-700 hover:text-amber-800'
-              }`}
-              title="Pin 29 daerah tambang jumbo (PDRB ≥ Rp 25T)"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span>Tambang</span>
-            </button>
-            <button
-              onClick={() => setActiveCasePin('madura')}
-              className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                activeCasePin === 'madura'
-                  ? 'bg-amber-600 text-white shadow-2xs'
-                  : 'text-slate-700 hover:text-amber-800'
-              }`}
-              title="Pin kesenjangan 5.4 km Suramadu"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span>Madura</span>
-            </button>
-            <button
-              onClick={() => setActiveCasePin('barito_kuala')}
-              className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
-                activeCasePin === 'barito_kuala'
-                  ? 'bg-amber-600 text-white shadow-2xs'
-                  : 'text-slate-700 hover:text-amber-800'
-              }`}
-              title="Pin studi kasus Kuadran II: Barito Kuala (P0 5.11% vs Sanitasi 55.29%)"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span>Barito Kuala</span>
-            </button>
-          </div>
+          {/* Case-Study Pins Strip (shown when in matrix view) */}
+          {activeView === 'matrix' && (
+            <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg border border-slate-200">
+              <button
+                onClick={() => setActiveCasePin('none')}
+                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                  activeCasePin === 'none'
+                    ? 'bg-white text-ink-primary shadow-2xs'
+                    : 'text-slate-600 hover:text-ink-primary'
+                }`}
+              >
+                Semua
+              </button>
+              <button
+                onClick={() => setActiveCasePin('resource_curse')}
+                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
+                  activeCasePin === 'resource_curse'
+                    ? 'bg-amber-600 text-white shadow-2xs'
+                    : 'text-slate-700 hover:text-amber-800'
+                }`}
+                title="Pin 29 daerah tambang jumbo (PDRB ≥ Rp 25T)"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Tambang</span>
+              </button>
+              <button
+                onClick={() => setActiveCasePin('madura')}
+                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
+                  activeCasePin === 'madura'
+                    ? 'bg-amber-600 text-white shadow-2xs'
+                    : 'text-slate-700 hover:text-amber-800'
+                }`}
+                title="Pin kesenjangan 5.4 km Suramadu"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Madura</span>
+              </button>
+              <button
+                onClick={() => setActiveCasePin('barito_kuala')}
+                className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center space-x-1 transition-all ${
+                  activeCasePin === 'barito_kuala'
+                    ? 'bg-amber-600 text-white shadow-2xs'
+                    : 'text-slate-700 hover:text-amber-800'
+                }`}
+                title="Pin studi kasus Kuadran II: Barito Kuala (P0 5.11% vs Sanitasi 55.29%)"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Barito Kuala</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Contextual Action Subtitle & Benchmark Reference Strip */}
-      <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
+      {activeView === 'matrix' ? (
+        <>
+          {/* Contextual Action Subtitle & Benchmark Reference Strip */}
+          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
         <div>
-          <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-okabe-blue shrink-0"></span>
-            <span>
-              {activeCasePin === 'resource_curse'
-                ? "Anomali Kutukan Sumber Daya: PDRB Tinggi, P0 & Kerentanan Ekstrem"
-                : activeCasePin === 'madura'
-                ? "Anomali Disparitas Madura: Kantong Kemiskinan Terisolasi di Jawa Timur"
-                : activeCasePin === 'barito_kuala'
-                ? "Kerentanan Tersembunyi Barito Kuala: Moneter Aman, Sanitasi Kritis"
-                : "Matriks Penapisan Beban Ganda 2x2: Memetakan 514 Daerah ke 4 Kuadran Intervensi"}
-            </span>
+          <h3 className="text-xs sm:text-sm font-bold text-slate-900">
+            {activeCasePin === 'resource_curse'
+              ? "Anomali Kutukan Sumber Daya: PDRB Tinggi, P0 & Kerentanan Ekstrem"
+              : activeCasePin === 'madura'
+              ? "Anomali Disparitas Madura: Kantong Kemiskinan Terisolasi di Jawa Timur"
+              : activeCasePin === 'barito_kuala'
+              ? "Kerentanan Tersembunyi Barito Kuala: Moneter Aman, Sanitasi Kritis"
+              : "Matriks Penapisan Beban Ganda 2x2: Memetakan 514 Daerah ke 4 Kuadran Intervensi"}
           </h3>
           <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
             Garis ambang batas kuadran berbasis median nasional: <strong>Median P0 ({medianP0.toFixed(2)}%)</strong> &amp; <strong>Median V_struc ({medianVStruc.toFixed(3)})</strong>.
@@ -329,17 +365,17 @@ export const PriorityImplications: React.FC<PageProps> = ({
                       selectedQuadrantCode === 'Q1' ? 'text-okabe-blue' : 'text-emerald-600'
                     }`} />
                     <div>
-                      <strong className="font-bold block">
-                        {selectedQuadrantCode === 'Q2' && "Arah Alokasi Anggaran Kuadran II (Prioritas Sarana Fisik Dasar):"}
-                        {selectedQuadrantCode === 'Q3' && "Arah Alokasi Anggaran Kuadran III (Optimalisasi Efisiensi Belanja Modal):"}
-                        {selectedQuadrantCode === 'Q1' && "Prinsip Alokasi Anggaran Kuadran I (Konvergensi Ganda Mandatori):"}
-                        {selectedQuadrantCode === 'Q4' && "Fokus Anggaran Kuadran IV (Stabilitas Pasar Kerja & Rantai Pasok):"}
+                      <strong className="font-bold block text-slate-900">
+                        {selectedQuadrantCode === 'Q2' && "Arah Alokasi Anggaran Kuadran II: Prioritas Sarana Sanitasi Fisik"}
+                        {selectedQuadrantCode === 'Q3' && "Arah Alokasi Anggaran Kuadran III: Stimulus Daya Beli & Padat Karya"}
+                        {selectedQuadrantCode === 'Q1' && "Prinsip Alokasi Anggaran Kuadran I: Konvergensi Ganda Mandatori"}
+                        {selectedQuadrantCode === 'Q4' && "Fokus Anggaran Kuadran IV: Stabilitas Pasar Kerja & Pembinaan Rantai Pasok"}
                       </strong>
-                      <p className="mt-0.5">
-                        {selectedQuadrantCode === 'Q2' && "Prioritaskan intervensi fisik sarana dasar daripada bertumpu semata pada bantuan sosial tunai. Kemiskinan konsumsi tampak rendah (P0 < 10.46%) karena ditopang ketahanan pangan lokal, namun daerah menyimpan defisit sanitasi tinggi (44.7% belum layak). Fokuskan pada DAK Fisik Sanitasi & Tangki Biofilter Pasang Surut."}
-                        {selectedQuadrantCode === 'Q3' && "Optimalkan efisiensi belanja modal dengan tidak menambah proyek sarana fisik baru. Fasilitas dasar telah memadai (V_struc < 0.2720); tantangan utama terletak pada daya beli rendah dan ketiadaan off-taker komoditas. Alokasi anggaran diprioritaskan ke subsidi pembiayaan mikro (UMi), penguatan BUMDes, dan Padat Karya Tunai."}
-                        {selectedQuadrantCode === 'Q1' && "Wajib memadukan bantalan sosial tunai jangka pendek (PKH/BLT) dengan belanja modal fisik infrastruktur dasar secara simultan. Pemenuhan konsumsi tanpa sarana air dan sanitasi layak tidak memutus rantai kemiskinan antargenerasi."}
-                        {selectedQuadrantCode === 'Q4' && "Menjaga stabilitas daya beli dari inflasi pangan, penyerapan tenaga kerja formal, peremajaan permukiman kumuh kantong marginal, serta pembinaan rantai pasok bagi kabupaten sekitar."}
+                      <p className="mt-1 text-slate-700">
+                        {selectedQuadrantCode === 'Q2' && "Kemiskinan konsumsi yang tampak rendah (P0 < 10.46%) menyamarkan defisit fasilitas fisik (44.7% warga belum bersanitasi layak). Prioritaskan DAK Fisik Sanitasi & Tangki Biofilter Pasang Surut, melengkapi bantuan sosial konsumsi."}
+                        {selectedQuadrantCode === 'Q3' && "Sarana fisik dasar telah memadai (V_struc < 0.2720); tantangan utama terletak pada daya beli rendah dan ketiadaan off-taker komoditas. Alokasi anggaran diprioritaskan ke subsidi pembiayaan mikro (UMi), penguatan BUMDes, dan Padat Karya Tunai."}
+                        {selectedQuadrantCode === 'Q1' && "Wajib memadukan bantalan sosial tunai jangka pendek (PKH/BLT) dengan belanja modal fisik infrastruktur dasar secara simultan demi memutus rantai kemiskinan antargenerasi."}
+                        {selectedQuadrantCode === 'Q4' && "Menjaga stabilitas daya beli dari inflasi pangan, penyerapan tenaga kerja formal, peremajaan permukiman kumuh, serta pembinaan rantai pasok bagi kabupaten penyangga."}
                       </p>
                     </div>
                   </div>
@@ -371,7 +407,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         </div>
                         <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.working_hypothesis}</p>
                         <span className="text-[10px] text-slate-400 italic block mt-0.5">
-                          *Dugaan sementara pemodelan data sains; wajib dibuktikan oleh data lapangan sebelum komitmen anggaran.
+                          *Asosiasi pemodelan data sains; validasi lapangan disyaratkan sebelum komitmen pagu anggaran.
                         </span>
                       </div>
                     </div>
@@ -388,7 +424,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         </div>
                         <p className="text-slate-600 mt-0.5 leading-relaxed">{activePolicy.direct_evidence_required}</p>
                         <span className="text-[10px] text-slate-500 font-medium block mt-0.5">
-                          Prinsip: "No Direct Proof, No Budget Commitment" (EHRA Dinkes, DTSEN Desil 1–2).
+                          Prinsip verifikasi lapangan berbasis bukti (Survei EHRA Dinkes &amp; DTSEN Desil 1–2).
                         </span>
                       </div>
                     </div>
@@ -470,7 +506,6 @@ export const PriorityImplications: React.FC<PageProps> = ({
               <div className="mt-3.5 p-3.5 bg-blue-50/80 border border-blue-200 rounded-xl text-xs space-y-2">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-okabe-blue"></span>
                     <strong className="text-okabe-blue font-bold text-[13px]">
                       {selectedDistrict.tipe_wilayah} {selectedDistrict.kab_kota}
                     </strong>
@@ -510,26 +545,28 @@ export const PriorityImplications: React.FC<PageProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Filtered Screening Table with Row Selection & Direct Policy Brief Action */}
-      <DataTable
-        districts={displayedDistricts}
-        title={
-          selectedQuadrantCode === 'ALL'
-            ? "Daftar Skrining Wilayah Penapisan Kebijakan (Semua Daerah)"
-            : `Daftar Skrining Wilayah Penapisan Kebijakan (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
-        }
-        subtitle="Daftar wilayah siap tindak lanjut. Klik nama daerah untuk memilih, atau klik tombol Draf Brief untuk membuka templat advokasi Bappeda & DPRD."
-        defaultSortField="vulnerability_score"
-        defaultSortAsc={false}
-        onSelectDistrict={handleSelectDistrict}
-        selectedDistrictKey={selectedDistrict ? `${selectedDistrict.provinsi}-${selectedDistrict.kab_kota}` : undefined}
-        onActionClick={(d) => {
-          setSelectedDistrict(d);
-          setIsPolicyBriefOpen(true);
-        }}
-        actionLabel="Draf Brief →"
-      />
+        </>
+      ) : (
+        /* Filtered Screening Table with Row Selection & Direct Policy Brief Action */
+        <DataTable
+          districts={displayedDistricts}
+          title={
+            selectedQuadrantCode === 'ALL'
+              ? "Daftar Skrining Wilayah Penapisan Kebijakan (Semua Daerah)"
+              : `Daftar Skrining Wilayah Penapisan Kebijakan (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
+          }
+          subtitle="Daftar wilayah siap tindak lanjut. Klik nama daerah untuk memilih, atau klik tombol Draf Brief untuk membuka templat advokasi Bappeda & DPRD."
+          defaultSortField="vulnerability_score"
+          defaultSortAsc={false}
+          onSelectDistrict={handleSelectDistrict}
+          selectedDistrictKey={selectedDistrict ? `${selectedDistrict.provinsi}-${selectedDistrict.kab_kota}` : undefined}
+          onActionClick={(d) => {
+            setSelectedDistrict(d);
+            setIsPolicyBriefOpen(true);
+          }}
+          actionLabel="Draf Brief →"
+        />
+      )}
 
       {/* Policy Brief Modal Dialog */}
       <PolicyBriefModal
