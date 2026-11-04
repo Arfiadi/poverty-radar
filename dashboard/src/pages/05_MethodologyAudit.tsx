@@ -129,7 +129,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           <OLSCoefficientsBar olsResults={olsResults} />
           <NarrativeCallout
             title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
-            epistemicBadge="Asosiasi Statistik Multivariat"
             insight={PARADOXES.olsStandardizedBeta.insightCallout}
             evidence={PARADOXES.olsStandardizedBeta.evidence}
           />

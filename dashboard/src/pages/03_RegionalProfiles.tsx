@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { District, ClusterSummary } from '../types';
 import { SmallMultiplesZScore } from '../components/charts/SmallMultiplesZScore';
-import { ClusterHeatmap } from '../components/charts/ClusterHeatmap';
 import { CLUSTERS } from '../constants/benchmarks';
 import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
-import { BarChart3, Grid, Filter, RotateCcw, Check } from 'lucide-react';
+import { Filter, RotateCcw } from 'lucide-react';
 
 interface PageProps {
   districts: District[];
@@ -14,7 +13,6 @@ interface PageProps {
 }
 
 export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts, clusterSummary }) => {
-  const [viewMode, setViewMode] = useState<'small_multiples' | 'heatmap'>('small_multiples');
   const [selectedClusterId, setSelectedClusterId] = useState<number | null>(null);
 
   const baselineDistricts = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
@@ -59,8 +57,8 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           </p>
         </div>
 
-        <div className="flex items-center space-x-2 shrink-0">
-          {selectedClusterId !== null && (
+        {selectedClusterId !== null && (
+          <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={() => setSelectedClusterId(null)}
               className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all"
@@ -69,34 +67,8 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
               <RotateCcw className="w-3 h-3" />
               <span>Reset Sorotan</span>
             </button>
-          )}
-
-          {/* Profiling View Switcher */}
-          <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
-            <button
-              onClick={() => setViewMode('small_multiples')}
-              className={`inline-flex items-center space-x-1 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                viewMode === 'small_multiples'
-                  ? 'bg-white text-okabe-blue shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <BarChart3 className="w-3.5 h-3.5" />
-              <span>Kisi Z-Score</span>
-            </button>
-            <button
-              onClick={() => setViewMode('heatmap')}
-              className={`inline-flex items-center space-x-1 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                viewMode === 'heatmap'
-                  ? 'bg-white text-okabe-blue shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Grid className="w-3.5 h-3.5" />
-              <span>Matriks Heatmap</span>
-            </button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 4 Clean Executive Cluster Archetype Cards (High Data-Ink, Clickable) */}
@@ -233,14 +205,12 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
         })}
       </div>
 
-      {/* Visual Profiling Centerpiece */}
+      {/* Visual Profiling Centerpiece: Small Multiples Z-Score */}
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3.5 sm:p-4 space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
           <div>
             <h3 className="text-xs font-bold text-slate-900 tracking-tight">
-              {viewMode === 'small_multiples'
-                ? "Profil Standar Z-Score 7 Indikator Struktural terhadap Rata-Rata Nasional (Z = 0)"
-                : "Matriks Heatmap Multidimensi: 4 Klaster × 7 Indikator Struktural"}
+              Profil Standar Z-Score 7 Indikator Struktural terhadap Rata-Rata Nasional (Z = 0)
             </h3>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Nilai Z &gt; 0 menunjukkan keunggulan di atas rata-rata nasional; Z &lt; 0 menunjukkan defisit fasilitas/modal dasar.
@@ -255,18 +225,11 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           )}
         </div>
 
-        {viewMode === 'small_multiples' ? (
-          <SmallMultiplesZScore 
-            districts={districts} 
-            allDistricts={allDistricts} 
-            selectedClusterId={selectedClusterId}
-          />
-        ) : (
-          <ClusterHeatmap 
-            districts={districts} 
-            allDistricts={allDistricts} 
-          />
-        )}
+        <SmallMultiplesZScore 
+          districts={districts} 
+          allDistricts={allDistricts} 
+          selectedClusterId={selectedClusterId}
+        />
       </div>
     </motion.div>
   );
