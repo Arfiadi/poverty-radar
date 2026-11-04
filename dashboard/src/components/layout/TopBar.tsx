@@ -97,75 +97,67 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
           </h1>
         </div>
 
-        {/* Center: Global Filter Dropdowns with Progressive Disclosure */}
+        {/* Center: Global Uniform Filter Dropdowns */}
         <div className="hidden lg:flex items-center space-x-2 shrink-0">
-          {activeAct !== 4 && (
-            <div className="flex items-center space-x-1 text-slate-500 mr-0.5">
-              <Filter className="w-3.5 h-3.5 text-slate-600" />
-            </div>
-          )}
+          <div className="flex items-center space-x-1 text-slate-500 mr-0.5">
+            <Filter className="w-3.5 h-3.5 text-slate-600" />
+          </div>
 
-          {/* 1. Island Filter (Babak 1, 2, 3, 4) */}
-          {activeAct !== 4 && (
-            <select
-              value={selectedIsland}
-              onChange={(e) => setSelectedIsland(e.target.value)}
-              aria-label="Filter Wilayah Kepulauan"
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
-                selectedIsland !== 'Semua Wilayah'
-                  ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
-                  : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              {ISLAND_REGIONS.map((island) => (
-                <option key={island} value={island}>
-                  {island === 'Semua Wilayah' ? 'Semua Pulau' : island}
-                </option>
-              ))}
-            </select>
-          )}
+          {/* 1. Island Filter */}
+          <select
+            value={selectedIsland}
+            onChange={(e) => setSelectedIsland(e.target.value)}
+            aria-label="Filter Wilayah Kepulauan"
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
+              selectedIsland !== 'Semua Wilayah'
+                ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
+                : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            {ISLAND_REGIONS.map((island) => (
+              <option key={island} value={island}>
+                {island === 'Semua Wilayah' ? 'Semua Pulau' : island}
+              </option>
+            ))}
+          </select>
 
-          {/* 2. Cluster Filter (Hanya di Babak 3: Profil Klaster) */}
-          {activeAct === 2 && (
-            <select
-              value={selectedCluster === 'all' ? 'all' : selectedCluster.toString()}
-              onChange={(e) => setSelectedCluster(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              aria-label="Filter Klaster Sosio-Ekonomi"
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
-                selectedCluster !== 'all'
-                  ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
-                  : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              <option value="all">Semua Klaster</option>
-              {CLUSTERS.map((c) => (
-                <option key={c.id} value={c.id.toString()}>
-                  Klaster {c.id + 1} ({c.shortName})
-                </option>
-              ))}
-            </select>
-          )}
+          {/* 2. Cluster Filter */}
+          <select
+            value={selectedCluster === 'all' ? 'all' : selectedCluster.toString()}
+            onChange={(e) => setSelectedCluster(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            aria-label="Filter Klaster Sosio-Ekonomi"
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
+              selectedCluster !== 'all'
+                ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
+                : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <option value="all">Semua Klaster</option>
+            {CLUSTERS.map((c) => (
+              <option key={c.id} value={c.id.toString()}>
+                Klaster {c.id + 1} ({c.shortName})
+              </option>
+            ))}
+          </select>
 
-          {/* 3. Quadrant Filter (Hanya di Babak 4: Matriks & Prioritas) */}
-          {activeAct === 3 && (
-            <select
-              value={selectedQuadrant}
-              onChange={(e) => setSelectedQuadrant(e.target.value)}
-              aria-label="Filter Kuadran Kerentanan"
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
-                selectedQuadrant !== 'all'
-                  ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
-                  : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              <option value="all">Semua Kuadran</option>
-              {QUADRANTS.map((q) => (
-                <option key={q.id} value={q.id}>
-                  {q.code} · {q.label.split(':')[1]?.trim() || q.label}
-                </option>
-              ))}
-            </select>
-          )}
+          {/* 3. Quadrant Filter */}
+          <select
+            value={selectedQuadrant}
+            onChange={(e) => setSelectedQuadrant(e.target.value)}
+            aria-label="Filter Kuadran Kerentanan"
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all focus:outline-hidden focus:ring-2 focus:ring-okabe-blue ${
+              selectedQuadrant !== 'all'
+                ? 'bg-blue-50 border border-okabe-blue text-okabe-blue font-bold ring-1 ring-okabe-blue/20'
+                : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <option value="all">Semua Kuadran</option>
+            {QUADRANTS.map((q) => (
+              <option key={q.id} value={q.id}>
+                {q.code} · {q.label.split(':')[1]?.trim() || q.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Right: Quick Search Box & Reset Action */}

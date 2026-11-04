@@ -159,34 +159,32 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       </div>
 
       {/* Visual Profiling View Switcher & Chart */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
-          <div>
-            <h3 className="text-xs font-bold text-slate-800 tracking-tight">
-              Perbandingan 7 Indikator Struktural terhadap Titik Tengah Nasional (N=514 Daerah)
-            </h3>
-            <p className="text-[10.5px] text-slate-500 mt-0.5">
-              Klaster 4 mencatatkan deprivasi ganda sarana dasar (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 memiliki cakupan layanan dasar di atas 92% beriringan dengan tantangan pengangguran terbuka perkotaan.
-            </p>
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between gap-2 pb-0.5">
+          <div className="flex items-center space-x-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
+            <span className="text-xs font-bold text-slate-800 tracking-tight">
+              Visualisasi Karakteristik Struktural 4 Klaster:
+            </span>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
+          <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
             <button
               onClick={() => setViewMode('small_multiples')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
                 viewMode === 'small_multiples'
-                  ? 'bg-okabe-blue text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-white text-okabe-blue shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Kisi Diagram Batang (Z-Score)
+              Kisi Batang (Z-Score)
             </button>
             <button
               onClick={() => setViewMode('heatmap')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
                 viewMode === 'heatmap'
-                  ? 'bg-okabe-blue text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-white text-okabe-blue shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Matriks Heatmap (28 Sel)
