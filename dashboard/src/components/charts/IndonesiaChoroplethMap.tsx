@@ -357,14 +357,6 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
 
       return {
         backgroundColor: 'transparent',
-        title: {
-          text: `Peta Spasial Indonesia: Distribusi ${indicatorLabel} per Provinsi`,
-          subtext: `Klik pada poligon provinsi untuk zoom dan membuka sebaran kabupaten/kota ${unit ? `(${unit})` : ''}`,
-          left: 'left',
-          top: 0,
-          textStyle: { fontSize: 13, fontWeight: 'bold', color: '#0F172A' },
-          subtextStyle: { fontSize: 11, color: '#64748B' }
-        },
         tooltip: {
           trigger: 'item',
           backgroundColor: '#FFFFFF',
@@ -473,14 +465,6 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
 
       return {
         backgroundColor: 'transparent',
-        title: {
-          text: `Peta Disparitas Daerah: Provinsi ${selectedProvince}`,
-          subtext: `Menampilkan sebaran ${provDistricts.length} kabupaten/kota · Rentang lokal: ${activeProvinceDetail?.minValue}${unit} s.d. ${activeProvinceDetail?.maxValue}${unit}`,
-          left: 'left',
-          top: 0,
-          textStyle: { fontSize: 13, fontWeight: 'bold', color: '#0F172A' },
-          subtextStyle: { fontSize: 11, color: '#64748B' }
-        },
         tooltip: {
           trigger: 'item',
           backgroundColor: '#FFFFFF',
