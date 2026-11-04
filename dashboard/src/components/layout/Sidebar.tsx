@@ -53,10 +53,10 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
     id: 3,
     step: "04",
     label: "Matriks & Prioritas",
-    sub: "Penapisan 2x2",
+    sub: "Prioritas 2x2",
     icon: SlidersHorizontal,
     narrativeTheme: "Matriks Skrining Kerentanan 2x2",
-    focusSummary: "Penapisan portofolio intervensi & analisis daerah tambang skala besar.",
+    focusSummary: "Pemetaan prioritas intervensi & analisis daerah tambang skala besar.",
   },
   {
     id: 4,

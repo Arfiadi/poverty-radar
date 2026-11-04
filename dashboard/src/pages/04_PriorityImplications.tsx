@@ -163,7 +163,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
             {activeView === 'matrix'
-              ? "Matriks Skrining Kerentanan 2x2: Penapisan Portofolio Kebijakan"
+              ? "Matriks Skrining Kerentanan 2x2: Pemetaan Prioritas Kebijakan"
               : "Daftar Skrining Daerah & Advokasi Kebijakan (514 Kab/Kota)"}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
@@ -224,7 +224,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-2 bg-white rounded-xl border border-slate-200/80 px-3 py-2 shadow-2xs">
                 <div className="flex items-center space-x-1 text-xs text-slate-600 font-medium">
                   <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>Studi Kasus Penapisan:</span>
+                  <span>Studi Kasus Prioritas:</span>
                 </div>
                 <div className="flex flex-wrap items-center gap-1">
                   <button
@@ -479,8 +479,8 @@ export const PriorityImplications: React.FC<PageProps> = ({
           districts={displayedDistricts}
           title={
             selectedQuadrantCode === 'ALL'
-              ? "Daftar Skrining Wilayah Penapisan Kebijakan (Semua Daerah)"
-              : `Daftar Skrining Wilayah Penapisan Kebijakan (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
+              ? "Daftar Skrining & Prioritas Intervensi (Semua Daerah)"
+              : `Daftar Skrining & Prioritas Intervensi (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
           }
           subtitle="Daftar wilayah siap tindak lanjut. Klik nama daerah untuk memilih, atau klik tombol Draf Brief untuk membuka templat advokasi Bappeda & DPRD."
           defaultSortField="vulnerability_score"
