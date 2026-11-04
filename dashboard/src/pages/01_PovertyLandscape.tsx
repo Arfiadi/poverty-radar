@@ -154,7 +154,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         />
 
         <KpiCard
-          label={isFilterActive ? "Kantong Akut Terpilih" : "Konsentrasi Kantong Akut"}
+          label={isFilterActive ? "Kemiskinan Kritis Terpilih" : "Kemiskinan Kritis (P0 ≥ 20%)"}
           value={
             isFilterActive
               ? `${acuteCount} Daerah`
@@ -163,19 +163,19 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           unit={isFilterActive ? `(${acutePct.toFixed(1)}%)` : "di Kawasan Timur"}
           benchmarkText={
             isFilterActive
-              ? `Nasional: ${totalAcute} kantong akut (P0 ≥ 20%)`
-              : `${easternAcuteCount} dari ${totalAcute} kantong akut di Timur`
+              ? `Nasional: ${totalAcute} daerah kritis (P0 ≥ 20%)`
+              : `${easternAcuteCount} dari ${totalAcute} daerah kritis di Timur`
           }
           contextText={
             isFilterActive
               ? (acuteCount > 0 
-                  ? `${acuteCount} daerah berkategori kritis`
+                  ? `${acuteCount} daerah berangka P0 ≥ 20%`
                   : "Nol daerah terpilih P0 ≥ 20%")
-              : "Kawasan barat menyumbang 13.1% (8 kantong 3T)"
+              : "53 di Maluku, Papua & NTT · 8 di Barat"
           }
           badge={{
             text: isFilterActive
-              ? (acuteCount > 0 ? `${acuteCount} Kantong Akut` : "Nol Kantong Akut")
+              ? (acuteCount > 0 ? `${acuteCount} Daerah Kritis` : "Nol Daerah Kritis")
               : "Polarisasi Spasial",
             type: isFilterActive 
               ? (acuteCount > 0 ? "warning" : "positive") 
@@ -370,8 +370,8 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                     <span className="font-bold text-amber-900 block mb-0.5 text-[10.5px]">Anomali Kemiskinan Barat</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
                       {isFilterActive 
-                        ? `Pada seleksi wilayah ini terdapat ${acuteCount} daerah berkategori kantong kemiskinan akut (P0 ≥ 20.0%).`
-                        : "86.9% kantong akut berada di Timur, namun profil deprivasi serupa muncul di pulau terisolir barat seperti Nias Barat (26.4%) dan Mentawai (14.8%)."}
+                        ? `Pada seleksi wilayah ini terdapat ${acuteCount} daerah berkategori kemiskinan kritis (P0 ≥ 20.0%).`
+                        : "86.9% kemiskinan kritis (P0 ≥ 20%) berada di Timur, namun profil deprivasi serupa muncul di pulau terisolir barat seperti Nias Barat (26.4%) dan Mentawai (14.8%)."}
                     </p>
                   </div>
 

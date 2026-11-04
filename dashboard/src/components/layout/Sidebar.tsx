@@ -29,7 +29,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
     sub: "The Hook · Disparitas 17.5x",
     icon: BarChart3,
     narrativeTheme: "Lanskap Makro Kemiskinan Daerah",
-    focusSummary: "Jurang ekstrem 17.5x & konsentrasi 86.9% kantong akut di Kawasan Timur.",
+    focusSummary: "Jurang ekstrem 17.5x & konsentrasi 86.9% kemiskinan kritis di Kawasan Timur.",
   },
   {
     id: 1,

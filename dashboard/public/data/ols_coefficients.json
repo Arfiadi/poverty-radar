@@ -4,7 +4,7 @@
     "label": "Pengeluaran Riil per Kapita",
     "beta": -0.318,
     "t_stat": -5.84,
-    "p_val": 9.33904970751464e-09,
+    "p_val": 9.339049707515599e-09,
     "significance": "***"
   },
   {
@@ -12,7 +12,7 @@
     "label": "Akses Sanitasi Layak",
     "beta": -0.19,
     "t_stat": -4.48,
-    "p_val": 9.336008288400507e-06,
+    "p_val": 9.336008288398998e-06,
     "significance": "***"
   },
   {
@@ -20,7 +20,7 @@
     "label": "PDRB (Skala Logaritmik)",
     "beta": -0.19,
     "t_stat": -4.17,
-    "p_val": 3.580306408446707e-05,
+    "p_val": 3.5803064084467716e-05,
     "significance": "***"
   },
   {
@@ -28,7 +28,7 @@
     "label": "Tingkat Partisipasi Kerja (TPAK)",
     "beta": 0.179,
     "t_stat": 4.36,
-    "p_val": 1.5442624439424453e-05,
+    "p_val": 1.5442624439425046e-05,
     "significance": "***"
   },
   {
@@ -36,7 +36,7 @@
     "label": "Rata-rata Lama Sekolah (RLS)",
     "beta": -0.113,
     "t_stat": -2.27,
-    "p_val": 0.02350628001665483,
+    "p_val": 0.023506280016654037,
     "significance": "*"
   },
   {
@@ -44,7 +44,7 @@
     "label": "Tingkat Pengangguran Terbuka (TPT)",
     "beta": 0.1,
     "t_stat": 2.23,
-    "p_val": 0.026475186455279194,
+    "p_val": 0.026475186455278785,
     "significance": "*"
   }
 ]

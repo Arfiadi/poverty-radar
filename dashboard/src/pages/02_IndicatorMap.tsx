@@ -63,8 +63,8 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
     isPrime: (v: number) => boolean;
   }> = {
     poverty_rate_p0: {
-      criticalLabel: "Kantong Akut (P0 ≥ 20%)",
-      criticalBenchmark: "Ambang batas kemiskinan akut: P0 ≥ 20.0%",
+      criticalLabel: "Kemiskinan Kritis (P0 ≥ 20%)",
+      criticalBenchmark: "Ambang batas kemiskinan kritis: P0 ≥ 20.0%",
       criticalContext: "Prioritas intervensi bansos & infrastruktur dasar",
       isCritical: (v) => v >= 20.0,
       primeLabel: "Target RPJMN Tercapai",

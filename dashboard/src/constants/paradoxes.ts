@@ -65,7 +65,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "3T di Kawasan Barat",
     page: "01_PovertyLandscape",
     actionTitle: "Anomali Barat: Kepulauan Terisolir Menyerupai Profil Deprivasi Akut Kawasan Timur",
-    insightCallout: "[Asosiasi Statistik]: Menunjukkan kovariansi empiris linier multivariat, bukan hubungan sebab-akibat deterministik. 86.9% kantong kemiskinan akut terkonsentrasi di Kawasan Timur, namun profil deprivasi serupa juga muncul di kantong kepulauan terisolir barat seperti Nias dan Mentawai.",
+    insightCallout: "[Asosiasi Statistik]: Menunjukkan kovariansi empiris linier multivariat, bukan hubungan sebab-akibat deterministik. 86.9% kemiskinan kritis (P0 ≥ 20%) terkonsentrasi di Kawasan Timur, namun profil deprivasi serupa juga muncul di kantong kepulauan terisolir barat seperti Nias dan Mentawai.",
     evidence: "Nias Barat (P0 26.42%), Nias Selatan (P0 16.92%), Kepulauan Mentawai (P0 14.84%).",
     disclaimer: EPISTEMIC_DISCLAIMER,
     caseDistricts: ["Nias", "Nias Selatan", "Nias Barat", "Nias Utara", "Kepulauan Mentawai"]

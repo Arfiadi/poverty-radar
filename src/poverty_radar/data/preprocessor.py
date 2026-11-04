@@ -44,8 +44,12 @@ def clean_raw_data(df_raw: pd.DataFrame) -> pd.DataFrame:
     df['kab_kota'] = df['kab_kota'].astype(str).str.replace('*', '', regex=False).str.strip()
     df['provinsi'] = df['provinsi'].astype(str).str.strip()
 
-    # Engineer geographic helper columns
-    df['tipe_wilayah'] = df['kab_kota'].apply(lambda x: 'Kota' if str(x).startswith('Kota') else 'Kabupaten')
+    # Engineer geographic helper columns (Official BPS: 98 Kota and 416 Kabupaten)
+    def assign_tipe(name: str) -> str:
+        s = str(name).strip()
+        return 'Kota' if (s.startswith('Kota ') and s != 'Kota Baru') else 'Kabupaten'
+
+    df['tipe_wilayah'] = df['kab_kota'].apply(assign_tipe)
     df['region_pulau'] = df['provinsi'].apply(assign_island_region)
 
     # Transform skewed GRDP / PDRB

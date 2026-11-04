@@ -357,8 +357,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         <div>
           <h3 className="text-xs font-bold text-slate-900 tracking-tight">
             {districts.length < 514 
-              ? `Polarisasi Antar-Kepulauan: Sebaran ${districts.length} Daerah Terfilter` 
-              : "Polarisasi Antar-Kepulauan: Konsentrasi 86.9% Kantong Akut di Kawasan Timur"}
+              ? `Polarisasi Kepulauan: Sebaran ${districts.length} Daerah Terfilter` 
+              : "Polarisasi Kepulauan: 86.9% Kemiskinan Kritis (P0 ≥ 20%) di Timur"}
           </h3>
           <p className="text-[10px] text-slate-500 mt-0.5">
             {districts.length < 514

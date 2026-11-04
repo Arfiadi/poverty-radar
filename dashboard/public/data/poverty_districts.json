@@ -7546,7 +7546,7 @@
   {
     "provinsi":"KALIMANTAN TENGAH",
     "kab_kota":"Kotawaringin Barat",
-    "tipe_wilayah":"Kota",
+    "tipe_wilayah":"Kabupaten",
     "region_pulau":"Kalimantan",
     "cluster_id":1,
     "cluster_name":"Klaster 2: Kabupaten Penyangga Mapan",
@@ -7569,7 +7569,7 @@
   {
     "provinsi":"KALIMANTAN TENGAH",
     "kab_kota":"Kotawaringin Timur",
-    "tipe_wilayah":"Kota",
+    "tipe_wilayah":"Kabupaten",
     "region_pulau":"Kalimantan",
     "cluster_id":1,
     "cluster_name":"Klaster 2: Kabupaten Penyangga Mapan",
@@ -7891,7 +7891,7 @@
   {
     "provinsi":"KALIMANTAN SELATAN",
     "kab_kota":"Kota Baru",
-    "tipe_wilayah":"Kota",
+    "tipe_wilayah":"Kabupaten",
     "region_pulau":"Kalimantan",
     "cluster_id":2,
     "cluster_name":"Klaster 3: Perdesaan Agraris Rentan",
