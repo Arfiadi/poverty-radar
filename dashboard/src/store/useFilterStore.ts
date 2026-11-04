@@ -114,8 +114,6 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
     return (
       s.selectedIsland !== 'Semua Wilayah' ||
       s.selectedProvince !== 'Semua Provinsi' ||
-      s.selectedCluster !== 'all' ||
-      s.selectedQuadrant !== 'all' ||
       s.searchQuery.trim() !== '' ||
       s.activeCasePin !== 'none' ||
       s.p0Range[0] > 2.0 ||

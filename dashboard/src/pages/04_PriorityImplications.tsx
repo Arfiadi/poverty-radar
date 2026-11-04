@@ -37,22 +37,16 @@ export const PriorityImplications: React.FC<PageProps> = ({
   policyMatrix 
 }) => {
   const { 
-    selectedQuadrant, 
-    setSelectedQuadrant, 
+    selectedIsland,
+    setSelectedIsland,
     activeCasePin, 
     setActiveCasePin 
   } = useFilterStore();
+  const [selectedQuadrantCode, setSelectedQuadrantCode] = useState<'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>('ALL');
   const [activeView, setActiveView] = useState<'matrix' | 'table'>('matrix');
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
   const [isPolicyBriefOpen, setIsPolicyBriefOpen] = useState<boolean>(false);
   const [isPlanningCycleOpen, setIsPlanningCycleOpen] = useState<boolean>(false);
-
-  // Derive active quadrant code ('ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4') from global store
-  const selectedQuadrantCode = useMemo(() => {
-    if (!selectedQuadrant || selectedQuadrant === 'all') return 'ALL';
-    const found = QUADRANTS.find(q => q.id === selectedQuadrant);
-    return found ? found.code : 'ALL';
-  }, [selectedQuadrant]);
 
   // Compute dynamic benchmarks from all available districts
   const medianP0 = useMemo(() => {
@@ -77,31 +71,25 @@ export const PriorityImplications: React.FC<PageProps> = ({
   // Synchronize case pin with selected district & quadrant
   useEffect(() => {
     if (activeCasePin === 'barito_kuala') {
-      const q2 = QUADRANTS.find(q => q.code === 'Q2');
-      if (q2) setSelectedQuadrant(q2.id);
-      const bk = districts.find(d => d.kab_kota.toLowerCase().includes('barito kuala'));
+      setSelectedQuadrantCode('Q2');
+      const bk = districts.find(d => d.kab_kota.toLowerCase().includes('barito kuala'))
+        || allDistricts.find(d => d.kab_kota.toLowerCase().includes('barito kuala'));
       if (bk) setSelectedDistrict(bk);
     } else if (activeCasePin === 'madura') {
-      const q1 = QUADRANTS.find(q => q.code === 'Q1');
-      if (q1) setSelectedQuadrant(q1.id);
-      const sp = districts.find(d => d.kab_kota.toLowerCase().includes('sampang'));
+      setSelectedQuadrantCode('Q1');
+      const sp = districts.find(d => d.kab_kota.toLowerCase().includes('sampang'))
+        || allDistricts.find(d => d.kab_kota.toLowerCase().includes('sampang'));
       if (sp) setSelectedDistrict(sp);
     } else if (activeCasePin === 'resource_curse') {
-      setSelectedQuadrant('all');
-      const mm = districts.find(d => d.kab_kota.toLowerCase().includes('mimika'));
+      setSelectedQuadrantCode('ALL');
+      const mm = districts.find(d => d.kab_kota.toLowerCase().includes('mimika'))
+        || allDistricts.find(d => d.kab_kota.toLowerCase().includes('mimika'));
       if (mm) setSelectedDistrict(mm);
     }
-  }, [activeCasePin, districts, setSelectedQuadrant]);
+  }, [activeCasePin, districts, allDistricts]);
 
-  const handleSelectQuadrant = (code: string) => {
-    if (code === 'ALL') {
-      setSelectedQuadrant('all');
-    } else {
-      const found = QUADRANTS.find(q => q.code === code);
-      if (found) {
-        setSelectedQuadrant(found.id);
-      }
-    }
+  const handleSelectQuadrant = (code: 'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4') => {
+    setSelectedQuadrantCode(code);
     if (activeCasePin !== 'none') {
       setActiveCasePin('none');
     }
@@ -109,10 +97,19 @@ export const PriorityImplications: React.FC<PageProps> = ({
 
   const handleSelectDistrict = (d: District) => {
     setSelectedDistrict(d);
-    const found = QUADRANTS.find(q => q.id === d.vulnerability_quadrant || d.vulnerability_quadrant.startsWith(q.id.split('(')[0]));
-    if (found) {
-      setSelectedQuadrant(found.id);
+    let code: 'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4' = 'ALL';
+    if (d.vulnerability_quadrant.startsWith('Kuadran I ')) code = 'Q1';
+    else if (d.vulnerability_quadrant.startsWith('Kuadran II ')) code = 'Q2';
+    else if (d.vulnerability_quadrant.startsWith('Kuadran III ')) code = 'Q3';
+    else if (d.vulnerability_quadrant.startsWith('Kuadran IV ')) code = 'Q4';
+    setSelectedQuadrantCode(code);
+  };
+
+  const handleActivateCasePin = (pin: typeof activeCasePin) => {
+    if (pin !== 'none' && selectedIsland !== 'Semua Wilayah') {
+      setSelectedIsland('Semua Wilayah');
     }
+    setActiveCasePin(pin);
   };
 
   // Policy recommendation for the selected district (for modal)
@@ -140,19 +137,19 @@ export const PriorityImplications: React.FC<PageProps> = ({
   }, [districts, selectedQuadrantCode]);
 
   const quadrantStats = useMemo(() => {
-    const base = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
+    const base = districts;
     const q1 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran I ')).length;
     const q2 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran II ')).length;
     const q3 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran III ')).length;
     const q4 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran IV ')).length;
-    const total = base.length || 514;
+    const total = base.length || 1;
     return {
       q1: { count: q1, pct: (q1 / total) * 100 },
       q2: { count: q2, pct: (q2 / total) * 100 },
       q3: { count: q3, pct: (q3 / total) * 100 },
       q4: { count: q4, pct: (q4 / total) * 100 },
     };
-  }, [allDistricts, districts]);
+  }, [districts]);
 
   return (
     <motion.div
@@ -167,12 +164,12 @@ export const PriorityImplications: React.FC<PageProps> = ({
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
             {activeView === 'matrix'
               ? "Matriks Skrining Kerentanan 2x2: Pemetaan Prioritas Kebijakan"
-              : "Daftar Skrining Daerah & Advokasi Kebijakan (514 Kab/Kota)"}
+              : `Daftar Skrining Daerah & Advokasi Kebijakan (${districts.length} Kab/Kota)`}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
             {activeView === 'matrix'
               ? "Diferensiasi intervensi fiskal memadukan kemiskinan konsumsi (P0) dan defisit fasilitas fisik (V_struc)."
-              : "Daftar rincian 514 kabupaten–kota siap tindak lanjut, draf policy brief, dan pengusulan DAK/APBD."}
+              : `Daftar rincian ${districts.length} kabupaten–kota siap tindak lanjut, draf policy brief, dan pengusulan DAK/APBD.`}
           </p>
         </div>
 
@@ -233,7 +230,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                   <button
                     onClick={() => {
                       setActiveCasePin('none');
-                      setSelectedQuadrant('all');
+                      setSelectedQuadrantCode('ALL');
                       setSelectedDistrict(null);
                     }}
                     className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all ${
@@ -242,10 +239,10 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    Semua (514)
+                    Semua ({districts.length})
                   </button>
                   <button
-                    onClick={() => setActiveCasePin('barito_kuala')}
+                    onClick={() => handleActivateCasePin('barito_kuala')}
                     className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
                       activeCasePin === 'barito_kuala'
                         ? 'bg-amber-600 text-white'
@@ -256,7 +253,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                     Barito Kuala (Q2)
                   </button>
                   <button
-                    onClick={() => setActiveCasePin('madura')}
+                    onClick={() => handleActivateCasePin('madura')}
                     className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
                       activeCasePin === 'madura'
                         ? 'bg-amber-600 text-white'
@@ -267,7 +264,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                     Madura (Q1)
                   </button>
                   <button
-                    onClick={() => setActiveCasePin('resource_curse')}
+                    onClick={() => handleActivateCasePin('resource_curse')}
                     className={`px-2 py-0.5 rounded text-xs font-semibold transition-all ${
                       activeCasePin === 'resource_curse'
                         ? 'bg-amber-600 text-white'
@@ -282,7 +279,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
 
               {/* The 2x2 Scatterplot Component */}
               <VulnerabilityMatrix2x2
-                districts={allDistricts}
+                districts={districts}
                 activeCasePin={activeCasePin}
                 activeQuadrantCode={selectedQuadrantCode}
                 onSelectDistrict={handleSelectDistrict}
@@ -343,7 +340,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                     }`}
                   >
                     Semua
-                    <span className="block text-[9.5px] font-normal opacity-80">514</span>
+                    <span className="block text-[9.5px] font-normal opacity-80">{districts.length}</span>
                   </button>
                   {QUADRANTS.map(q => {
                     const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
