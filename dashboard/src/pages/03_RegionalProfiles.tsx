@@ -48,7 +48,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           <span>Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi</span>
         </h2>
         <p className="text-xs text-slate-500 mt-0.5">
-          Model K-Means memetakan konfigurasi defisit fasilitas dasar (sanitasi, air, RLS) bebas target leakage.
+          Mengelompokkan 514 daerah berdasarkan kesamaan 7 indikator struktural.
         </p>
       </div>
 

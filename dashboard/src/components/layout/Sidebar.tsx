@@ -47,7 +47,7 @@ export const ACT_NAV_ITEMS: ActNavItem[] = [
     sub: "4 Tipologi Sosio-Ekonomi",
     icon: Layers,
     narrativeTheme: "Arketipe 4 Klaster Sosio-Ekonomi",
-    focusSummary: "Konfigurasi defisit fasilitas dasar (sanitasi, air, RLS) bebas target leakage.",
+    focusSummary: "Mengelompokkan 514 daerah berdasarkan kesamaan 7 indikator struktural.",
   },
   {
     id: 3,
