@@ -100,7 +100,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             <span>Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium leading-tight">
-            Ketimpangan wilayah yang tajam antara kawasan barat dan timur Indonesia
+            Menyingkap jurang kemiskinan 514 kabupaten/kota yang tertutupi ilusi angka rata-rata nasional
           </p>
         </div>
       </div>
@@ -113,7 +113,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           benchmarkText={
             isFilterActive
               ? `Baseline RI: ${formatPercent(nationalMedianP0)}`
-              : "Titik tengah sebaran 514 kab/kota"
+              : "Titik tengah sebaran 514 kabupaten/kota"
           }
           contextText={
             isFilterActive && minDistrict && maxDistrict
@@ -138,7 +138,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           contextText={
             isFilterActive
               ? `Disparitas nasional: ${nationalDisparityRatio.toFixed(2)}x lipat`
-              : "Target disparitas ideal: 1.0x lipat"
+              : "Target rasio pemerataan ideal: 1.00x lipat"
           }
           badge={{
             text: isFilterActive 
@@ -164,14 +164,14 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           benchmarkText={
             isFilterActive
               ? `Nasional: ${totalAcute} daerah kritis (P0 ≥ 20%)`
-              : `${easternAcuteCount} dari ${totalAcute} daerah kritis di Timur`
+              : `${easternAcuteCount} dari ${totalAcute} daerah kritis nasional (P0 ≥ 20%)`
           }
           contextText={
             isFilterActive
               ? (acuteCount > 0 
                   ? `${acuteCount} daerah berangka P0 ≥ 20%`
                   : "Nol daerah terpilih P0 ≥ 20%")
-              : "53 di Maluku, Papua & NTT · 8 di Barat"
+              : "Terkonsentrasi di Maluku, Papua, & NTT (8 di Barat)"
           }
           badge={{
             text: isFilterActive
@@ -202,11 +202,11 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           </div>
           <div className="flex items-center space-x-2 text-[10.5px]">
             <span className="font-bold text-emerald-700">
-              {targetRpjmnCount} Daerah ({targetRpjmnPct.toFixed(1)}%) Memenuhi Target
+              {targetRpjmnCount} Daerah ({targetRpjmnPct.toFixed(1)}%) Capai Sasaran
             </span>
             <span className="text-slate-300">|</span>
             <span className="font-semibold text-slate-500">
-              {districts.length - targetRpjmnCount} Daerah ({(100 - targetRpjmnPct).toFixed(1)}%) Masih Tertinggal
+              {districts.length - targetRpjmnCount} Daerah ({(100 - targetRpjmnPct).toFixed(1)}%) Belum Capai Sasaran
             </span>
           </div>
         </div>

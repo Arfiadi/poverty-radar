@@ -104,25 +104,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           borderColor: '#FFFFFF',
           borderWidth: 2,
         },
-        label: {
-          show: isHighPriority,
-          position: 'top',
-          distance: 5,
-          formatter: `${stat.median.toFixed(1)}%`,
-          fontSize: 10,
-          fontWeight: 'bold',
-          color: '#D55E00',
-        }
       });
     });
-
-    // Key national outliers with direct labels (immune to jitter drift)
-    const OUTLIER_CONFIG: Record<string, { label: string; position: 'top' | 'bottom' | 'left' | 'right' }> = {
-      'Kota Sawah Lunto': { label: 'Sawahlunto (2.38%)', position: 'bottom' },
-      'Sampang': { label: 'Sampang (23.8%)', position: 'top' },
-      'Nias Barat': { label: 'Nias Barat (26.4%)', position: 'top' },
-      'Intan Jaya': { label: 'Intan Jaya (41.7%)', position: 'left' },
-    };
 
     // 4. District points clamped strictly within row tracks (+-0.10)
     const scatterPointsData = districts.map((d, i) => {
@@ -130,7 +113,6 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
       if (yIdx === -1) return null;
 
       const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.20 - 0.10;
-      const outlierCfg = OUTLIER_CONFIG[d.kab_kota];
 
       return {
         name: d.kab_kota,
@@ -138,27 +120,11 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         rawDistrict: d,
         itemStyle: {
           color: CLUSTER_COLORS[d.cluster_id] || '#0072B2',
-          opacity: outlierCfg ? 1 : 0.35,
-          borderColor: outlierCfg ? '#0F172A' : '#FFFFFF',
-          borderWidth: outlierCfg ? 1.5 : 0.4,
-        },
-        symbolSize: outlierCfg ? 8.5 : 4.5,
-        label: outlierCfg ? {
-          show: true,
-          formatter: outlierCfg.label,
-          position: outlierCfg.position,
-          distance: 5,
-          fontSize: 9.5,
-          fontWeight: 'bold',
-          color: '#0F172A',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: '#CBD5E1',
+          opacity: 0.45,
+          borderColor: '#FFFFFF',
           borderWidth: 0.5,
-          borderRadius: 4,
-          padding: [1.5, 4],
-          shadowColor: 'rgba(0, 0, 0, 0.08)',
-          shadowBlur: 3,
-        } : undefined
+        },
+        symbolSize: 5.5,
       };
     }).filter(Boolean);
 

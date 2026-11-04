@@ -89,15 +89,24 @@ export const KpiCard: React.FC<KpiCardProps> = ({
           )}
         </dd>
 
-        {/* Tier 3: Concise 1-Line Benchmark & Context */}
-        <dd className="m-0 pt-1 border-t border-slate-100 text-[10.5px] text-slate-500">
-          <p 
-            className="text-[10px] sm:text-[10.5px] font-medium text-slate-600 truncate leading-tight" 
-            title={`${benchmarkText}${contextText ? ' · ' + contextText : ''}`}
-          >
-            <span>{benchmarkText}</span>
-            {contextText && <span className="text-slate-400 font-normal"> · {contextText}</span>}
-          </p>
+        {/* Tier 3: Structured Benchmark & Context (2-line, zero awkward truncation) */}
+        <dd className="m-0 pt-1 border-t border-slate-100 text-[10.5px]">
+          <div className="flex flex-col space-y-0.5 leading-snug">
+            <span 
+              className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 truncate"
+              title={benchmarkText}
+            >
+              {benchmarkText}
+            </span>
+            {contextText && (
+              <span 
+                className="text-[9.5px] sm:text-[10px] text-slate-500 font-normal truncate"
+                title={contextText}
+              >
+                {contextText}
+              </span>
+            )}
+          </div>
         </dd>
       </dl>
     </article>
