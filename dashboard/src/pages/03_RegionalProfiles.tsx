@@ -50,10 +50,10 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-100">
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
-            Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi
+            4 Tipologi Sosio-Ekonomi Kabupaten–Kota di Indonesia
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Pengelompokan tanpa pengawasan (K-Means, k=4) terhadap 7 indikator struktural dasar.
+            Memetakan profil 514 daerah melalui 7 indikator fasilitas dasar, modal manusia, dan ketenagakerjaan.
           </p>
         </div>
 
