@@ -33,7 +33,7 @@ export const App: React.FC = () => {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-canvas">
-        <div className={`${isSidebarCollapsed ? 'w-[68px] min-w-[68px] max-w-[68px]' : 'w-[232px] min-w-[232px] max-w-[232px]'} bg-surface border-r border-slate-200/80 p-4 hidden md:block transition-all duration-300`}>
+        <div className={`${isSidebarCollapsed ? 'w-[56px] min-w-[56px] max-w-[56px]' : 'w-[180px] min-w-[180px] max-w-[180px]'} bg-surface border-r border-slate-200/80 p-4 hidden md:block transition-all duration-300`}>
           <SkeletonCard height="h-64" />
         </div>
         <div className="flex-1 p-8 space-y-6">
@@ -122,14 +122,14 @@ export const App: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-canvas text-ink-primary">
-      {/* Sticky Left Sidebar (232px) */}
+      {/* Sticky Left Sidebar (180px) */}
       <Sidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar totalDistricts={districts.length} filteredCount={filteredDistricts.length} />
 
-        <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 max-w-[1440px] w-full mx-auto space-y-4">
+        <main className="flex-1 px-3 py-2.5 sm:px-4 sm:py-3 max-w-[1600px] w-full mx-auto space-y-3">
           <SmallSampleWarning count={filteredDistricts.length} />
           {renderActiveAct()}
         </main>
