@@ -96,5 +96,15 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     insightCallout: "[Asosiasi Statistik]: Menunjukkan kovariansi empiris linier multivariat, bukan hubungan sebab-akibat deterministik. Hasil multivariat OLS menunjukkan daya beli warga (β = -0.318) dan sanitasi fisik (β = -0.190) memiliki asosiasi relatif negatif terkuat terhadap variasi tingkat kemiskinan (P0), sementara TPAK berasosiasi relatif positif signifikan (β = +0.179).",
     evidence: "Koefisien baku terstandarisasi: Pengeluaran (-0.318) > Sanitasi (-0.190) = Log PDRB (-0.190) > TPAK (+0.179) > RLS (-0.113) > TPT (+0.100).",
     disclaimer: EPISTEMIC_DISCLAIMER
+  },
+  baritoKuala: {
+    id: "paradox-10",
+    name: "Kerentanan Tersembunyi Barito Kuala",
+    page: "04_PriorityImplications",
+    actionTitle: "Kerentanan Tersembunyi: Kemiskinan Moneter Rendah (5.11%) Menyimpan Krisis Sanitasi Akut (55.29%)",
+    insightCallout: "[Asosiasi Statistik]: Menunjukkan kovariansi empiris linier multivariat, bukan hubungan sebab-akibat deterministik. Barito Kuala berada di Kuadran II dengan P0 rendah (5.11%) berkat ketahanan pangan pasang surut, namun 44.7% warga belum bersanitasi layak. Solusi tepat adalah DAK Fisik Sanitasi & Tangki Biofilter Kedap Air Pasang Surut (Rp30.5 M), bukan bansos tunai semata.",
+    evidence: "Barito Kuala (P0 5.11%, Sanitasi 55.29%, Air 65.15%, UHH 66.86 thn, V_struc 0.4475). Intervensi terverifikasi: 4.500 unit tangki biofilter lahan basah.",
+    disclaimer: EPISTEMIC_DISCLAIMER,
+    caseDistricts: ["Barito Kuala", "Tanah Datar", "Mandailing Natal", "Lebak"]
   }
 };

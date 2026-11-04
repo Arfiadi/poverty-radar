@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
+import { Download } from 'lucide-react';
 
 interface DualismProps {
   districts: District[];
@@ -28,13 +29,6 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
 
   const option = useMemo(() => {
     return {
-      title: {
-        text: 'The Great Dualism: Jurang Kemiskinan vs Paradoks Pengangguran',
-        subtext: `Kabupaten ~${p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~${tptRatio}x lebih tinggi.`,
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 12, color: '#64748B' }
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
@@ -59,15 +53,15 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
       },
       legend: {
         data: ['Kabupaten (Pedesaan)', 'Kota (Perkotaan)'],
-        top: 38,
+        top: 8,
         right: 15,
         textStyle: { fontSize: 11, color: '#475569' }
       },
       grid: {
-        top: 75,
+        top: 38,
         right: 45,
         bottom: 45,
-        left: 155
+        left: 180
       },
       xAxis: {
         type: 'value',
@@ -101,11 +95,50 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
         }
       ]
     };
-  }, [kabP0, kotaP0, kabTpt, kotaTpt, countKab, countKota, p0Ratio, tptRatio]);
+  }, [kabP0, kotaP0, kabTpt, kotaTpt, countKab, countKota]);
+
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `the-great-dualism-kab-kota.png`;
+    a.click();
+  };
 
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '320px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+    <div className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3">
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            The Great Dualism: Jurang Kemiskinan vs Paradoks Pengangguran
+          </h3>
+          <p className="text-xs text-slate-600 mt-0.5">
+            Kabupaten ~{p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~{tptRatio}x lebih tinggi.
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      <div className="w-full relative" role="img" aria-label="Grafik batang komparasi dualisme kabupaten vs kota">
+        <ReactECharts ref={echartsRef} option={option} style={{ height: '310px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+      </div>
     </div>
   );
 };

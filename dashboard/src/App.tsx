@@ -27,13 +27,13 @@ const PageLoadingFallback: React.FC = () => (
 
 export const App: React.FC = () => {
   const { districts, clusterSummary, policyMatrix, olsResults, benchmarks, boundaryCases, loading, error } = useDashboardData();
-  const { activeAct } = useFilterStore();
+  const { activeAct, isSidebarCollapsed } = useFilterStore();
   const filteredDistricts = useFilteredDistricts(districts);
 
   if (loading) {
     return (
       <div className="flex min-h-screen bg-canvas">
-        <div className="w-[232px] min-w-[232px] max-w-[232px] bg-surface border-r border-slate-200/80 p-4 hidden md:block">
+        <div className={`${isSidebarCollapsed ? 'w-[68px] min-w-[68px] max-w-[68px]' : 'w-[232px] min-w-[232px] max-w-[232px]'} bg-surface border-r border-slate-200/80 p-4 hidden md:block transition-all duration-300`}>
           <SkeletonCard height="h-64" />
         </div>
         <div className="flex-1 p-8 space-y-6">

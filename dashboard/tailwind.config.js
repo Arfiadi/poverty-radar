@@ -16,7 +16,7 @@ export default {
         ink: {
           primary: "#1E293B",
           muted: "#475569", // Slate 600 (WCAG AA kontras > 5.0:1)
-          faint: "#94A3B8",
+          faint: "#64748B", // Slate 500 (WCAG AA kontras > 4.5:1 terhadap #FFFFFF & #F8FAFC)
         },
         sdg: "#E5243B", // SDG 1 Red
         okabe: {

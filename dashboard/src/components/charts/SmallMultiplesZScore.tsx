@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
+import { Download } from 'lucide-react';
 
 interface SmallMultiplesProps {
   districts: District[];
@@ -64,14 +65,38 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
   const option = useMemo(() => {
     const featureLabels = features.map(f => f.label);
 
+    const n0 = districts.filter(d => d.cluster_id === 0).length;
+    const n1 = districts.filter(d => d.cluster_id === 1).length;
+    const n2 = districts.filter(d => d.cluster_id === 2).length;
+    const n3 = districts.filter(d => d.cluster_id === 3).length;
+
     return {
-      title: {
-        text: 'Profil Pembeda 4 Klaster Sosio-Ekonomi: Small Multiples Bar Charts (Z-Score)',
-        subtext: 'Deviasi terstandarisasi (Z-Score) tiap indikator terhadap acuan rata-rata populasi nasional (Z = 0, N=514).',
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
-      },
+      title: [
+        {
+          text: `Klaster 1: Perkotaan Modern (N=${n0})`,
+          top: 6,
+          left: 135,
+          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[0] }
+        },
+        {
+          text: `Klaster 2: Penyangga Mapan (N=${n1})`,
+          top: 6,
+          left: '60%',
+          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[1] }
+        },
+        {
+          text: `Klaster 3: Perdesaan Agraris (N=${n2})`,
+          top: '52%',
+          left: 135,
+          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[2] }
+        },
+        {
+          text: `Klaster 4: 3T Deprivasi Akut (N=${n3})`,
+          top: '52%',
+          left: '60%',
+          textStyle: { fontSize: 11, fontWeight: 'bold', color: CLUSTER_COLORS[3] }
+        },
+      ],
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
@@ -80,27 +105,22 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
         padding: [8, 12],
         textStyle: { color: '#1E293B', fontSize: 12 },
         formatter: (params: any) => {
-          const item = params[0];
+          const item = Array.isArray(params) ? params[0] : params;
+          if (!item) return '';
           const zVal = item.value;
           const status = zVal >= 0 ? 'Di atas rata-rata nasional' : 'Di bawah rata-rata nasional (Defisit)';
           return `
-            <div style="font-weight: 700;">${item.name}</div>
-            <div style="color: ${item.color}; margin-top: 4px;">Z-Score: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong></div>
+            <div style="font-weight: 700; color: #0F172A;">${item.name}</div>
+            <div style="color: ${item.color}; margin-top: 4px; font-weight: 600;">Z-Score: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong></div>
             <div style="font-size: 11px; color: #64748B;">Status: ${status}</div>
           `;
         }
       },
-      legend: {
-        data: clusterNames,
-        top: 42,
-        right: 10,
-        textStyle: { fontSize: 10, color: '#475569' }
-      },
       grid: [
-        { left: 130, right: '55%', top: 85, height: '36%' },
-        { left: '60%', right: 30, top: 85, height: '36%' },
-        { left: 130, right: '55%', top: '56%', height: '36%' },
-        { left: '60%', right: 30, top: '56%', height: '36%' },
+        { left: 135, right: '53%', top: 34, height: '42%' },
+        { left: '60%', right: 25, top: 34, height: '42%' },
+        { left: 135, right: '53%', top: '58%', height: '38%' },
+        { left: '60%', right: 25, top: '58%', height: '38%' },
       ],
       xAxis: [0, 1, 2, 3].map(i => ({
         gridIndex: i,
@@ -133,17 +153,96 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
           markLine: {
             silent: true,
             symbol: ['none', 'none'],
+            label: { show: false },
             lineStyle: { type: 'solid', color: '#0F172A', width: 1.5 },
             data: [{ xAxis: 0 }]
           }
         };
       })
     };
-  }, [clusterNames, clusterZScores, features]);
+  }, [clusterNames, clusterZScores, districts, features]);
+
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `small-multiples-zscore-klaster.png`;
+    a.click();
+  };
 
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '480px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+    <div 
+      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3"
+      role="region"
+      aria-label="Small Multiples Z-Score Profil Standarisasi 4 Klaster"
+    >
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            Profil Struktural 4 Klaster: Konfigurasi Defisit Fasilitas Dasar (Anchor Z = 0)
+          </h3>
+          <p className="text-xs text-slate-600 mt-0.5">
+            Deviasi terstandarisasi 7 indikator terhadap acuan populasi nasional (bebas kebocoran target P0)
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      {/* Chart Canvas */}
+      <div 
+        className="w-full relative"
+        role="img"
+        aria-label="Grafik batang small multiples 4 kolom menampilkan profil deviasi Z-Score untuk Klaster 1 hingga Klaster 4."
+      >
+        <ReactECharts 
+          ref={echartsRef}
+          option={option} 
+          style={{ height: '560px', width: '100%' }} 
+          opts={{ renderer: 'canvas' }} 
+        />
+
+        {/* Screen reader data summary */}
+        <div className="sr-only">
+          <h4>Deviasi Z-Score Rata-Rata per Klaster</h4>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Indikator</th>
+                {clusterNames.map((name, i) => (
+                  <th key={i} scope="col">{name}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {features.map((f, fIdx) => (
+                <tr key={f.key}>
+                  <td>{f.label}</td>
+                  {clusterNames.map((_, cIdx) => (
+                    <td key={cIdx}>{clusterZScores[cIdx]?.[fIdx]?.toFixed(2)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

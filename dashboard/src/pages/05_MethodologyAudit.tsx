@@ -49,16 +49,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           benchmarkText="100% Label Biner Bawaan Dibuang"
           contextText="Menolak klasifikasi terawasi artifisial · Murni Unsupervised K-Means"
           badge={{ text: "Metodologi Valid", type: "positive" }}
-          range={{
-            min: 0,
-            max: 100,
-            current: 0,
-            target: 0,
-            minLabel: "0% (Bebas)",
-            maxLabel: "100%",
-            targetLabel: "Target: 0%",
-            unit: "%",
-          }}
           accentColor="#009E73"
         />
 
@@ -68,14 +58,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           benchmarkText="508 dari 514 Daerah Identik Formula"
           contextText="Formula deterministik sederhana terbukti merekonstruksi label bawaan uploader"
           badge={{ text: "Terbukti Heuristik", type: "critical" }}
-          range={{
-            min: 0,
-            max: 100,
-            current: 98.83,
-            minLabel: "0%",
-            maxLabel: "100%",
-            unit: "%",
-          }}
           accentColor="#0072B2"
         />
 
@@ -85,15 +67,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           benchmarkText="Adjusted Rand Index (k = 4)"
           contextText="Mengukur ketahanan partisi K-Means terhadap perturbasi acak multi-seed"
           badge={{ text: "Stabilitas Tinggi", type: "positive" }}
-          range={{
-            min: 0.0,
-            max: 1.0,
-            current: 0.9803,
-            target: 1.0,
-            minLabel: "0.0",
-            maxLabel: "1.0",
-            targetLabel: "Maks: 1.0",
-          }}
           accentColor="#009E73"
         />
 
@@ -103,14 +76,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           benchmarkText="R² Terkoreksi: 51.07% (p < 0.001)"
           contextText="6 indikator struktural dasar menjelaskan mayoritas variasi kemiskinan moneter"
           badge={{ text: "Ekonometrika Solid", type: "default" }}
-          range={{
-            min: 0,
-            max: 100,
-            current: 51.64,
-            minLabel: "0%",
-            maxLabel: "100%",
-            unit: "%",
-          }}
           accentColor="#0F172A"
         />
       </div>
@@ -163,12 +128,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
       {activeTab === 'ols' && (
         <div className="space-y-4">
           <OLSCoefficientsBar olsResults={olsResults} />
-          <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-start space-x-2.5">
-            <span className="font-bold shrink-0 text-amber-800">[Asosiasi Statistik]:</span>
-            <span className="leading-relaxed">
-              Koefisien regresi terstandarisasi baku (β) merepresentasikan estimasi <strong>asosiasi multivariat linier relatif</strong> dalam kondisi <em>ceteris paribus</em>, bukan hubungan sebab-akibat deterministik langsung (*correlation does not imply causation*). Seluruh variabel dianalisis dalam kerangka komparasi struktural.
-            </span>
-          </div>
           <NarrativeCallout
             title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
             insight={PARADOXES.olsStandardizedBeta.insightCallout}

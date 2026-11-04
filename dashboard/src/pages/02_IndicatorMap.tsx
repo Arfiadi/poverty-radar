@@ -51,6 +51,95 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
   const disparitySpan = maxVal - minVal;
   const disparityRatio = (minVal > 0 && maxVal > 0) ? (maxVal / minVal) : null;
 
+  // Policy thresholds for active indicator
+  const THRESHOLD_MAP: Record<string, {
+    criticalLabel: string;
+    criticalBenchmark: string;
+    criticalContext: string;
+    isCritical: (v: number) => boolean;
+    primeLabel: string;
+    primeBenchmark: string;
+    primeContext: string;
+    isPrime: (v: number) => boolean;
+  }> = {
+    poverty_rate_p0: {
+      criticalLabel: "Kantong Akut (P0 ≥ 20%)",
+      criticalBenchmark: "Ambang batas kemiskinan akut: P0 ≥ 20.0%",
+      criticalContext: "Prioritas intervensi bansos & infrastruktur dasar",
+      isCritical: (v) => v >= 20.0,
+      primeLabel: "Target RPJMN Tercapai",
+      primeBenchmark: "Sasaran RPJMN 2024: P0 ≤ 7.0%",
+      primeContext: "Wilayah berhasil menekan kemiskinan di bawah target",
+      isPrime: (v) => v <= 7.0,
+    },
+    sanitation_access_pct: {
+      criticalLabel: "Defisit Sanitasi Kritis",
+      criticalBenchmark: "Ambang defisit parah: Akses < 60.0%",
+      criticalContext: "Wilayah darurat sanitasi layak & jamban higienis",
+      isCritical: (v) => v < 60.0,
+      primeLabel: "Standar Layak Terpenuhi",
+      primeBenchmark: "Standar Pelayanan Minimal: Akses ≥ 80.0%",
+      primeContext: "Mayoritas rumah tangga memiliki sanitasi higienis",
+      isPrime: (v) => v >= 80.0,
+    },
+    clean_water_access_pct: {
+      criticalLabel: "Defisit Air Bersih",
+      criticalBenchmark: "Ambang krisis air terlindung: Akses < 60.0%",
+      criticalContext: "Ketergantungan pada sumber air tak terlindung",
+      isCritical: (v) => v < 60.0,
+      primeLabel: "Akses Air Terlindung Baik",
+      primeBenchmark: "Target cakupan air terlindung: Akses ≥ 80.0%",
+      primeContext: "Keamanan pasokan air minum terlindung memadai",
+      isPrime: (v) => v >= 80.0,
+    },
+    avg_school_years: {
+      criticalLabel: "Di Bawah Lulusan SD",
+      criticalBenchmark: "Ambang tertinggal: RLS < 7.0 Tahun",
+      criticalContext: "Kualifikasi modal manusia di bawah jenjang dasar",
+      isCritical: (v) => v < 7.0,
+      primeLabel: "Tuntas Wajib Belajar",
+      primeBenchmark: "Standar Wajib Belajar 9 Tahun: RLS ≥ 9.0 Thn",
+      primeContext: "Rata-rata penduduk menamatkan jenjang SMP sederajat",
+      isPrime: (v) => v >= 9.0,
+    },
+    expenditure_per_capita: {
+      criticalLabel: "Daya Beli Rendah",
+      criticalBenchmark: "Kuartil bawah: < Rp8,50 Juta/tahun",
+      criticalContext: "Kapasitas konsumsi riil penduduk sangat terbatas",
+      isCritical: (v) => v < 8500,
+      primeLabel: "Konsumsi Mapan",
+      primeBenchmark: "Kuartil atas: ≥ Rp12,00 Juta/tahun",
+      primeContext: "Daya beli riil masyarakat tergolong tinggi",
+      isPrime: (v) => v >= 12000,
+    },
+    unemployment_rate_tpt: {
+      criticalLabel: "Pengangguran Tinggi",
+      criticalBenchmark: "Ambang friksional tinggi: TPT ≥ 7.0%",
+      criticalContext: "Tantangan penyerapan tenaga kerja perkotaan",
+      isCritical: (v) => v >= 7.0,
+      primeLabel: "Pasar Kerja Stabil",
+      primeBenchmark: "Ambang stabil pengangguran: TPT < 4.5%",
+      primeContext: "Daya serap aktivitas ekonomi lokal terjaga",
+      isPrime: (v) => v < 4.5,
+    },
+    labor_participation_tpak: {
+      criticalLabel: "Kerja Subsistensi Ekstrem",
+      criticalBenchmark: "Ambang beban bertahan hidup: TPAK ≥ 75.0%",
+      criticalContext: "Warga miskin wajib bekerja bertahan hidup",
+      isCritical: (v) => v >= 75.0,
+      primeLabel: "Struktur Kerja Terbina",
+      primeBenchmark: "Keseimbangan sektor formal: TPAK < 68.0%",
+      primeContext: "Didukung peluang pendidikan & kesempatan formal",
+      isPrime: (v) => v < 68.0,
+    },
+  };
+
+  const activeThreshold = THRESHOLD_MAP[selectedIndicator as string] || THRESHOLD_MAP['poverty_rate_p0'];
+  const criticalCount = validDistricts.filter(d => activeThreshold.isCritical(d[selectedIndicator] as number)).length;
+  const criticalPct = validDistricts.length > 0 ? (criticalCount / validDistricts.length) * 100 : 0;
+  const primeCount = validDistricts.filter(d => activeThreshold.isPrime(d[selectedIndicator] as number)).length;
+  const primePct = validDistricts.length > 0 ? (primeCount / validDistricts.length) * 100 : 0;
+
   const formatIndicatorVal = (v: number): string => {
     if (selectedIndicator === 'expenditure_per_capita') return formatCurrencyMillion(v);
     if (selectedIndicator === 'avg_school_years') return formatYears(v);
@@ -71,7 +160,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
             <span className="w-2 h-2 rounded-full bg-okabe-blue shrink-0"></span>
             <span>Polarisasi Spasial 34 Provinsi &amp; Paradoks Ketenagakerjaan</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-600 mt-0.5 font-medium">
             Peta interaktif membongkar dikotomi kabupaten vs kota dan tekanan kerja subsistensi di wilayah 3T.
           </p>
         </div>
@@ -118,86 +207,57 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         </div>
       </div>
 
-      {/* Row 1: Active Indicator KPI Cards Strip (4 Cards with Stephen Few Micro Bullet Graph) */}
+      {/* Row 1: Active Indicator KPI Cards Strip (4 Clean 3-Tier Executive Cards) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard
-          label={`Median: ${activeOption.label}`}
+          label="Median Wilayah"
           value={formatIndicatorVal(medianVal)}
-          benchmarkText="Titik Tengah Distribusi (Median Wilayah)"
-          contextText={`Cakupan: ${districts.length} daerah · Rentang: ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
-          badge={{ text: `${districts.length} Daerah`, type: "default" }}
-          range={{
-            min: minVal,
-            max: maxVal,
-            current: medianVal,
-            minLabel: minRegion ? `${minRegion.kab_kota} (${formatIndicatorVal(minVal)})` : "",
-            maxLabel: maxRegion ? `${maxRegion.kab_kota} (${formatIndicatorVal(maxVal)})` : "",
-            unit: activeOption.unit,
-          }}
+          benchmarkText="Titik Tengah Distribusi Spasial"
+          contextText={`Cakupan: ${validDistricts.length} daerah · Rentang: ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
+          badge={{ text: `${validDistricts.length} Daerah`, type: "default" }}
         />
 
         <KpiCard
-          label={`Capaian Tertinggi: ${activeOption.label}`}
-          value={formatIndicatorVal(maxVal)}
-          benchmarkText={maxRegion ? `${maxRegion.kab_kota} (${maxRegion.provinsi})` : "—"}
-          contextText={`Selisih terhadap titik tengah: +${formatIndicatorVal(maxVal - medianVal)}`}
-          badge={{ text: "Nilai Maksimum", type: "positive" }}
-          range={{
-            min: minVal,
-            max: maxVal,
-            current: maxVal,
-            minLabel: `Min: ${formatIndicatorVal(minVal)}`,
-            maxLabel: `Max: ${formatIndicatorVal(maxVal)}`,
-            unit: activeOption.unit,
-          }}
-          accentColor="#0072B2"
-        />
-
-        <KpiCard
-          label={`Capaian Terendah: ${activeOption.label}`}
-          value={formatIndicatorVal(minVal)}
-          benchmarkText={minRegion ? `${minRegion.kab_kota} (${minRegion.provinsi})` : "—"}
-          contextText={
-            disparityRatio !== null
-              ? `Rasio kesenjangan: ${disparityRatio.toFixed(1)}x lipat`
-              : `Rentang disparitas absolut: ${formatIndicatorVal(disparitySpan)}`
-          }
-          badge={{ text: "Nilai Minimum", type: "warning" }}
-          range={{
-            min: minVal,
-            max: maxVal,
-            current: minVal,
-            minLabel: `Min: ${formatIndicatorVal(minVal)}`,
-            maxLabel: `Max: ${formatIndicatorVal(maxVal)}`,
-            unit: activeOption.unit,
+          label={activeThreshold.criticalLabel}
+          value={`${criticalCount} Daerah`}
+          unit={`(${criticalPct.toFixed(1)}%)`}
+          benchmarkText={activeThreshold.criticalBenchmark}
+          contextText={activeThreshold.criticalContext}
+          badge={{
+            text: criticalCount > 0 ? "Defisit Kritis" : "Terkendali",
+            type: criticalCount > 0 ? "critical" : "positive",
           }}
           accentColor="#D55E00"
         />
 
         <KpiCard
+          label={activeThreshold.primeLabel}
+          value={`${primeCount} Daerah`}
+          unit={`(${primePct.toFixed(1)}%)`}
+          benchmarkText={activeThreshold.primeBenchmark}
+          contextText={activeThreshold.primeContext}
+          badge={{
+            text: primePct >= 50 ? "Mayoritas Capai" : "Sebagian Capai",
+            type: primePct >= 50 ? "positive" : "warning",
+          }}
+          accentColor="#009E73"
+        />
+
+        <KpiCard
           label="Disparitas Antardaerah"
-          value={disparityRatio !== null ? `${disparityRatio.toFixed(2)}x Lipat` : formatIndicatorVal(disparitySpan)}
-          benchmarkText={`Rentang Spasial: ${formatIndicatorVal(disparitySpan)}`}
-          contextText={
+          value={disparityRatio !== null ? `${disparityRatio.toFixed(2)}x` : formatIndicatorVal(disparitySpan)}
+          unit={disparityRatio !== null ? "Lipat" : ""}
+          benchmarkText={
             minRegion && maxRegion
-              ? `Kesenjangan antara ${minRegion.kab_kota} dan ${maxRegion.kab_kota}`
-              : "Variasi sebaran indikator antardaerah"
+              ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${formatIndicatorVal(minVal)}) vs ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${formatIndicatorVal(maxVal)})`
+              : `Rentang Spasial: ${formatIndicatorVal(disparitySpan)}`
           }
+          contextText={`Rentang absolut: ${formatIndicatorVal(disparitySpan)} · Kesenjangan nilai terendah vs tertinggi`}
           badge={{
             text: disparityRatio && disparityRatio >= 3.0 ? "Disparitas Tinggi" : "Kesenjangan Spasial",
             type: disparityRatio && disparityRatio >= 3.0 ? "warning" : "default",
           }}
-          range={{
-            min: 1.0,
-            max: Math.max(disparityRatio || 1, 10.0),
-            current: disparityRatio || 1.0,
-            target: 1.0,
-            minLabel: "1.0x (Ideal)",
-            maxLabel: `${Math.max(disparityRatio || 1, 10.0).toFixed(0)}x Lipat`,
-            targetLabel: "Target 1.0x",
-            unit: "x",
-          }}
-          accentColor="#E69F00"
+          accentColor={disparityRatio && disparityRatio >= 3.0 ? "#E69F00" : "#0072B2"}
         />
       </div>
 

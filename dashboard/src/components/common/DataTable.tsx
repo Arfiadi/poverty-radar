@@ -11,6 +11,8 @@ interface DataTableProps {
   subtitle?: string;
   defaultSortField?: keyof District;
   defaultSortAsc?: boolean;
+  onSelectDistrict?: (d: District) => void;
+  selectedDistrictKey?: string;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -19,6 +21,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   subtitle = "Tabel rincian profil sosial-ekonomi daerah",
   defaultSortField = 'poverty_rate_p0',
   defaultSortAsc = false,
+  onSelectDistrict,
+  selectedDistrictKey,
 }) => {
   const [sortField, setSortField] = useState<keyof District>(defaultSortField);
   const [sortAsc, setSortAsc] = useState<boolean>(defaultSortAsc);
@@ -133,8 +137,19 @@ export const DataTable: React.FC<DataTableProps> = ({
             ) : (
               paginatedData.map((d, idx) => {
                 const rankNum = (page - 1) * pageSize + idx + 1;
+                const rowKey = `${d.provinsi}-${d.kab_kota}`;
+                const isSelected = selectedDistrictKey === rowKey;
+
                 return (
-                  <tr key={`${d.provinsi}-${d.kab_kota}`} className="hover:bg-slate-50/70 transition-colors">
+                  <tr 
+                    key={rowKey} 
+                    onClick={() => onSelectDistrict?.(d)}
+                    className={`transition-colors ${onSelectDistrict ? 'cursor-pointer' : ''} ${
+                      isSelected 
+                        ? 'bg-blue-50/90 hover:bg-blue-100/90' 
+                        : 'hover:bg-slate-50/70'
+                    }`}
+                  >
                     <td className="py-2 px-3 text-slate-400 font-mono text-xs">{rankNum}</td>
                     <td className="py-2 px-3 font-semibold text-ink-primary whitespace-nowrap">
                       {d.tipe_wilayah} {d.kab_kota}

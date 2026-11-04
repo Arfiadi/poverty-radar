@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
+import { Download } from 'lucide-react';
 
 interface StripPlotProps {
   districts: District[];
@@ -104,16 +105,24 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           borderWidth: 2,
         },
         label: {
-          show: true,
+          show: isHighPriority,
           position: 'top',
-          distance: 6,
+          distance: 5,
           formatter: `${stat.median.toFixed(1)}%`,
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: 'bold',
-          color: isHighPriority ? '#D55E00' : '#1E293B',
+          color: '#D55E00',
         }
       });
     });
+
+    // Key national outliers with direct labels (immune to jitter drift)
+    const OUTLIER_CONFIG: Record<string, { label: string; position: 'top' | 'bottom' | 'left' | 'right' }> = {
+      'Kota Sawah Lunto': { label: 'Sawahlunto (2.38%)', position: 'bottom' },
+      'Sampang': { label: 'Sampang (23.8%)', position: 'top' },
+      'Nias Barat': { label: 'Nias Barat (26.4%)', position: 'top' },
+      'Intan Jaya': { label: 'Intan Jaya (41.7%)', position: 'left' },
+    };
 
     // 4. District points clamped strictly within row tracks (+-0.12)
     const scatterPointsData = districts.map((d, i) => {
@@ -121,6 +130,7 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
       if (yIdx === -1) return null;
 
       const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.24 - 0.12;
+      const outlierCfg = OUTLIER_CONFIG[d.kab_kota];
 
       return {
         name: d.kab_kota,
@@ -128,22 +138,31 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         rawDistrict: d,
         itemStyle: {
           color: CLUSTER_COLORS[d.cluster_id] || '#0072B2',
-          opacity: 0.6,
-          borderColor: '#FFFFFF',
-          borderWidth: 0.5,
+          opacity: outlierCfg ? 1 : 0.6,
+          borderColor: outlierCfg ? '#0F172A' : '#FFFFFF',
+          borderWidth: outlierCfg ? 2 : 0.5,
         },
-        symbolSize: 6,
+        symbolSize: outlierCfg ? 9 : 6,
+        label: outlierCfg ? {
+          show: true,
+          formatter: outlierCfg.label,
+          position: outlierCfg.position,
+          distance: 6,
+          fontSize: 10,
+          fontWeight: 'bold',
+          color: '#0F172A',
+          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+          borderColor: '#CBD5E1',
+          borderWidth: 0.5,
+          borderRadius: 4,
+          padding: [2, 5],
+          shadowColor: 'rgba(0, 0, 0, 0.08)',
+          shadowBlur: 3,
+        } : undefined
       };
     }).filter(Boolean);
 
     return {
-      title: {
-        text: 'Disparitas Kemiskinan Moneter (P0) di 6 Kawasan Kepulauan',
-        subtext: 'Urutan menurun berdasarkan median wilayah. Garis tebal menunjukkan rentang antarkuartil (IQR), titik mewakili 514 kabupaten/kota.',
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
-      },
       tooltip: {
         trigger: 'item',
         backgroundColor: '#FFFFFF',
@@ -154,46 +173,44 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         extraCssText: 'box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border-radius: 8px;',
       },
       grid: {
-        top: 60,
-        right: 40,
-        bottom: 45,
-        left: 145
+        top: 26,
+        right: 20,
+        bottom: 34,
+        left: 130
       },
       xAxis: {
         type: 'value',
         name: 'Kemiskinan P0 (%)',
         nameLocation: 'middle',
-        nameGap: 26,
-        nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#475569' },
+        nameGap: 20,
+        nameTextStyle: { fontSize: 9.5, fontWeight: 'bold', color: '#475569' },
         min: 0,
-        max: 43.5,
-        splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
-        axisLabel: { formatter: '{value}%', color: '#64748B' },
+        max: 45,
+        interval: 10,
+        splitLine: { show: false },
+        axisLine: { show: true, lineStyle: { color: '#CBD5E1' } },
+        axisTick: { show: true, lineStyle: { color: '#CBD5E1' } },
+        axisLabel: { formatter: '{value}%', color: '#64748B', fontSize: 9.5 },
       },
       yAxis: {
         type: 'category',
         data: yAxisCategories,
         axisLine: { show: false },
         axisTick: { show: false },
-        splitLine: { show: true, lineStyle: { color: '#F1F5F9' } },
-        splitArea: {
-          show: true,
-          areaStyle: {
-            color: ['rgba(248, 250, 252, 0.7)', 'rgba(255, 255, 255, 0.3)']
-          }
-        },
+        splitLine: { show: false },
+        splitArea: { show: false },
         axisLabel: {
           color: '#1E293B',
           fontWeight: 700,
-          fontSize: 11,
+          fontSize: 10,
           formatter: (isl: string) => {
             const stat = statsMap.get(isl);
             if (!stat) return isl;
             return `{title|${isl}}\n{sub|(N=${stat.count} · Med: ${stat.median.toFixed(1)}%)}`;
           },
           rich: {
-            title: { fontWeight: 'bold', color: '#1E293B', fontSize: 11, lineHeight: 14 },
-            sub: { color: '#64748B', fontSize: 10, lineHeight: 14 }
+            title: { fontWeight: 'bold', color: '#1E293B', fontSize: 10.5, lineHeight: 14 },
+            sub: { color: '#64748B', fontSize: 9, lineHeight: 12 }
           }
         }
       },
@@ -273,23 +290,38 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
             }
           }
         },
-        // National Median Benchmark Reference Line
+        // Reference Lines: RPJMN Target (7.00%) & National Median (10.46%)
         {
-          name: 'Baseline Nasional',
+          name: 'Garis Rujukan Kebijakan',
           type: 'line',
           markLine: {
             silent: true,
             symbol: ['none', 'none'],
-            lineStyle: { type: 'dashed', color: '#DC2626', width: 1.5 },
             data: [
               {
+                xAxis: 7.00,
+                lineStyle: { type: 'dashed', color: '#047857', width: 1.5 },
+                label: {
+                  formatter: 'Target RPJMN: 7.0%',
+                  position: 'end',
+                  align: 'right',
+                  color: '#047857',
+                  fontSize: 9.5,
+                  fontWeight: 'bold',
+                  distance: 6,
+                }
+              },
+              {
                 xAxis: nationalMedian,
+                lineStyle: { type: 'dashed', color: '#DC2626', width: 1.5 },
                 label: {
                   formatter: 'Median RI: 10.46%',
                   position: 'end',
+                  align: 'left',
                   color: '#DC2626',
-                  fontSize: 10,
+                  fontSize: 9.5,
                   fontWeight: 'bold',
+                  distance: 6,
                 }
               }
             ]
@@ -299,14 +331,88 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
     };
   }, [districts, yAxisCategories, statsMap]);
 
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `strip-plot-kemiskinan-kepulauan.png`;
+    a.click();
+  };
+
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts
-        option={option}
-        style={{ height: '370px', width: '100%' }}
-        opts={{ renderer: 'canvas' }}
-        notMerge={true}
-      />
+    <div 
+      className="bg-surface rounded-xl border border-slate-200/90 p-2.5 sm:p-3 shadow-subtle flex flex-col justify-between h-full"
+      role="region"
+      aria-label="Jittered Strip Plot Sebaran Kemiskinan Moneter per Wilayah Kepulauan"
+    >
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-1.5 shrink-0">
+        <div>
+          <h3 className="text-xs font-bold text-slate-900 tracking-tight">
+            Polarisasi Antar-Kepulauan: Konsentrasi 86.9% Kantong Akut di Kawasan Timur
+          </h3>
+          <p className="text-[10px] text-slate-500 mt-0.5">
+            Sebaran 514 daerah di 6 gugus pulau vs median nasional (10.46%) & sasaran RPJMN (7.0%)
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10.5px] font-semibold rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3 h-3" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      {/* Chart Visualization */}
+      <div 
+        className="w-full flex-1 min-h-[295px] relative flex flex-col justify-center" 
+        role="img" 
+        aria-label="Jittered strip plot menampilkan 514 titik kabupaten/kota di 6 gugus pulau dengan penanda median regional."
+      >
+        <ReactECharts
+          ref={echartsRef}
+          option={option}
+          style={{ height: '100%', minHeight: '295px', width: '100%' }}
+          opts={{ renderer: 'canvas' }}
+          notMerge={true}
+        />
+
+        {/* Screen reader data summary table */}
+        <div className="sr-only">
+          <h4>Ringkasan Statistik Sebaran Kemiskinan per Gugus Kepulauan</h4>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Kepulauan</th>
+                <th scope="col">Jumlah Daerah</th>
+                <th scope="col">Median P0</th>
+                <th scope="col">Rentang Min - Maks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {islandStats.map(s => (
+                <tr key={s.name}>
+                  <td>{s.name}</td>
+                  <td>{s.count}</td>
+                  <td>{s.median.toFixed(2)}%</td>
+                  <td>{s.min.toFixed(2)}% - {s.max.toFixed(2)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

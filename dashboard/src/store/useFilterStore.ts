@@ -10,6 +10,7 @@ interface FilterStore {
   p0Range: [number, number];
   activeCasePin: CaseStudyPin;
   activeAct: number; // 0: Landscape, 1: Map/Indicator, 2: Profiles, 3: Priority, 4: Methodology
+  isSidebarCollapsed: boolean;
 
   setSelectedIsland: (island: string) => void;
   setSelectedProvince: (prov: string) => void;
@@ -19,7 +20,14 @@ interface FilterStore {
   setP0Range: (range: [number, number]) => void;
   setActiveCasePin: (pin: CaseStudyPin) => void;
   setActiveAct: (act: number) => void;
+  toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   resetFilters: () => void;
+  clearIsland: () => void;
+  clearCluster: () => void;
+  clearQuadrant: () => void;
+  clearSearch: () => void;
+  clearCasePin: () => void;
   hasActiveFilters: () => boolean;
 }
 
@@ -48,6 +56,7 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
   p0Range: DEFAULT_P0_RANGE,
   activeCasePin: 'none',
   activeAct: getInitialAct(),
+  isSidebarCollapsed: false,
 
   setSelectedIsland: (island) => set({ selectedIsland: island, selectedProvince: 'Semua Provinsi' }),
   setSelectedProvince: (prov) => set({ selectedProvince: prov }),
@@ -64,6 +73,25 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
     }
     set({ activeAct: act });
   },
+  toggleSidebar: () => {
+    set((s) => {
+      const next = !s.isSidebarCollapsed;
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 310);
+      }
+      return { isSidebarCollapsed: next };
+    });
+  },
+  setSidebarCollapsed: (collapsed: boolean) => {
+    set({ isSidebarCollapsed: collapsed });
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 310);
+    }
+  },
 
   resetFilters: () => set({
     selectedIsland: 'Semua Wilayah',
@@ -74,6 +102,12 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
     p0Range: DEFAULT_P0_RANGE,
     activeCasePin: 'none',
   }),
+
+  clearIsland: () => set({ selectedIsland: 'Semua Wilayah', selectedProvince: 'Semua Provinsi' }),
+  clearCluster: () => set({ selectedCluster: 'all' }),
+  clearQuadrant: () => set({ selectedQuadrant: 'all' }),
+  clearSearch: () => set({ searchQuery: '' }),
+  clearCasePin: () => set({ activeCasePin: 'none' }),
 
   hasActiveFilters: () => {
     const s = get();

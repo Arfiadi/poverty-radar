@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
 import { EPISTEMIC_DISCLAIMER } from '../../constants/paradoxes';
+import { Download } from 'lucide-react';
 
 interface WorkingPoorProps {
   districts: District[];
@@ -71,13 +72,6 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
     }
 
     return {
-      title: {
-        text: 'The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan',
-        subtext: `Korelasi positif (r = +${r.toFixed(3)}): warga wilayah miskin dominan bekerja subsistensi bertahan hidup.\n${EPISTEMIC_DISCLAIMER}`,
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 10.5, color: '#64748B', lineHeight: 15 }
-      },
       tooltip: {
         trigger: 'item',
         backgroundColor: '#FFFFFF',
@@ -100,7 +94,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
         }
       },
       grid: {
-        top: 75,
+        top: 25,
         right: 30,
         bottom: 45,
         left: 55
@@ -155,9 +149,62 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
     };
   }, [districts]);
 
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `scatter-the-working-poor.png`;
+    a.click();
+  };
+
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '330px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+    <div 
+      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3"
+      role="region"
+      aria-label="Scatter Plot Korelasi Positif Paradoks Ketenagakerjaan The Working Poor"
+    >
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan
+          </h3>
+          <p className="text-xs text-slate-600 mt-0.5">
+            Korelasi positif (r = +0.462): warga wilayah miskin dominan bekerja subsistensi bertahan hidup · {EPISTEMIC_DISCLAIMER}
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      {/* Chart Canvas */}
+      <div 
+        className="w-full relative"
+        role="img"
+        aria-label="Diagram scatter plot menampilkan 514 daerah mengilustrasikan asosiasi linier positif antara TPAK dan tingkat kemiskinan."
+      >
+        <ReactECharts 
+          ref={echartsRef}
+          option={option} 
+          style={{ height: '340px', width: '100%' }} 
+          opts={{ renderer: 'canvas' }} 
+        />
+      </div>
     </div>
   );
 };

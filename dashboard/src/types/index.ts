@@ -116,7 +116,7 @@ export interface NationalBenchmarks {
   dualism_kota_tpt: number;
 }
 
-export type CaseStudyPin = 'none' | 'resource_curse' | 'madura';
+export type CaseStudyPin = 'none' | 'resource_curse' | 'madura' | 'barito_kuala';
 
 export interface FilterState {
   selectedIsland: string;

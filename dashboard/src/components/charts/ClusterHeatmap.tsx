@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
+import { Download } from 'lucide-react';
 
 interface HeatmapProps {
   districts: District[];
@@ -53,13 +54,6 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
 
   const option = useMemo(() => {
     return {
-      title: {
-        text: 'Matriks Karakteristik Klaster (28 Sel Z-Score Divergen)',
-        subtext: 'Biru (#0072B2) = Unggul di atas rata-rata nasional, Vermillion (#D55E00) = Defisit kritis di bawah rata-rata (Palet Okabe-Ito).',
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 11, color: '#64748B' }
-      },
       tooltip: {
         position: 'top',
         backgroundColor: '#FFFFFF',
@@ -80,9 +74,9 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
         }
       },
       grid: {
-        top: 65,
+        top: 25,
         right: 35,
-        bottom: 40,
+        bottom: 68,
         left: 155
       },
       xAxis: {
@@ -103,7 +97,7 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
         calculable: false,
         orient: 'horizontal',
         left: 'center',
-        bottom: 0,
+        bottom: 6,
         inRange: {
           color: ['#D55E00', '#E69F00', '#F8FAFC', '#56B4E9', '#0072B2']
         },
@@ -131,9 +125,48 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
     };
   }, [data, features]);
 
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `matriks-karakteristik-klaster-heatmap.png`;
+    a.click();
+  };
+
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '360px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+    <div className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3">
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            Matriks Karakteristik Klaster (28 Sel Z-Score Divergen)
+          </h3>
+          <p className="text-xs text-slate-600 mt-0.5">
+            Biru (#0072B2) = Unggul di atas rata-rata nasional · Vermillion (#D55E00) = Defisit kritis di bawah rata-rata (Palet Okabe-Ito)
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      <div className="w-full relative" role="img" aria-label="Matriks Heatmap 28 sel deviasi Z-score">
+        <ReactECharts ref={echartsRef} option={option} style={{ height: '380px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+      </div>
     </div>
   );
 };

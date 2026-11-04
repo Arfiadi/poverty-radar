@@ -17,6 +17,24 @@ interface PageProps {
 export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts, clusterSummary }) => {
   const [viewMode, setViewMode] = useState<'small_multiples' | 'heatmap'>('small_multiples');
 
+  const baselineDistricts = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
+
+  // Compute national medians for baseline comparison
+  const getMedian = (key: keyof District): number => {
+    const vals = baselineDistricts
+      .map(d => d[key] as number)
+      .filter(v => typeof v === 'number')
+      .sort((a, b) => a - b);
+    if (!vals.length) return 0;
+    const mid = Math.floor(vals.length / 2);
+    return vals.length % 2 !== 0 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
+  };
+
+  const natMedianP0 = getMedian('poverty_rate_p0');
+  const natMedianSan = getMedian('sanitation_access_pct');
+  const natMedianRls = getMedian('avg_school_years');
+  const natMedianExp = getMedian('expenditure_per_capita');
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -38,16 +56,16 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
 
         {/* Model Diagnostics Pill Badges */}
         <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs shrink-0">
-          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 font-bold text-[11px]">
+          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 font-bold text-xs">
             k = 4 Klaster
           </span>
-          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 text-[11px]">
+          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 text-xs">
             Siluet: <strong>0.2028</strong>
           </span>
-          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 text-[11px]">
+          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 text-xs">
             DBI: <strong>1.4522</strong>
           </span>
-          <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-200 font-bold text-[11px]">
+          <span className="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-md border border-emerald-200 font-bold text-xs">
             ARI: 0.9803
           </span>
         </div>
@@ -64,6 +82,11 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           const meanRls = summary?.avg_school_years_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0);
           const meanSan = summary?.sanitation_access_pct_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0);
           const meanExp = summary?.expenditure_per_capita_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0);
+
+          const deltaP0 = meanP0 - natMedianP0;
+          const deltaSan = meanSan - natMedianSan;
+          const deltaRls = meanRls - natMedianRls;
+          const deltaExp = meanExp - natMedianExp;
 
           return (
             <div 
@@ -82,21 +105,41 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-baseline gap-1">
                   <span className="text-slate-500 font-medium">Kemiskinan P0:</span>
-                  <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
+                  <div className="flex items-baseline space-x-1 shrink-0">
+                    <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
+                    <span className={`text-[10px] font-mono font-bold ${deltaP0 > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
+                      ({deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}% vs Nas)
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-baseline gap-1">
                   <span className="text-slate-500 font-medium">Akses Sanitasi:</span>
-                  <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
+                  <div className="flex items-baseline space-x-1 shrink-0">
+                    <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
+                    <span className={`text-[10px] font-mono font-bold ${deltaSan >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                      ({deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}% vs Nas)
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-baseline gap-1">
                   <span className="text-slate-500 font-medium">Rata-Rata RLS:</span>
-                  <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
+                  <div className="flex items-baseline space-x-1 shrink-0">
+                    <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
+                    <span className={`text-[10px] font-mono font-bold ${deltaRls >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                      ({deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)} thn)
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-baseline gap-1">
                   <span className="text-slate-500 font-medium">Pengeluaran:</span>
-                  <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
+                  <div className="flex items-baseline space-x-1 shrink-0">
+                    <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
+                    <span className={`text-[10px] font-mono font-bold ${deltaExp >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                      ({deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt)
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -140,7 +183,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       <NarrativeCallout
         title="DIFERENSIASI AKAR MASALAH ANTAR-KLASTER"
         insight="Profil empat klaster membuktikan akar kemiskinan bervariasi: Klaster 4 lumpuh akibat defisit sanitasi dan isolasi fisik, sedangkan Klaster 3 terhambat rendahnya produktivitas agraris dan modal manusia."
-        evidence="Klaster 4 (Sanitasi 22.8%, RLS 5.8 thn, P0 30.6%) vs Klaster 3 (Sanitasi 63.8%, RLS 7.5 thn, P0 12.8%) vs Klaster 1 (P0 5.4%, Sanitasi 85.9%)."
+        evidence="Klaster 4 (Sanitasi 31.2%, RLS 5.26 thn, P0 29.5%) vs Klaster 3 (Sanitasi 72.3%, RLS 8.13 thn, P0 13.7%) vs Klaster 1 (P0 6.6%, Sanitasi 92.4%)."
       />
     </motion.div>
   );

@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
+import { Download } from 'lucide-react';
 
 interface HistogramProps {
   districts: District[];
@@ -51,13 +52,6 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
 
   const option = useMemo(() => {
     return {
-      title: {
-        text: 'Distribusi Frekuensi Kemiskinan Moneter (P0 %)',
-        subtext: 'Sebaran menceng ke kanan (right-skewed) dengan ekor panjang kemiskinan ekstrem.',
-        left: 'left',
-        textStyle: { fontSize: 13, fontWeight: 'bold', color: '#1E293B' },
-        subtextStyle: { fontSize: 12, color: '#64748B' }
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
@@ -75,16 +69,27 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
         }
       },
       grid: {
-        top: 65,
+        top: 25,
         right: 25,
-        bottom: 35,
+        bottom: 42,
         left: 45
       },
       xAxis: {
         type: 'category',
         data: binLabels,
+        name: 'Kemiskinan P0 (%)',
+        nameLocation: 'middle',
+        nameGap: 24,
+        nameTextStyle: { color: '#64748B', fontSize: 10, fontWeight: 600 },
         axisLine: { lineStyle: { color: '#CBD5E1' } },
-        axisLabel: { color: '#64748B', fontSize: 10, interval: 0, rotate: 25 }
+        axisLabel: {
+          color: '#64748B',
+          fontSize: 10,
+          interval: 1,
+          formatter: (_val: string, idx: number) => {
+            return `${idx * 3}%`;
+          }
+        }
       },
       yAxis: {
         type: 'value',
@@ -129,9 +134,83 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts }) =
     };
   }, [binLabels, counts, nationalMedian, medianBinLabel, districts.length]);
 
+  const echartsRef = useRef<any>(null);
+
+  const handleExportImage = () => {
+    const chart = echartsRef.current?.getEchartsInstance();
+    if (!chart) return;
+    const url = chart.getDataURL({
+      pixelRatio: 2,
+      backgroundColor: '#FFFFFF',
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `histogram-sebaran-kemiskinan.png`;
+    a.click();
+  };
+
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/80 p-4 shadow-subtle">
-      <ReactECharts option={option} style={{ height: '360px', width: '100%' }} opts={{ renderer: 'canvas' }} />
+    <div 
+      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3"
+      role="region"
+      aria-label="Histogram Distribusi Frekuensi Kemiskinan Moneter"
+    >
+      {/* Chart Header & Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            Sebaran Menjulur ke Kanan: Mayoritas Daerah Terkonsentrasi di Bawah Median
+          </h3>
+          <p className="text-xs text-slate-600 mt-0.5">
+            Frekuensi sebaran P0 (interval 3%) dengan ekor panjang 3T hingga 41.7% vs median nasional (10.46%)
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportImage}
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          title="Unduh visualisasi grafik (PNG)"
+          aria-label="Unduh grafik PNG"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Ekspor PNG</span>
+        </button>
+      </div>
+
+      {/* Chart Canvas */}
+      <div 
+        className="w-full relative"
+        role="img"
+        aria-label="Histogram distribusi frekuensi tingkat kemiskinan 514 daerah di Indonesia."
+      >
+        <ReactECharts 
+          ref={echartsRef}
+          option={option} 
+          style={{ height: '360px', width: '100%' }} 
+          opts={{ renderer: 'canvas' }} 
+        />
+
+        {/* Screen reader summary table */}
+        <div className="sr-only">
+          <h4>Frekuensi Daerah per Interval Kemiskinan</h4>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Interval Kemiskinan</th>
+                <th scope="col">Frekuensi Daerah</th>
+              </tr>
+            </thead>
+            <tbody>
+              {binLabels.map((lbl, idx) => (
+                <tr key={lbl}>
+                  <td>{lbl}</td>
+                  <td>{counts[idx]} daerah</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

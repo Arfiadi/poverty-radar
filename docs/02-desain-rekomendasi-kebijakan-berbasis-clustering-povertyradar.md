@@ -280,6 +280,40 @@ Matriks Skrining Kerentanan Relatif 2x2 memadukan dua sumbu ortogonal independen
 
 ---
 
+### 3.3. Pohon Keputusan Skrining Intervensi Cepat (Rapid Policy Decision Tree)
+
+Sebagai panduan navigasi visual yang mudah dipahami bagi pimpinan daerah (Bupati/Walikota, Sekda, dan Kepala Bappeda), diagram pohon keputusan berikut menyajikan alur pemetaan logis bertahap untuk mendiagnosis posisi kabupaten/kota dan menentukan paket kebijakan prioritas:
+
+```mermaid
+flowchart TD
+    START["Mulai Diagnosis Daerah<br/>(514 Kabupaten/Kota)"] --> CHECK_P0{"Tingkat Kemiskinan Moneter P0<br/>(Ambang Median Nasional = 10.46%)"}
+
+    CHECK_P0 -->|P0 >= 10.46% (Kemiskinan Tinggi)| HIGH_P0["Kelompok Kemiskinan Moneter Tinggi"]
+    CHECK_P0 -->|P0 < 10.46% (Kemiskinan Rendah)| LOW_P0["Kelompok Kemiskinan Moneter Rendah"]
+
+    HIGH_P0 --> CHECK_VULN_H{"Indeks Kerentanan Struktural V_struc<br/>(Ambang Median Nasional = 0.2720)"}
+    CHECK_VULN_H -->|V_struc >= 0.2720 (Kerentanan Tinggi)| Q1_DIAG["<b>KUADRAN I: PRIORITAS UTAMA</b><br/>(N = 162 Daerah: Klaster 4 & Klaster 3 Rentan)"]
+    CHECK_VULN_H -->|V_struc < 0.2720 (Kerentanan Rendah)| Q3_DIAG["<b>KUADRAN III: KANTONG DAYA BELI</b><br/>(N = 95 Daerah: Klaster 2, 3, & 8 Kota Klaster 1)"]
+
+    LOW_P0 --> CHECK_VULN_L{"Indeks Kerentanan Struktural V_struc<br/>(Ambang Median Nasional = 0.2720)"}
+    CHECK_VULN_L -->|V_struc >= 0.2720 (Kerentanan Tinggi)| Q2_DIAG["<b>KUADRAN II: KERENTANAN TERSEMBUNYI</b><br/>(N = 95 Daerah: Mayoritas Klaster 3 & 2)"]
+    CHECK_VULN_L -->|V_struc < 0.2720 (Kerentanan Rendah)| Q4_DIAG["<b>KUADRAN IV: TERBINA & MAPAN</b><br/>(N = 162 Daerah: Kota Modern & Penyangga Mapan)"]
+
+    Q1_DIAG --> Q1_ACTION["<b>Paket Konvergensi Ganda</b><br/>• Bansos Tunai PKH/Sembako (Kemensos/PT Pos)<br/>• DAK Fisik Sanitasi & Air Bersih Afirmasi<br/>• Satuan Pelayanan Pemenuhan Gizi (SPPG BGN)<br/>• Balai PU Pusat & Dana Otsus/DTI Papua"]
+    
+    Q2_DIAG --> Q2_ACTION["<b>Paket Infrastruktur Preventif</b><br/>• Inpres Air Minum & Sanitasi + DAK Fisik<br/>• Tangki Septik Biofilter Kedap Air (SPALD-S)<br/>• DAU Earmark Bidang Pekerjaan Umum<br/>• <i>Warning:</i> Larangan Bansos Tunai Murni!"]
+
+    Q3_DIAG --> Q3_ACTION["<b>Paket Pengungkit Produktivitas</b><br/>• Pembiayaan Ultra Mikro (UMi) & KUR Mikro<br/>• BUMDes Bersama & Pembeli Siaga (Off-Taker)<br/>• Pelatihan Vokasi & Bursa Kerja Disnaker<br/>• <i>Warning:</i> Larangan Proyek Fisik Baru!"]
+
+    Q4_DIAG --> Q4_ACTION["<b>Paket Pemeliharaan & Kemitraan</b><br/>• Perlindungan Pekerja Gig/Informal (BPJS BPU)<br/>• Penataan Kumuh Rusunawa MBR (Kemen PKP)<br/>• Pengendalian Inflasi Pangan (TPID)<br/>• Pusat Pasokan Regional (Supply Chain Hub)"]
+```
+
+> [!NOTE]
+> **Panduan Penggunaan Cepat:**  
+> Pohon keputusan di atas dirancang untuk penapisan awal tingkat makro (*rapid screening*). Setiap keputusan definitif alokasi belanja daerah tetap wajib ditindaklanjuti dengan pengujian hipotesis lapangan dan pemadanan data mikro keluarga (DTSEN / Survei EHRA Dinkes) sesuai **Protokol Translasi 10 Langkah** pada Bagian 4.
+
+---
+
 ## 4. KERANGKA TRANSLASI KEBIJAKAN 10 LANGKAH (CLUSTER-TO-POLICY PROTOCOL)
 
 Untuk menjembatani temuan data sains PovertyRadar ke dalam dokumen perencanaan dan penganggaran resmi Pemda, disusun protokol operasional standar 10 langkah:
