@@ -3,7 +3,17 @@ import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { District } from '../../types';
 import { ClusterBadge, QuadrantBadge } from '../common/Badge';
-import { MapPin, Info, ZoomIn, ZoomOut, RotateCcw, Download, ArrowLeft, Layers, Loader2 } from 'lucide-react';
+import { 
+  MapPin, 
+  Info, 
+  ZoomIn, 
+  ZoomOut, 
+  RotateCcw, 
+  Download, 
+  ArrowLeft, 
+  Layers, 
+  Loader2 
+} from 'lucide-react';
 
 interface IndonesiaMapProps {
   districts: District[];
@@ -91,6 +101,10 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
   const [selectedDistrictName, setSelectedDistrictName] = useState<string | null>(null);
   const [isDrilling, setIsDrilling] = useState<boolean>(false);
 
+  // Cooperative gesture handling state (Google Maps style Ctrl+Scroll UX)
+  const [showGestureOverlay, setShowGestureOverlay] = useState<boolean>(false);
+  const overlayTimerRef = useRef<any>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const echartsRef = useRef<any>(null);
 
   // 1. Load national 34-provinces GeoJSON and register with ECharts once
@@ -129,6 +143,39 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
         console.warn('Gagal memuat peta poligon kabupaten/kota:', err);
       });
   }, []);
+
+  // 3. Intercept wheel events with Cooperative Gesture Handling (Ctrl + Scroll)
+  useEffect(() => {
+    const el = mapContainerRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      // Touchpad pinch-to-zoom OR Ctrl + Wheel scrolling
+      if (e.ctrlKey || e.metaKey) {
+        // Intentional map zoom: let ECharts handle it, prevent browser whole-page zoom
+        e.preventDefault();
+        setShowGestureOverlay(false);
+      } else {
+        // Normal 2-finger scroll on touchpad or mouse wheel:
+        // Stop event from reaching ECharts so the map NEVER accidentally shrinks!
+        e.stopPropagation();
+
+        // Display brief unobtrusive gesture hint overlay (exact Google Maps behavior)
+        setShowGestureOverlay(true);
+        if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current);
+        overlayTimerRef.current = setTimeout(() => {
+          setShowGestureOverlay(false);
+        }, 1400);
+      }
+    };
+
+    // Attach in capture phase to intercept before ECharts zrender
+    el.addEventListener('wheel', onWheel, { capture: true, passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel, { capture: true } as any);
+      if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current);
+    };
+  }, [mapLoaded]);
 
   // Compute statistics per province
   const provinceStatsMap = useMemo(() => {
@@ -291,6 +338,9 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
 
   // Compute ECharts option dynamically based on map level (National vs Province)
   const option = useMemo(() => {
+    // scaleLimit guarantees map will NEVER shrink smaller than 90% or zoom excessively
+    const currentScaleLimit = { min: 0.9, max: 4.5 };
+
     if (mapLevel === 'national') {
       const nationalData = Object.values(provinceStatsMap).map(s => ({
         name: s.provinceName,
@@ -371,6 +421,7 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
             type: 'map',
             map: 'indonesia',
             roam: true,
+            scaleLimit: currentScaleLimit,
             zoom: 1.18,
             center: [118, -2.5],
             aspectScale: 0.9,
@@ -491,6 +542,7 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
             type: 'map',
             map: currentMapKey,
             roam: true,
+            scaleLimit: currentScaleLimit,
             zoom: 1.05,
             center: provinceCenter,
             aspectScale: 0.9,
@@ -550,20 +602,23 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
     }
   };
 
+  // Smooth, calibrated zoom buttons with strict bounding clamp (0.9 to 4.5)
   const handleZoomIn = () => {
     const chart = echartsRef.current?.getEchartsInstance();
     if (!chart) return;
     const currentOption = chart.getOption();
-    const currentZoom = currentOption.series?.[0]?.zoom || 1.15;
-    chart.setOption({ series: [{ zoom: Math.min(currentZoom * 1.3, 10) }] });
+    const currentZoom = currentOption.series?.[0]?.zoom || (mapLevel === 'national' ? 1.18 : 1.05);
+    const newZoom = Math.min(Number((currentZoom * 1.25).toFixed(2)), 4.5);
+    chart.setOption({ series: [{ zoom: newZoom }] });
   };
 
   const handleZoomOut = () => {
     const chart = echartsRef.current?.getEchartsInstance();
     if (!chart) return;
     const currentOption = chart.getOption();
-    const currentZoom = currentOption.series?.[0]?.zoom || 1.15;
-    chart.setOption({ series: [{ zoom: Math.max(currentZoom / 1.3, 0.6) }] });
+    const currentZoom = currentOption.series?.[0]?.zoom || (mapLevel === 'national' ? 1.18 : 1.05);
+    const newZoom = Math.max(Number((currentZoom / 1.25).toFixed(2)), 0.9);
+    chart.setOption({ series: [{ zoom: newZoom }] });
   };
 
   const handleResetZoom = () => {
@@ -681,10 +736,11 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           </div>
         </div>
 
-        {/* ECharts Map Display */}
+        {/* ECharts Map Display Container */}
         {mapLoaded ? (
           <div 
-            className="h-[460px] w-full relative"
+            ref={mapContainerRef}
+            className="h-[460px] w-full relative overflow-hidden rounded-xl"
             role="img"
             aria-label={`Visualisasi Peta Choropleth menampilkan indikator ${indicatorLabel} pada tingkat ${mapLevel === 'province' ? `Provinsi ${selectedProvince}` : 'Nasional'}.`}
           >
@@ -698,6 +754,16 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
               onEvents={{ click: onChartClick }}
               opts={{ renderer: 'canvas' }}
             />
+
+            {/* Google Maps Style Cooperative Gesture Overlay (Discreet & Non-Intrusive) */}
+            {showGestureOverlay && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900/35 backdrop-blur-[1.5px] transition-opacity duration-200 pointer-events-none">
+                <div className="bg-slate-900/90 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-xl flex items-center space-x-2 border border-slate-700/60 animate-in fade-in zoom-in-95 duration-150">
+                  <Info className="w-4 h-4 text-sky-400 shrink-0" />
+                  <span>Gunakan <strong>Ctrl + Scroll</strong> untuk memperbesar/memperkecil peta</span>
+                </div>
+              </div>
+            )}
           </div>
         ) : loadError ? (
           <div className="h-[360px] flex items-center justify-center bg-slate-50 rounded-xl border border-dashed border-slate-300">

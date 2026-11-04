@@ -97,10 +97,10 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         <div>
           <h2 className="text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-sdg shrink-0"></span>
-            <span>Jurang Disparitas Ekstrem {nationalDisparityRatio.toFixed(2)}x Lipat Membelah Lanskap Kemiskinan</span>
+            <span>Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat</span>
           </h2>
           <p className="text-[10.5px] text-slate-500 font-medium leading-tight">
-            Polarisasi spasial tajam antara pusat perkotaan barat dan kantong deprivasi kepulauan timur (BPS Susenas 2021, N=514 daerah).
+            Ketimpangan wilayah yang tajam antara kawasan barat dan timur Indonesia
           </p>
         </div>
       </div>
