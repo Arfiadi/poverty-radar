@@ -17,7 +17,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
     { key: 'expenditure_per_capita', label: 'Pengeluaran Riil' },
     { key: 'life_expectancy', label: 'Harapan Hidup (UHH)' },
     { key: 'log_pdrb', label: 'Log-PDRB' },
-    { key: 'unemployment_rate_tpt', label: 'Pengangguran (TPT)' },
+    { key: 'unemployment_rate_tpt', label: 'TPT Rendah (Inv)' },
   ], []);
 
   // Compute baseline mean & std using full national dataset (anchors Z=0 to national population)
@@ -39,10 +39,16 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
     for (let c = 0; c < 4; c++) {
       const cDistricts = districts.filter(d => d.cluster_id === c);
       features.forEach(f => {
-        const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
-        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : stats[f.key].mean;
-        const z = (cMean - stats[f.key].mean) / stats[f.key].std;
-        res[c].push(Number(z.toFixed(2)));
+        if (cDistricts.length === 0) {
+          res[c].push(0);
+        } else {
+          const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
+          const cMean = cVals.reduce((a, b) => a + b, 0) / cVals.length;
+          const rawZ = (cMean - stats[f.key].mean) / stats[f.key].std;
+          // Invert TPT so lower unemployment is positive (+, advantageous)
+          const z = f.key === 'unemployment_rate_tpt' ? -rawZ : rawZ;
+          res[c].push(Number(z.toFixed(2)));
+        }
       });
     }
     return res;

@@ -25,15 +25,46 @@ import { PARADOXES } from '../constants/paradoxes';
 
 interface PageProps {
   districts: District[];
+  allDistricts?: District[];
   policyMatrix: PolicyRecommendation[];
 }
 
-export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMatrix }) => {
-  const { activeCasePin, setActiveCasePin } = useFilterStore();
-  const [selectedQuadrantCode, setSelectedQuadrantCode] = useState<string>('Q1');
+export const PriorityImplications: React.FC<PageProps> = ({ 
+  districts, 
+  allDistricts = districts,
+  policyMatrix 
+}) => {
+  const { 
+    selectedQuadrant, 
+    setSelectedQuadrant, 
+    activeCasePin, 
+    setActiveCasePin 
+  } = useFilterStore();
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
   const [isPolicyBriefOpen, setIsPolicyBriefOpen] = useState<boolean>(false);
   const [isPlanningCycleOpen, setIsPlanningCycleOpen] = useState<boolean>(false);
+
+  // Derive active quadrant code ('ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4') from global store
+  const selectedQuadrantCode = useMemo(() => {
+    if (!selectedQuadrant || selectedQuadrant === 'all') return 'ALL';
+    const found = QUADRANTS.find(q => q.id === selectedQuadrant);
+    return found ? found.code : 'ALL';
+  }, [selectedQuadrant]);
+
+  // Compute dynamic benchmarks from all available districts
+  const medianP0 = useMemo(() => {
+    if (!allDistricts || allDistricts.length === 0) return 10.46;
+    const sorted = [...allDistricts].map(d => d.poverty_rate_p0).sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+  }, [allDistricts]);
+
+  const medianVStruc = useMemo(() => {
+    if (!allDistricts || allDistricts.length === 0) return 0.2720;
+    const sorted = [...allDistricts].map(d => d.vulnerability_score).sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+  }, [allDistricts]);
 
   // Active policy recommendation item from matrix based on quadrant
   const activePolicy = selectedQuadrantCode === 'ALL'
@@ -43,7 +74,8 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
   // Synchronize case pin with selected district & quadrant
   useEffect(() => {
     if (activeCasePin === 'barito_kuala') {
-      setSelectedQuadrantCode('Q2');
+      const q2 = QUADRANTS.find(q => q.code === 'Q2');
+      if (q2) setSelectedQuadrant(q2.id);
       const bk = districts.find(d => d.kab_kota.toLowerCase().includes('barito kuala'));
       if (bk) setSelectedDistrict(bk);
     } else if (activeCasePin === 'madura') {
@@ -53,10 +85,17 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
       const mm = districts.find(d => d.kab_kota.toLowerCase().includes('mimika'));
       if (mm) setSelectedDistrict(mm);
     }
-  }, [activeCasePin, districts]);
+  }, [activeCasePin, districts, setSelectedQuadrant]);
 
   const handleSelectQuadrant = (code: string) => {
-    setSelectedQuadrantCode(code);
+    if (code === 'ALL') {
+      setSelectedQuadrant('all');
+    } else {
+      const found = QUADRANTS.find(q => q.code === code);
+      if (found) {
+        setSelectedQuadrant(found.id);
+      }
+    }
     if (activeCasePin !== 'none') {
       setActiveCasePin('none');
     }
@@ -64,14 +103,9 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
 
   const handleSelectDistrict = (d: District) => {
     setSelectedDistrict(d);
-    if (d.vulnerability_quadrant.startsWith('Kuadran I ')) {
-      setSelectedQuadrantCode('Q1');
-    } else if (d.vulnerability_quadrant.startsWith('Kuadran II ')) {
-      setSelectedQuadrantCode('Q2');
-    } else if (d.vulnerability_quadrant.startsWith('Kuadran III ')) {
-      setSelectedQuadrantCode('Q3');
-    } else if (d.vulnerability_quadrant.startsWith('Kuadran IV ')) {
-      setSelectedQuadrantCode('Q4');
+    const found = QUADRANTS.find(q => d.vulnerability_quadrant.startsWith(q.id.split(' ')[0] + ' ' + q.id.split(' ')[1]));
+    if (found) {
+      setSelectedQuadrant(found.id);
     }
   };
 
@@ -100,18 +134,19 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
   }, [districts, selectedQuadrantCode]);
 
   const quadrantStats = useMemo(() => {
-    const q1 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran I ')).length;
-    const q2 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran II ')).length;
-    const q3 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran III ')).length;
-    const q4 = districts.filter(d => d.vulnerability_quadrant.startsWith('Kuadran IV ')).length;
-    const total = districts.length || 514;
+    const base = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
+    const q1 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran I ')).length;
+    const q2 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran II ')).length;
+    const q3 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran III ')).length;
+    const q4 = base.filter(d => d.vulnerability_quadrant.startsWith('Kuadran IV ')).length;
+    const total = base.length || 514;
     return {
       q1: { count: q1, pct: (q1 / total) * 100 },
       q2: { count: q2, pct: (q2 / total) * 100 },
       q3: { count: q3, pct: (q3 / total) * 100 },
       q4: { count: q4, pct: (q4 / total) * 100 },
     };
-  }, [districts]);
+  }, [allDistricts, districts]);
 
   return (
     <motion.div
@@ -202,7 +237,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
           label="Kuadran I: Prioritas Beban Ganda"
           value={`${quadrantStats.q1.count} Daerah`}
           unit={`(${quadrantStats.q1.pct.toFixed(1)}%)`}
-          benchmarkText="Kriteria: P0 ≥ 10.46% & V_struc ≥ 0.272"
+          benchmarkText={`Kriteria: P0 ≥ ${medianP0.toFixed(2)}% & V_struc ≥ ${medianVStruc.toFixed(3)}`}
           contextText="Kemiskinan konsumsi tinggi & defisit fisik parah · Prioritas DAK Fisik & Bansos"
           badge={{
             text: selectedQuadrantCode === 'Q1' ? "Aktif Terpilih" : "Prioritas Utama",
@@ -217,7 +252,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
           label="Kuadran II: Kerentanan Tersembunyi"
           value={`${quadrantStats.q2.count} Daerah`}
           unit={`(${quadrantStats.q2.pct.toFixed(1)}%)`}
-          benchmarkText="Kriteria: P0 < 10.46% & V_struc ≥ 0.272"
+          benchmarkText={`Kriteria: P0 < ${medianP0.toFixed(2)}% & V_struc ≥ ${medianVStruc.toFixed(3)}`}
           contextText="Moneter tampak aman, sanitasi/air rapuh · Intervensi preventif infrastruktur dasar"
           badge={{
             text: selectedQuadrantCode === 'Q2' ? "Aktif Terpilih" : "Rentan Fisik",
@@ -232,7 +267,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
           label="Kuadran III: Kantong Daya Beli"
           value={`${quadrantStats.q3.count} Daerah`}
           unit={`(${quadrantStats.q3.pct.toFixed(1)}%)`}
-          benchmarkText="Kriteria: P0 ≥ 10.46% & V_struc < 0.272"
+          benchmarkText={`Kriteria: P0 ≥ ${medianP0.toFixed(2)}% & V_struc < ${medianVStruc.toFixed(3)}`}
           contextText="Fasilitas dasar baik, daya beli lemah · Stimulus pasar kerja & padat karya"
           badge={{
             text: selectedQuadrantCode === 'Q3' ? "Aktif Terpilih" : "Defisit Moneter",
@@ -247,7 +282,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
           label="Kuadran IV: Wilayah Terbina / Mapan"
           value={`${quadrantStats.q4.count} Daerah`}
           unit={`(${quadrantStats.q4.pct.toFixed(1)}%)`}
-          benchmarkText="Kriteria: P0 < 10.46% & V_struc < 0.272"
+          benchmarkText={`Kriteria: P0 < ${medianP0.toFixed(2)}% & V_struc < ${medianVStruc.toFixed(3)}`}
           contextText="Layanan dasar lengkap & konsumsi stabil · Perluasan kemandirian fiskal PAD"
           badge={{
             text: selectedQuadrantCode === 'Q4' ? "Aktif Terpilih" : "Wilayah Mapan",
@@ -263,7 +298,7 @@ export const PriorityImplications: React.FC<PageProps> = ({ districts, policyMat
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div className="lg:col-span-7">
           <VulnerabilityMatrix2x2
-            districts={districts}
+            districts={allDistricts}
             activeCasePin={activeCasePin}
             activeQuadrantCode={selectedQuadrantCode}
             onSelectDistrict={handleSelectDistrict}

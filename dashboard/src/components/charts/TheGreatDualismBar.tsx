@@ -24,8 +24,9 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
     };
   }, [districts]);
 
-  const p0Ratio = kotaP0 > 0 ? (kabP0 / kotaP0).toFixed(2) : '1.87';
-  const tptRatio = kabTpt > 0 ? (kotaTpt / kabTpt).toFixed(2) : '1.82';
+  const hasBothTypes = countKab > 0 && countKota > 0;
+  const p0Ratio = hasBothTypes && kotaP0 > 0 ? (kabP0 / kotaP0).toFixed(2) : 'N/A';
+  const tptRatio = hasBothTypes && kabTpt > 0 ? (kotaTpt / kabTpt).toFixed(2) : 'N/A';
 
   const option = useMemo(() => {
     return {
@@ -121,7 +122,9 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
             The Great Dualism: Jurang Kemiskinan vs Paradoks Pengangguran
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
-            Kabupaten ~{p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~{tptRatio}x lebih tinggi.
+            {hasBothTypes
+              ? `Kabupaten ~${p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~${tptRatio}x lebih tinggi.`
+              : `Perbandingan tidak tersedia (${countKab} Kabupaten, ${countKota} Kota pada seleksi aktif).`}
           </p>
         </div>
 

@@ -69,6 +69,21 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
 
   const targetRpjmnCount = districts.filter(d => d.poverty_rate_p0 <= 7.0).length;
   const targetRpjmnPct = districts.length > 0 ? (targetRpjmnCount / districts.length) * 100 : 0;
+  const aboveRpjmnCount = districts.length - targetRpjmnCount;
+  const aboveRpjmnPct = districts.length > 0 ? (aboveRpjmnCount / districts.length) * 100 : 0;
+
+  // Dynamic composition badges for leaderboard
+  const highestPapuaCount = displayedHighest.filter(d => d.region_pulau === 'Maluku & Papua').length;
+  const highestPapuaPct = displayedHighest.length > 0 ? (highestPapuaCount / displayedHighest.length) * 100 : 0;
+  const highestBadgeText = highestPapuaPct === 100 
+    ? "100% Papua" 
+    : (highestPapuaPct > 0 
+        ? `${highestPapuaPct.toFixed(0)}% Papua` 
+        : `${displayedHighest[0]?.region_pulau || 'Daerah'} Dominan`);
+
+  const lowestKotaCount = displayedLowest.filter(d => d.tipe_wilayah.toLowerCase() === 'kota').length;
+  const lowestKotaPct = displayedLowest.length > 0 ? (lowestKotaCount / displayedLowest.length) * 100 : 0;
+  const lowestBadgeText = `${lowestKotaPct.toFixed(0)}% Kota Modern`;
 
   return (
     <motion.div 
@@ -284,7 +299,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                         <span>{leaderboardScope === 'top5' ? 'Top 5' : 'Top 10'} Kemiskinan Tertinggi</span>
                       </div>
                       <span className="text-[9.5px] font-bold font-mono bg-red-100/80 text-red-800 px-1 py-0.2 rounded border border-red-200">
-                        100% Papua
+                        {highestBadgeText}
                       </span>
                     </div>
 
@@ -319,7 +334,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                         <span>{leaderboardScope === 'top5' ? 'Top 5' : 'Top 10'} Kemiskinan Terendah</span>
                       </div>
                       <span className="text-[9.5px] font-bold font-mono bg-blue-100/80 text-okabe-blue px-1 py-0.2 rounded border border-blue-200">
-                        70% Kota Modern
+                        {lowestBadgeText}
                       </span>
                     </div>
 
@@ -354,19 +369,23 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                   <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200/80 text-slate-700">
                     <span className="font-bold text-amber-900 block mb-0.5 text-[10.5px]">Anomali Kemiskinan Barat</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
-                      86.9% kantong akut berada di Timur, namun profil deprivasi serupa muncul di pulau terisolir barat seperti Nias Barat (26.4%) dan Mentawai (14.8%).
+                      {isFilterActive 
+                        ? `Pada seleksi wilayah ini terdapat ${acuteCount} daerah berkategori kantong kemiskinan akut (P0 ≥ 20.0%).`
+                        : "86.9% kantong akut berada di Timur, namun profil deprivasi serupa muncul di pulau terisolir barat seperti Nias Barat (26.4%) dan Mentawai (14.8%)."}
                     </p>
                   </div>
 
                   <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-slate-700">
                     <span className="font-bold text-okabe-blue block mb-0.5 text-[10.5px]">Tantangan Target RPJMN 2024</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
-                      391 daerah (76.1%) masih tertinggal di atas sasaran nasional (6.5%–7.0%). Kebijakan seragam tidak efektif untuk jurang disparitas 17.50x lipat.
+                      {aboveRpjmnCount} daerah ({aboveRpjmnPct.toFixed(1)}%) masih tertinggal di atas sasaran nasional (6.5%–7.0%). Kebijakan seragam tidak efektif untuk jurang disparitas {(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x lipat.
                     </p>
                   </div>
 
                   <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200/60 text-slate-500 text-[9.5px]">
-                    <span>Bukti: Intan Jaya (41.66%) vs Kota Sawahlunto (2.38%) = 17.50x Lipat.</span>
+                    <span>
+                      Bukti: {minDistrict && maxDistrict ? `${maxDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${maxDistrict.poverty_rate_p0.toFixed(2)}%) vs ${minDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${minDistrict.poverty_rate_p0.toFixed(2)}%) = ${dynamicDisparityRatio.toFixed(2)}x Lipat.` : `Intan Jaya (41.66%) vs Kota Sawahlunto (2.38%) = 17.50x Lipat.`}
+                    </span>
                   </div>
                 </div>
               )}

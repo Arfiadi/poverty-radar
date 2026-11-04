@@ -18,22 +18,21 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
   const [viewMode, setViewMode] = useState<'small_multiples' | 'heatmap'>('small_multiples');
 
   const baselineDistricts = allDistricts && allDistricts.length > 0 ? allDistricts : districts;
+  const isFiltered = districts.length < baselineDistricts.length;
 
-  // Compute national medians for baseline comparison
-  const getMedian = (key: keyof District): number => {
+  // Compute national means for mathematically unbiased baseline delta comparison (mean vs mean)
+  const getMean = (key: keyof District): number => {
     const vals = baselineDistricts
       .map(d => d[key] as number)
-      .filter(v => typeof v === 'number')
-      .sort((a, b) => a - b);
+      .filter(v => typeof v === 'number');
     if (!vals.length) return 0;
-    const mid = Math.floor(vals.length / 2);
-    return vals.length % 2 !== 0 ? vals[mid] : (vals[mid - 1] + vals[mid]) / 2;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
   };
 
-  const natMedianP0 = getMedian('poverty_rate_p0');
-  const natMedianSan = getMedian('sanitation_access_pct');
-  const natMedianRls = getMedian('avg_school_years');
-  const natMedianExp = getMedian('expenditure_per_capita');
+  const natMeanP0 = getMean('poverty_rate_p0');
+  const natMeanSan = getMean('sanitation_access_pct');
+  const natMeanRls = getMean('avg_school_years');
+  const natMeanExp = getMean('expenditure_per_capita');
 
   return (
     <motion.div
@@ -76,17 +75,30 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
         {CLUSTERS.map((c) => {
           const summary = clusterSummary.find(s => s.cluster_id === c.id);
           const cDistricts = districts.filter(d => d.cluster_id === c.id);
-          const totalRegions = summary?.total_regions ?? c.count;
-          const pctNational = summary?.pct_of_national ?? Number(((c.count / 514) * 100).toFixed(1));
-          const meanP0 = summary?.poverty_rate_p0_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.poverty_rate_p0, 0) / cDistricts.length : 0);
-          const meanRls = summary?.avg_school_years_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0);
-          const meanSan = summary?.sanitation_access_pct_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0);
-          const meanExp = summary?.expenditure_per_capita_mean ?? (cDistricts.length ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0);
+          const hasData = cDistricts.length > 0;
 
-          const deltaP0 = meanP0 - natMedianP0;
-          const deltaSan = meanSan - natMedianSan;
-          const deltaRls = meanRls - natMedianRls;
-          const deltaExp = meanExp - natMedianExp;
+          const totalRegions = isFiltered ? cDistricts.length : (summary?.total_regions ?? c.count);
+          const pctNational = isFiltered 
+            ? (districts.length > 0 ? (cDistricts.length / districts.length) * 100 : 0)
+            : (summary?.pct_of_national ?? Number(((c.count / 514) * 100).toFixed(1)));
+
+          const meanP0 = isFiltered
+            ? (hasData ? cDistricts.reduce((a, b) => a + b.poverty_rate_p0, 0) / cDistricts.length : 0)
+            : (summary?.poverty_rate_p0_mean ?? (hasData ? cDistricts.reduce((a, b) => a + b.poverty_rate_p0, 0) / cDistricts.length : 0));
+          const meanRls = isFiltered
+            ? (hasData ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0)
+            : (summary?.avg_school_years_mean ?? (hasData ? cDistricts.reduce((a, b) => a + b.avg_school_years, 0) / cDistricts.length : 0));
+          const meanSan = isFiltered
+            ? (hasData ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0)
+            : (summary?.sanitation_access_pct_mean ?? (hasData ? cDistricts.reduce((a, b) => a + b.sanitation_access_pct, 0) / cDistricts.length : 0));
+          const meanExp = isFiltered
+            ? (hasData ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0)
+            : (summary?.expenditure_per_capita_mean ?? (hasData ? cDistricts.reduce((a, b) => a + b.expenditure_per_capita, 0) / cDistricts.length : 0));
+
+          const deltaP0 = meanP0 - natMeanP0;
+          const deltaSan = meanSan - natMeanSan;
+          const deltaRls = meanRls - natMeanRls;
+          const deltaExp = meanExp - natMeanExp;
 
           return (
             <div 
@@ -104,44 +116,51 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
                 <h3 className="text-sm font-bold text-ink-primary mt-1.5 leading-snug">{c.name.split(':')[1]?.trim() || c.name}</h3>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
-                <div className="flex justify-between items-baseline gap-1">
-                  <span className="text-slate-500 font-medium">Kemiskinan P0:</span>
-                  <div className="flex items-baseline space-x-1 shrink-0">
-                    <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
-                    <span className={`text-[10px] font-mono font-bold ${deltaP0 > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                      ({deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}% vs Nas)
-                    </span>
+              {!hasData ? (
+                <div className="mt-4 pt-4 border-t border-slate-100 text-center py-4 text-xs text-slate-400">
+                  <p className="font-semibold text-slate-500">Tidak Ada Wilayah Terfilter</p>
+                  <p className="text-[10px] text-slate-400 mt-1">Klaster ini tidak memiliki perwakilan pada seleksi saat ini.</p>
+                </div>
+              ) : (
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
+                  <div className="flex justify-between items-baseline gap-1">
+                    <span className="text-slate-500 font-medium">Kemiskinan P0:</span>
+                    <div className="flex items-baseline space-x-1 shrink-0">
+                      <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
+                      <span className={`text-[10px] font-mono font-bold ${deltaP0 > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
+                        ({deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}% vs Rata-Rata)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-baseline gap-1">
+                    <span className="text-slate-500 font-medium">Akses Sanitasi:</span>
+                    <div className="flex items-baseline space-x-1 shrink-0">
+                      <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
+                      <span className={`text-[10px] font-mono font-bold ${deltaSan >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                        ({deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}% vs Rata-Rata)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-baseline gap-1">
+                    <span className="text-slate-500 font-medium">Rata-Rata RLS:</span>
+                    <div className="flex items-baseline space-x-1 shrink-0">
+                      <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
+                      <span className={`text-[10px] font-mono font-bold ${deltaRls >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                        ({deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)} thn)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-baseline gap-1">
+                    <span className="text-slate-500 font-medium">Pengeluaran:</span>
+                    <div className="flex items-baseline space-x-1 shrink-0">
+                      <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
+                      <span className={`text-[10px] font-mono font-bold ${deltaExp >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                        ({deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt)
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-baseline gap-1">
-                  <span className="text-slate-500 font-medium">Akses Sanitasi:</span>
-                  <div className="flex items-baseline space-x-1 shrink-0">
-                    <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
-                    <span className={`text-[10px] font-mono font-bold ${deltaSan >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                      ({deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}% vs Nas)
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-baseline gap-1">
-                  <span className="text-slate-500 font-medium">Rata-Rata RLS:</span>
-                  <div className="flex items-baseline space-x-1 shrink-0">
-                    <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
-                    <span className={`text-[10px] font-mono font-bold ${deltaRls >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                      ({deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)} thn)
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-baseline gap-1">
-                  <span className="text-slate-500 font-medium">Pengeluaran:</span>
-                  <div className="flex items-baseline space-x-1 shrink-0">
-                    <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
-                    <span className={`text-[10px] font-mono font-bold ${deltaExp >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                      ({deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt)
-                    </span>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           );
         })}

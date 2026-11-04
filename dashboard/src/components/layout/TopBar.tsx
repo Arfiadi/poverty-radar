@@ -44,6 +44,10 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
         e.preventDefault();
         searchInputRef.current?.focus();
       } else if (e.key === 'Escape') {
+        // Guard: Do not reset filters if a modal dialog is currently open
+        if (document.querySelector('[role="dialog"]') || e.defaultPrevented) {
+          return;
+        }
         if (document.activeElement === searchInputRef.current) {
           searchInputRef.current?.blur();
         } else if (isFiltered) {

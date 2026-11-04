@@ -16,7 +16,7 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
     { key: 'expenditure_per_capita', label: 'Pengeluaran' },
     { key: 'life_expectancy', label: 'UHH Hidup' },
     { key: 'log_pdrb', label: 'Log-PDRB' },
-    { key: 'unemployment_rate_tpt', label: 'TPT' },
+    { key: 'unemployment_rate_tpt', label: 'TPT (Inv)' },
   ], []);
 
   const clusterLabels = [
@@ -39,14 +39,20 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
       s[f.key] = { mean, std: Math.sqrt(variance) || 1 };
     });
 
-    const matrix: [number, number, number][] = [];
+    const matrix: [number, number, number | null][] = [];
     for (let c = 0; c < 4; c++) {
       const cDistricts = districts.filter(d => d.cluster_id === c);
       features.forEach((f, fIdx) => {
-        const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
-        const cMean = cVals.length ? cVals.reduce((a, b) => a + b, 0) / cVals.length : s[f.key].mean;
-        const z = (cMean - s[f.key].mean) / s[f.key].std;
-        matrix.push([fIdx, 3 - c, Number(z.toFixed(2))]); // invert Y so Klaster 1 is on top
+        if (cDistricts.length === 0) {
+          matrix.push([fIdx, 3 - c, null]);
+        } else {
+          const cVals = cDistricts.map(d => Number(d[f.key as keyof District]));
+          const cMean = cVals.reduce((a, b) => a + b, 0) / cVals.length;
+          const rawZ = (cMean - s[f.key].mean) / s[f.key].std;
+          // Invert Z-score for TPT: low unemployment is positive (+, blue), high unemployment is deficit (-, vermillion)
+          const z = f.key === 'unemployment_rate_tpt' ? -rawZ : rawZ;
+          matrix.push([fIdx, 3 - c, Number(z.toFixed(2))]); // invert Y so Klaster 1 is on top
+        }
       });
     }
     return matrix;
@@ -64,9 +70,19 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
           const fName = features[params.value[0]].label;
           const cName = clusterLabels[3 - params.value[1]];
           const zVal = params.value[2];
+          const isTpt = features[params.value[0]].key === 'unemployment_rate_tpt';
+          if (zVal === null || zVal === undefined) {
+            return `
+              <div style="font-weight: 700;">${cName}</div>
+              <div style="color: #64748B; font-size: 11px;">Indikator: ${fName}</div>
+              <div style="margin-top: 4px; border-top: 1px solid #F1F5F9; padding-top: 4px; color: #94A3B8;">
+                <em>Tidak ada data pada filter ini</em>
+              </div>
+            `;
+          }
           return `
             <div style="font-weight: 700;">${cName}</div>
-            <div style="color: #64748B; font-size: 11px;">Indikator: ${fName}</div>
+            <div style="color: #64748B; font-size: 11px;">Indikator: ${fName} ${isTpt ? '(Skala Terbalik: Positif = Pengangguran Rendah)' : ''}</div>
             <div style="margin-top: 4px; border-top: 1px solid #F1F5F9; padding-top: 4px;">
               Z-Score vs Acuan Nasional: <strong>${zVal > 0 ? '+' : ''}${zVal} SD</strong>
             </div>
@@ -111,7 +127,7 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
           data: data,
           label: {
             show: true,
-            formatter: (p: any) => `${p.value[2] > 0 ? '+' : ''}${p.value[2]}`,
+            formatter: (p: any) => p.value[2] === null || p.value[2] === undefined ? 'N/A' : `${p.value[2] > 0 ? '+' : ''}${p.value[2]}`,
             color: '#0F172A',
             fontWeight: 'bold',
             fontSize: 11

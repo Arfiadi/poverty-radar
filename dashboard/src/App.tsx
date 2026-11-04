@@ -92,7 +92,13 @@ export const App: React.FC = () => {
         );
         break;
       case 3:
-        pageComponent = <PriorityImplications districts={filteredDistricts} policyMatrix={policyMatrix} />;
+        pageComponent = (
+          <PriorityImplications 
+            districts={filteredDistricts} 
+            allDistricts={districts}
+            policyMatrix={policyMatrix} 
+          />
+        );
         break;
       case 4:
         pageComponent = (
