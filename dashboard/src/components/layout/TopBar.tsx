@@ -69,36 +69,11 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
     ? QUADRANTS.find(q => q.id === selectedQuadrant)
     : null;
 
-  // Sample status tone calculation
-  const getSampleBadgeStyle = () => {
-    if (filteredCount < 30) {
-      return {
-        container: 'bg-rose-50 text-rose-800 border-rose-200/90 font-bold',
-        dot: 'bg-rose-500',
-        note: 'Sampel Terbatas (<30)'
-      };
-    }
-    if (filteredCount < totalDistricts) {
-      return {
-        container: 'bg-amber-50 text-amber-800 border-amber-200/90 font-semibold',
-        dot: 'bg-amber-500',
-        note: 'Sub-sampel'
-      };
-    }
-    return {
-      container: 'bg-emerald-50 text-emerald-800 border-emerald-200/90 font-semibold',
-      dot: 'bg-emerald-500',
-      note: 'Total Nasional'
-    };
-  };
-
-  const sampleStyle = getSampleBadgeStyle();
-
   return (
     <div className="sticky top-0 z-30 flex flex-col shadow-subtle select-none">
       {/* Primary Top Bar Row */}
       <header className="h-[52px] bg-surface/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-5 flex items-center justify-between gap-3">
-        {/* Left: Sidebar Toggle + Current Act Title & Scope Count */}
+        {/* Left: Sidebar Toggle + Current Act Title */}
         <div className="flex items-center space-x-2.5 min-w-0 shrink-0">
           <button
             onClick={toggleSidebar}
@@ -120,15 +95,6 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
           <h1 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight truncate">
             {currentItem.label}
           </h1>
-
-          {/* Sample Size Indicator Badge */}
-          <span 
-            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs shrink-0 border ${sampleStyle.container}`}
-            title={`Cakupan data yang aktif dianalisis: ${filteredCount} dari ${totalDistricts} daerah (${sampleStyle.note})`}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${sampleStyle.dot}`}></span>
-            {filteredCount} / {totalDistricts} Daerah
-          </span>
         </div>
 
         {/* Center: Global Filter Dropdowns */}
