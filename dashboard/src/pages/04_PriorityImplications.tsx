@@ -106,7 +106,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
 
   const handleSelectDistrict = (d: District) => {
     setSelectedDistrict(d);
-    const found = QUADRANTS.find(q => d.vulnerability_quadrant.startsWith(q.id.split(' ')[0] + ' ' + q.id.split(' ')[1]));
+    const found = QUADRANTS.find(q => q.id === d.vulnerability_quadrant || d.vulnerability_quadrant.startsWith(q.id.split('(')[0]));
     if (found) {
       setSelectedQuadrant(found.id);
     }

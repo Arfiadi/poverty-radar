@@ -34,10 +34,10 @@ export const PolicyBriefModal: React.FC<PolicyBriefModalProps> = ({
 
   if (!isOpen || !district) return null;
 
-  const isQ1 = district.vulnerability_quadrant.startsWith('Kuadran I');
-  const isQ2 = district.vulnerability_quadrant.startsWith('Kuadran II');
-  const isQ3 = district.vulnerability_quadrant.startsWith('Kuadran III');
-  const isQ4 = district.vulnerability_quadrant.startsWith('Kuadran IV');
+  const isQ1 = district.vulnerability_quadrant.startsWith('Kuadran I ');
+  const isQ2 = district.vulnerability_quadrant.startsWith('Kuadran II ');
+  const isQ3 = district.vulnerability_quadrant.startsWith('Kuadran III ');
+  const isQ4 = district.vulnerability_quadrant.startsWith('Kuadran IV ');
 
   const getMisallocationAlert = () => {
     if (isQ2) {
