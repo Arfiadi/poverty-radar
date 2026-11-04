@@ -166,7 +166,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           <div>
             <h3 className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
-              <span>Deviasi Relatif 7 Indikator Struktural terhadap Median Nasional (N=514)</span>
+              <span>Perbandingan 7 Indikator Struktural terhadap Titik Tengah Nasional (N=514 Daerah)</span>
             </h3>
             <p className="text-[10.5px] text-slate-500 mt-0.5">
               Klaster 4 mengalami defisit fasilitas dasar paling tajam (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 unggul layanan dasar (&gt;92%) namun menghadapi tantangan pengangguran terbuka formal tertinggi.

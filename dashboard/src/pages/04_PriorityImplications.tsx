@@ -171,10 +171,10 @@ export const PriorityImplications: React.FC<PageProps> = ({
           <button
             onClick={() => setIsPlanningCycleOpen(true)}
             className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition-all"
-            title="Buka panduan resmi 10 langkah translasi dari data analitik ke dokumen RKPD & APBD"
+            title="Buka panduan resmi 10 langkah penerjemahan data analitik ke dokumen perencanaan RKPD &amp; APBD"
           >
             <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Alur Translasi 10 Langkah (SIPD-RI)</span>
+            <span>Panduan Alur SIPD-RI</span>
           </button>
 
           {/* Case-Study Pins Strip */}

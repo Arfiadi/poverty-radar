@@ -64,7 +64,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
       <dl className="flex flex-col justify-between h-full space-y-1 m-0">
         {/* Tier 1: Label + Badge */}
         <div className="flex items-start justify-between gap-1.5">
-          <dt className="text-[10px] sm:text-[10.5px] font-bold tracking-wider uppercase text-slate-600 leading-tight">
+          <dt className="text-xs font-bold tracking-wider uppercase text-slate-600 leading-tight">
             {label}
           </dt>
           {badge && (
@@ -77,7 +77,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
         {/* Tier 2: Big Number + Unit */}
         <dd className="m-0 flex items-baseline space-x-1.5">
           <span
-            className="text-xl sm:text-[22px] font-black tracking-tight tabular-nums font-mono leading-none"
+            className="text-2xl sm:text-[26px] font-black tracking-tight tabular-nums font-mono leading-none"
             style={{ color: accentColor || '#0F172A' }}
           >
             {value}

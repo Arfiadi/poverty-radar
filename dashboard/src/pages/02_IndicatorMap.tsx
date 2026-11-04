@@ -161,7 +161,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
             <span>Polarisasi Spasial 34 Provinsi &amp; Paradoks Ketenagakerjaan</span>
           </h2>
           <p className="text-xs text-slate-600 mt-0.5 font-medium">
-            Peta interaktif membongkar dikotomi kabupaten vs kota dan tekanan kerja subsistensi di wilayah 3T.
+            Menjelajahi sebaran spasial 34 provinsi: disparitas wilayah kabupaten–kota dan karakteristik pasar kerja daerah.
           </p>
         </div>
 

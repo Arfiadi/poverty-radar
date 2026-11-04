@@ -95,11 +95,11 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       {/* Editorial Headline Strip (Compact) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-0.5">
         <div>
-          <h2 className="text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-sdg shrink-0"></span>
             <span>Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat</span>
           </h2>
-          <p className="text-[10.5px] text-slate-500 font-medium leading-tight">
+          <p className="text-xs text-slate-500 font-medium leading-tight">
             Ketimpangan wilayah yang tajam antara kawasan barat dan timur Indonesia
           </p>
         </div>
@@ -303,7 +303,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                       </span>
                     </div>
 
-                    <div className={`space-y-0.5 ${leaderboardScope === 'top10' ? 'max-h-[85px] overflow-y-auto pr-0.5' : ''}`}>
+                    <div className={`space-y-0.5 ${leaderboardScope === 'top10' ? 'max-h-[175px] overflow-y-auto pr-0.5' : ''}`}>
                       {displayedHighest.map((d, i) => {
                         const barWidth = Math.min(100, Math.max(10, (d.poverty_rate_p0 / 45) * 100));
                         return (
@@ -338,7 +338,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                       </span>
                     </div>
 
-                    <div className={`space-y-0.5 ${leaderboardScope === 'top10' ? 'max-h-[85px] overflow-y-auto pr-0.5' : ''}`}>
+                    <div className={`space-y-0.5 ${leaderboardScope === 'top10' ? 'max-h-[175px] overflow-y-auto pr-0.5' : ''}`}>
                       {displayedLowest.map((d, i) => {
                         const barWidth = Math.min(100, Math.max(10, (d.poverty_rate_p0 / 45) * 100));
                         return (

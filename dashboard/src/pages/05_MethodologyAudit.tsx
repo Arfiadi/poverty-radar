@@ -33,10 +33,10 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         <div>
           <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
-            <span>Integritas Metodologi &amp; Sains Data: Nol Kebocoran Target</span>
+            <span>Transparansi Metodologi &amp; Validasi Pemodelan Ilmiah</span>
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            PovertyRadar secara ketat menolak klasifikasi terawasi dan mendekonstruksi label bawaan untuk menjamin transparansi ilmiah.
+            Dokumentasi pembuktian penolakan label biner buatan, pencegahan target leakage, dan validitas model statistik.
           </p>
         </div>
       </div>
