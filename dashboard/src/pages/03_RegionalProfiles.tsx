@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { District, ClusterSummary } from '../types';
 import { SmallMultiplesZScore } from '../components/charts/SmallMultiplesZScore';
 import { ClusterHeatmap } from '../components/charts/ClusterHeatmap';
-import { NarrativeCallout } from '../components/common/NarrativeCallout';
 import { CLUSTERS } from '../constants/benchmarks';
 import { PARADOXES } from '../constants/paradoxes';
 import { formatPercent, formatYears, formatCurrencyMillion } from '../utils/formatters';
@@ -43,9 +42,8 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
     >
       {/* Editorial Headline Strip */}
       <div className="pb-0.5">
-        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-okabe-teal shrink-0"></span>
-          <span>Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi</span>
+        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+          Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi
         </h2>
         <p className="text-xs text-slate-500 mt-0.5">
           Mengelompokkan 514 daerah berdasarkan kesamaan 7 indikator struktural.
@@ -164,12 +162,11 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
           <div>
-            <h3 className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
-              <span>Perbandingan 7 Indikator Struktural terhadap Titik Tengah Nasional (N=514 Daerah)</span>
+            <h3 className="text-xs font-bold text-slate-800 tracking-tight">
+              Perbandingan 7 Indikator Struktural terhadap Titik Tengah Nasional (N=514 Daerah)
             </h3>
             <p className="text-[10.5px] text-slate-500 mt-0.5">
-              Klaster 4 mengalami defisit fasilitas dasar paling tajam (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 unggul layanan dasar (&gt;92%) namun menghadapi tantangan pengangguran terbuka formal tertinggi.
+              Klaster 4 mencatatkan deprivasi ganda sarana dasar (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 memiliki cakupan layanan dasar di atas 92% beriringan dengan tantangan pengangguran terbuka perkotaan.
             </p>
           </div>
 
@@ -182,7 +179,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              Small Multiples Bar Charts (Z-Score)
+              Kisi Diagram Batang (Z-Score)
             </button>
             <button
               onClick={() => setViewMode('heatmap')}

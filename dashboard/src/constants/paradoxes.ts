@@ -17,7 +17,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "The Working Poor",
     page: "02_IndicatorMap",
     actionTitle: "The Working Poor: Tingginya Partisipasi Kerja Berbanding Lurus dengan Kemiskinan Daerah",
-    insightCallout: "Tingkat pengangguran rendah di wilayah 3T mencerminkan tingginya keterlibatan kerja bertahan hidup (r = +0.462), bukan tingginya kemakmuran ekonomi, sementara pengangguran kota didominasi oleh pencari kerja terdidik.",
+    insightCallout: "Tingkat pengangguran rendah di wilayah 3T beriringan dengan tingginya tekanan kerja subsistensi bertahan hidup (r = +0.462), sementara pengangguran kota didominasi oleh pencari kerja terdidik.",
     evidence: "TPT Nduga 0.00% (TPAK 97.93%, P0 37.18%) vs Kota Depok TPT 9.76% (P0 2.58%).",
     caseDistricts: ["Nduga", "Lanny Jaya", "Puncak", "Kota Depok"]
   },
@@ -43,7 +43,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "Sanitasi & Air Dasar vs PDRB",
     page: "03_RegionalProfiles",
     actionTitle: "Faktor Layanan Dasar: Akses Sanitasi & Air Beriringan Kuat dengan Variasi Kemiskinan",
-    insightCallout: "Akses sanitasi layak (r = -0.562) dan air bersih (r = -0.374) menunjukkan korelasi negatif yang lebih kuat terhadap tingkat kemiskinan dibandingkan skala PDRB daerah (r = -0.240).",
+    insightCallout: "Akses sanitasi layak (r = -0.562) dan air bersih (r = -0.374) menunjukkan korelasi negatif yang lebih konsisten terhadap tingkat kemiskinan dibandingkan skala PDRB daerah (r = -0.240).",
     evidence: "Korelasi Pearson terhadap P0: Sanitasi r = -0.562, Air r = -0.374, Log PDRB r = -0.527."
   },
   maduraDisparity: {
@@ -51,7 +51,7 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "Disparitas Madura",
     page: "04_PriorityImplications",
     actionTitle: "Disparitas Madura: Jembatan Fisik Suramadu (5.4 km) Belum Mengikis Jurang Kemiskinan Regional",
-    insightCallout: "Hanya terpisah jembatan 5.4 km Suramadu, Kota Surabaya tergolong mapan (P0 5.2%), sementara Kabupaten Sampang mencatatkan kemiskinan 23.8%. Ketersediaan infrastruktur penghubung fisik terbukti belum serta-merta mengikis jurang modal manusia dan sanitasi dasar.",
+    insightCallout: "Hanya terpisah jembatan 5.4 km Suramadu, Kota Surabaya tergolong mapan (P0 5.2%), sementara Kabupaten Sampang mencatatkan kemiskinan 23.8%. Ketersediaan infrastruktur penghubung fisik beriringan dengan bertahannya jurang modal manusia dan sanitasi dasar.",
     evidence: "Surabaya (P0 5.23%, RLS 10.51) vs Sampang (P0 23.76%, RLS 4.86), Bangkalan (P0 21.57%), Pamekasan (P0 15.30%), Sumenep (P0 20.51%).",
     caseDistricts: ["Sampang", "Bangkalan", "Pamekasan", "Sumenep", "Kota Surabaya"]
   },
@@ -78,15 +78,15 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     name: "Dekonstruksi Label Kaggle",
     page: "05_MethodologyAudit",
     actionTitle: "Dekonstruksi Label Kaggle: Pembuktian Ilmiah 98.8% Akurasi Rekonstruksi Aturan Biner",
-    insightCallout: "Label biner bawaan Kaggle dibongkar sebagai aturan heuristik sederhana dengan kecocokan 98.83% (508 daerah), membuktikan label tersebut bukan ground truth BPS dan ditolak 100% demi mencegah kebocoran target.",
+    insightCallout: "Label biner bawaan Kaggle dibongkar sebagai aturan heuristik deterministik sederhana dengan kecocokan 98.83% (508 daerah), menunjukkan label tersebut merupakan artefak komputasi dan wajib dieliminasi demi mencegah kebocoran target.",
     evidence: "508 dari 514 daerah cocok sempurna (98.83% akurasi rekonstruksi)."
   },
   olsStandardizedBeta: {
     id: "paradox-9",
     name: "Koefisien Terstandarisasi OLS",
     page: "05_MethodologyAudit",
-    actionTitle: "Ekonometrika OLS: Pengeluaran Riil (β = -0.318) & Sanitasi (β = -0.190) Memiliki Pengaruh Terkuat",
-    insightCallout: "Estimasi model multivariat OLS menunjukkan kapasitas daya beli riil (β = -0.318) dan sarana sanitasi (β = -0.190) memiliki bobot pengaruh negatif terkuat terhadap variasi kemiskinan, sedangkan partisipasi kerja (TPAK) beriringan positif (β = +0.179).",
+    actionTitle: "Ekonometrika OLS: Pengeluaran Riil (β = -0.318) & Sanitasi (β = -0.190) Memiliki Asosiasi Terkuat",
+    insightCallout: "Estimasi model multivariat OLS menunjukkan kapasitas daya beli riil (β = -0.318) dan sarana sanitasi (β = -0.190) memiliki bobot asosiasi negatif terkuat terhadap variasi kemiskinan, sedangkan partisipasi kerja (TPAK) beriringan positif (β = +0.179).",
     evidence: "Koefisien baku terstandarisasi: Pengeluaran (-0.318) > Sanitasi (-0.190) = Log PDRB (-0.190) > TPAK (+0.179) > RLS (-0.113) > TPT (+0.100)."
   },
   baritoKuala: {

@@ -49,7 +49,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
     <article
       onClick={onClick}
       title={fullTooltip}
-      className={`bg-surface rounded-xl p-2.5 sm:py-2 sm:px-3 shadow-2xs transition-all flex flex-col justify-between ${
+      className={`bg-surface rounded-xl p-3 sm:py-2.5 sm:px-3.5 shadow-2xs transition-all flex flex-col justify-between ${
         onClick ? 'cursor-pointer hover:shadow-subtle hover:-translate-y-0.5' : 'hover:shadow-subtle'
       } ${
         isActive 
@@ -61,7 +61,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
       aria-label={`${label}: ${value} ${unit || ''}`}
     >
-      <dl className="flex flex-col justify-between h-full space-y-1 m-0">
+      <dl className="flex flex-col justify-between h-full space-y-1.5 m-0">
         {/* Tier 1: Label + Badge */}
         <div className="flex items-start justify-between gap-1.5">
           <dt className="text-xs font-bold tracking-wider uppercase text-slate-600 leading-tight">
@@ -90,7 +90,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
         </dd>
 
         {/* Tier 3: Structured Benchmark & Context (2-line, zero awkward truncation) */}
-        <dd className="m-0 pt-1 border-t border-slate-100 text-[10.5px]">
+        <dd className="m-0 pt-1.5 border-t border-slate-100 text-[10.5px]">
           <div className="flex flex-col space-y-0.5 leading-snug">
             <span 
               className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 truncate"

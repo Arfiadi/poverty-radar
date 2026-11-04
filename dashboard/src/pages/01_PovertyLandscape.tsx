@@ -95,9 +95,8 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       {/* Editorial Headline Strip (Compact) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-0.5">
         <div>
-          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-sdg shrink-0"></span>
-            <span>Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat</span>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+            Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat
           </h2>
           <p className="text-xs text-slate-500 font-medium leading-tight">
             Rata-rata nasional menyembunyikan kenyataan disparitas: terbentang dari 2,38% di Sawahlunto hingga 41,66% di Intan Jaya
@@ -192,8 +191,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
       {/* Row 1.5: Bilah Progres Sasaran RPJMN 2024 (Compact Executive Bar) */}
       <div className="bg-surface rounded-xl border border-slate-200/90 py-1.5 px-3 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
-          <div className="flex items-center space-x-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span>
+          <div className="flex items-center">
             <span className="text-[10.5px] font-bold text-slate-800 tracking-tight">
               {isFilterActive
                 ? `Capaian Sasaran RPJMN 2024 — Wilayah Terpilih (${districts.length} Daerah)`
@@ -376,9 +374,9 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
                   </div>
 
                   <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-slate-700">
-                    <span className="font-bold text-okabe-blue block mb-0.5 text-[10.5px]">Mengapa Kebijakan Seragam Tidak Efektif?</span>
+                    <span className="font-bold text-okabe-blue block mb-0.5 text-[10.5px]">Mengapa Kebijakan Seragam Kurang Efektif?</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
-                      Sebanyak {aboveRpjmnCount} daerah ({aboveRpjmnPct.toFixed(1)}%) masih tertinggal di atas sasaran nasional (6,5%–7,0%). Bantuan sosial tunai yang diseragamkan terbukti tidak mampu mengurai jurang disparitas {(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x lipat tanpa perbaikan fasilitas dasar.
+                      Sebanyak {aboveRpjmnCount} daerah ({aboveRpjmnPct.toFixed(1)}%) masih berada di atas sasaran nasional (6,5%–7,0%). Kebijakan bantuan sosial tunai yang diseragamkan belum beriringan dengan penurunan jurang disparitas {(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x lipat jika tidak disertai pemenuhan sarana dasar.
                     </p>
                   </div>
 

@@ -184,7 +184,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
             {hasEnoughSample && rValue !== null
-              ? `Semakin tinggi kemiskinan suatu daerah, semakin tinggi tingkat partisipasi kerja warganya (r = ${rValue >= 0 ? '+' : ''}${rValue.toFixed(3)}).`
+              ? `Asosiasi linier (r = ${rValue >= 0 ? '+' : ''}${rValue.toFixed(3)}): Partisipasi kerja beriringan positif dengan kemiskinan akibat dominasi sektor subsistensi.`
               : `Korelasi tidak tersedia (sampel daerah tidak mencukupi, n < 3).`}
           </p>
         </div>
