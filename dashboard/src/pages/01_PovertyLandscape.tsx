@@ -4,6 +4,7 @@ import { Database, Sparkles, TrendingUp, TrendingDown, Layers } from 'lucide-rea
 import { District, NationalBenchmarks } from '../types';
 import { KpiCard } from '../components/common/KpiCard';
 import { ArchipelagoStripPlot } from '../components/charts/ArchipelagoStripPlot';
+import { DistributionHistogram } from '../components/charts/DistributionHistogram';
 import { DistrictsDataModal } from '../components/modals/DistrictsDataModal';
 import { PARADOXES } from '../constants/paradoxes';
 import { formatPercent } from '../utils/formatters';
@@ -16,6 +17,9 @@ interface PageProps {
 export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks }) => {
   // Modal state for exploring full 514 districts
   const [isDataModalOpen, setIsDataModalOpen] = useState<boolean>(false);
+
+  // View state for primary visualization (Strip Plot vs Histogram)
+  const [chartView, setChartView] = useState<'stripplot' | 'histogram'>('stripplot');
 
   // Tab state for executive side panel
   const [activeTab, setActiveTab] = useState<'extremes' | 'insights'>('extremes');
@@ -223,11 +227,48 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         </div>
       </div>
 
+      {/* Visual Switcher Bar: Titik Kepulauan vs Histogram Frekuensi */}
+      <div className="flex items-center justify-between pb-0.5">
+        <div className="flex items-center space-x-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
+          <span className="text-xs font-bold text-slate-800 tracking-tight">
+            Visualisasi Sebaran Kemiskinan Moneter (P0):
+          </span>
+        </div>
+
+        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
+          <button
+            onClick={() => setChartView('stripplot')}
+            className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+              chartView === 'stripplot'
+                ? 'bg-white text-okabe-blue shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Titik Kepulauan (Strip Plot)
+          </button>
+          <button
+            onClick={() => setChartView('histogram')}
+            className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
+              chartView === 'histogram'
+                ? 'bg-white text-okabe-blue shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Distribusi Frekuensi (Histogram)
+          </button>
+        </div>
+      </div>
+
       {/* Row 2: Dual Hero Side-by-Side Canvas (Grid 12 Kolom, Rasio 8:4, True Zero-Scroll) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 sm:gap-2 items-stretch">
         {/* Kolom Kiri: Single Hero Visual (8 Kolom / ~67% Lebar) */}
         <div className="lg:col-span-8 flex flex-col">
-          <ArchipelagoStripPlot districts={districts} />
+          {chartView === 'stripplot' ? (
+            <ArchipelagoStripPlot districts={districts} />
+          ) : (
+            <DistributionHistogram districts={districts} />
+          )}
         </div>
 
         {/* Kolom Kanan: Executive Side Panel Dual-Tab (4 Kolom / ~33% Lebar) */}
