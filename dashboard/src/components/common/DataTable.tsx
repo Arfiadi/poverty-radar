@@ -13,6 +13,8 @@ interface DataTableProps {
   defaultSortAsc?: boolean;
   onSelectDistrict?: (d: District) => void;
   selectedDistrictKey?: string;
+  onActionClick?: (d: District) => void;
+  actionLabel?: string;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -23,6 +25,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   defaultSortAsc = false,
   onSelectDistrict,
   selectedDistrictKey,
+  onActionClick,
+  actionLabel = "Draf Brief →",
 }) => {
   const [sortField, setSortField] = useState<keyof District>(defaultSortField);
   const [sortAsc, setSortAsc] = useState<boolean>(defaultSortAsc);
@@ -245,13 +249,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                   {renderSortIcon('labor_participation_tpak')}
                 </div>
               </th>
+              {onActionClick && (
+                <th className="py-2 px-2 text-center whitespace-nowrap w-24">
+                  Aksi
+                </th>
+              )}
             </tr>
           </thead>
 
           <tbody className="divide-y divide-slate-100 text-slate-700 font-normal">
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={12} className="text-center py-8 text-slate-400">
+                <td colSpan={onActionClick ? 13 : 12} className="text-center py-8 text-slate-400">
                   Tidak ada daerah yang memenuhi kriteria pencarian / filter.
                 </td>
               </tr>
@@ -291,6 +300,21 @@ export const DataTable: React.FC<DataTableProps> = ({
                     <td className="py-1.5 px-2 text-right tabular-nums text-slate-600">{formatCurrencyMillion(d.expenditure_per_capita)}</td>
                     <td className="py-1.5 px-2 text-right tabular-nums text-slate-600">{formatPercent(d.unemployment_rate_tpt)}</td>
                     <td className="py-1.5 px-2 text-right tabular-nums text-slate-600">{formatPercent(d.labor_participation_tpak)}</td>
+                    {onActionClick && (
+                      <td className="py-1.5 px-2 text-center whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onActionClick(d);
+                          }}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-okabe-blue border border-blue-200 hover:bg-okabe-blue hover:text-white transition-colors shadow-2xs"
+                          title={`Buka ${actionLabel} untuk ${d.kab_kota}`}
+                        >
+                          <span>{actionLabel}</span>
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })

@@ -207,13 +207,24 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         </div>
       </div>
 
+      {/* Section Header: Contextual Indicator Title */}
+      <div className="flex items-center justify-between pt-0.5">
+        <div className="flex items-center space-x-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
+          <span className="text-xs font-bold text-slate-800 tracking-tight">
+            Ringkasan Spasial Indikator: <span className="text-okabe-blue">{activeOption.label}</span>
+          </span>
+          <span className="text-[10px] text-slate-400 font-mono">({activeOption.unit || 'Skala Relatif'})</span>
+        </div>
+      </div>
+
       {/* Row 1: Active Indicator KPI Cards Strip (4 Clean 3-Tier Executive Cards) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard
-          label="Median Wilayah"
+          label="Median Indikator"
           value={formatIndicatorVal(medianVal)}
-          benchmarkText="Titik Tengah Distribusi Spasial"
-          contextText={`Cakupan: ${validDistricts.length} daerah · Rentang: ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
+          benchmarkText="Titik tengah sebaran spasial"
+          contextText={`Cakupan ${validDistricts.length} daerah · Rentang ${formatIndicatorVal(minVal)} s.d. ${formatIndicatorVal(maxVal)}`}
           badge={{ text: `${validDistricts.length} Daerah`, type: "default" }}
         />
 
@@ -244,17 +255,17 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         />
 
         <KpiCard
-          label="Disparitas Antardaerah"
+          label="Disparitas Wilayah"
           value={disparityRatio !== null ? `${disparityRatio.toFixed(2)}x` : formatIndicatorVal(disparitySpan)}
           unit={disparityRatio !== null ? "Lipat" : ""}
           benchmarkText={
             minRegion && maxRegion
-              ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${formatIndicatorVal(minVal)}) vs ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${formatIndicatorVal(maxVal)})`
+              ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} vs ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')}`
               : `Rentang Spasial: ${formatIndicatorVal(disparitySpan)}`
           }
-          contextText={`Rentang absolut: ${formatIndicatorVal(disparitySpan)} · Kesenjangan nilai terendah vs tertinggi`}
+          contextText={`Rentang absolut: ${formatIndicatorVal(disparitySpan)}`}
           badge={{
-            text: disparityRatio && disparityRatio >= 3.0 ? "Disparitas Tinggi" : "Kesenjangan Spasial",
+            text: disparityRatio && disparityRatio >= 3.0 ? "Disparitas Tinggi" : "Kesenjangan",
             type: disparityRatio && disparityRatio >= 3.0 ? "warning" : "default",
           }}
           accentColor={disparityRatio && disparityRatio >= 3.0 ? "#E69F00" : "#0072B2"}
@@ -283,35 +294,6 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         <TheGreatDualismBar districts={districts} />
         <WorkingPoorScatter districts={districts} />
       </div>
-
-      {/* Narrative Callout for Dualism & Working Poor */}
-      {(() => {
-        const kabs = districts.filter(d => d.tipe_wilayah === 'Kabupaten');
-        const kotas = districts.filter(d => d.tipe_wilayah === 'Kota');
-        const mean = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-        const kabMeanP0 = mean(kabs.map(d => d.poverty_rate_p0));
-        const kotaMeanP0 = mean(kotas.map(d => d.poverty_rate_p0));
-        const kabMeanTpt = mean(kabs.map(d => d.unemployment_rate_tpt));
-        const kotaMeanTpt = mean(kotas.map(d => d.unemployment_rate_tpt));
-        const p0Ratio = (kabs.length > 0 && kotas.length > 0 && kotaMeanP0 > 0) ? (kabMeanP0 / kotaMeanP0).toFixed(2) : null;
-        const tptRatio = (kabs.length > 0 && kotas.length > 0 && kabMeanTpt > 0) ? (kotaMeanTpt / kabMeanTpt).toFixed(2) : null;
-
-        return (
-          <NarrativeCallout
-            title="WAWASAN DUALISME SPASIAL & KERJA SUBSISTENSI"
-            insight={
-              p0Ratio 
-                ? `Kabupaten menanggung kemiskinan ~${p0Ratio}x lebih tinggi dari kota, sementara pengangguran rendah di wilayah miskin mencerminkan kerja subsistensi bertahan hidup (The Working Poor), bukan tingginya kemakmuran ekonomi.`
-                : "Pada seleksi wilayah aktif, pengangguran rendah di kantong perdesaan mencerminkan kerja subsistensi bertahan hidup (The Working Poor), bukan tingginya kemakmuran ekonomi."
-            }
-            evidence={
-              p0Ratio && tptRatio
-                ? `Rasio P0 Kab:Kota = ${p0Ratio}x; Rasio TPT Kota:Kab = ${tptRatio}x; Nduga TPAK 97.93% dengan TPT 0.00%.`
-                : "Nduga TPAK 97.93% dengan TPT 0.00%; asosiasi statistik mengindikasikan tekanan bertahan hidup, bukan hubungan sebab-akibat."
-            }
-          />
-        );
-      })()}
     </motion.div>
   );
 };

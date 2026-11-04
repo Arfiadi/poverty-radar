@@ -120,7 +120,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
               : 'bg-surface text-slate-600 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          Tab 4: Prinsip Visualisasi &amp; Nol Target Leakage
+          Tab 4: Validasi Klastering &amp; Formulasi V_struc
         </button>
       </div>
 
@@ -211,23 +211,110 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         </div>
       )}
 
-      {/* Tab 4: Design Principles & Unsupervised Integrity */}
+      {/* Tab 4: Model Validation & Structural Vulnerability Formulation */}
       {activeTab === 'principles' && (
-        <div className="bg-surface rounded-xl border border-slate-200/80 p-6 shadow-subtle space-y-5 text-xs">
-          <div>
-            <h3 className="text-sm font-bold text-ink-primary">
-              Standar Desain Visual &amp; Filosofi Unsupervised Learning
-            </h3>
-            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
-              Dokumentasi resmi mengenai pilihan arsitektur visual dan batasan metodologis yang diterapkan pada sistem PovertyRadar SDGs.
-            </p>
+        <div className="space-y-4">
+          {/* Top Row: Clustering Diagnostics & V_struc Mathematical Formulation */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Box 1: K-Means Clustering Validation Metrics */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3.5 text-xs">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-okabe-blue"></span>
+                  <h3 className="text-sm font-bold text-ink-primary">
+                    Validasi Diagnostik Model Klastering (k = 4)
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-100 text-okabe-blue border border-blue-200">
+                  Unsupervised K-Means
+                </span>
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                Pemilihan <strong>k = 4 klaster</strong> didasarkan pada optimasi multikriteria dari 20+ eksperimen pemodelan:
+              </p>
+              
+              <div className="grid grid-cols-3 gap-2.5 text-center">
+                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Koefisien Siluet</span>
+                  <div className="text-base font-extrabold text-okabe-blue mt-0.5">0.2028</div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">Struktur Riil Manifold</span>
+                </div>
+                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Davies-Bouldin</span>
+                  <div className="text-base font-extrabold text-amber-700 mt-0.5">1.4522</div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">Rasio Separasi Klaster</span>
+                </div>
+                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Adjusted Rand (ARI)</span>
+                  <div className="text-base font-extrabold text-emerald-700 mt-0.5">0.9803</div>
+                  <span className="text-[10px] text-slate-500 block mt-0.5">Stabilitas Multi-Seed</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5 text-slate-600">
+                <div className="font-semibold text-slate-800 flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Protokol Fitur Klastering &amp; Penskalaan:</span>
+                </div>
+                <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-600 pl-1">
+                  <li><strong>7 Fitur Input:</strong> Sanitasi, Air Minum, RLS, UHH, TPAK, TPT, dan log1p(PDRB).</li>
+                  <li><strong>Penskalaan Robust:</strong> Menggunakan <code>RobustScaler</code> (Median &amp; IQR) untuk meredam pencilan 3T tanpa membuang baris data.</li>
+                  <li><strong>Anti-Multikolinearitas:</strong> IPM komposit ($r &gt; 0.86$) dan kemiskinan moneter $P_0$ tidak disertakan dalam kalkulasi jarak Euclidean.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Box 2: Structural Vulnerability Index (V_struc) Formulation */}
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3.5 text-xs">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <h3 className="text-sm font-bold text-ink-primary">
+                    Formulasi Indeks Kerentanan Struktural (V_struc)
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                  Ambang Batas: 0.2720
+                </span>
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                $V_{`\\text{struc}`}$ mengukur intensitas defisit sarana dasar &amp; modal manusia secara objektif, bebas dari ketergantungan metrik moneter:
+              </p>
+
+              <div className="p-3 bg-slate-900 text-slate-100 font-mono text-[11px] rounded-lg overflow-x-auto shadow-inner space-y-1">
+                <div className="text-amber-400 font-semibold">
+                  V_struc = 0.25 × (D̃_sanitasi + D̃_air + D̃_RLS + D̃_UHH)
+                </div>
+                <div className="text-[10px] text-slate-400 font-sans mt-1">
+                  Di mana masing-masing defisit dinormalisasi Min-Max ke rentang [0, 1] terhadap 514 daerah:
+                </div>
+                <div className="text-[10px] text-slate-300">
+                  • D̃_sanitasi = MinMax(100% - Akses Sanitasi Layak) [Bobot 25%]<br />
+                  • D̃_air = MinMax(100% - Akses Air Minum Layak) [Bobot 25%]<br />
+                  • D̃_RLS = MinMax(max(RLS) - Rata-rata Lama Sekolah) [Bobot 25%]<br />
+                  • D̃_UHH = MinMax(max(UHH) - Usia Harapan Hidup) [Bobot 25%]
+                </div>
+              </div>
+
+              <div className="bg-amber-50/80 p-3 rounded-lg border border-amber-200 text-amber-950 space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-amber-900">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                  <span>Kriteria Ambang Skrining Matriks 2x2:</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-amber-900">
+                  • <strong>V_struc ≥ 0.2720 (Median Nasional):</strong> Kerentanan struktural tinggi (Kuadran I &amp; II). Memerlukan intervensi modal fisik DAK &amp; sarana dasar.<br />
+                  • <strong>V_struc &lt; 0.2720:</strong> Kerentanan struktural rendah (Kuadran III &amp; IV). Fasilitas dasar memadai, intervensi difokuskan pada stimulus daya beli &amp; padat karya.
+                </p>
+              </div>
+            </div>
           </div>
 
+          {/* Bottom Row: Design Principles & Unsupervised Integrity */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5 text-xs">
               <div className="flex items-center space-x-2 text-ink-primary font-bold">
                 <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                <span>Mengapa Radar / Spider Chart Dilarang</span>
+                <span className="text-sm">Mengapa Radar / Spider Chart Dilarang</span>
               </div>
               <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
                 <li>
@@ -242,10 +329,10 @@ export const MethodologyAudit: React.FC<PageProps> = ({
               </ul>
             </div>
 
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-2.5 text-xs">
               <div className="flex items-center space-x-2 text-ink-primary font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Filosofi Zero Target Leakage &amp; SDG 1</span>
+                <span className="text-sm">Filosofi Zero Target Leakage &amp; SDG 1</span>
               </div>
               <ul className="list-disc list-inside space-y-1.5 text-slate-600 leading-relaxed">
                 <li>

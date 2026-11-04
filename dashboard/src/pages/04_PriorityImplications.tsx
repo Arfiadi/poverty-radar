@@ -15,8 +15,6 @@ import {
 import { District, PolicyRecommendation } from '../types';
 import { VulnerabilityMatrix2x2 } from '../components/charts/VulnerabilityMatrix2x2';
 import { DataTable } from '../components/common/DataTable';
-import { NarrativeCallout } from '../components/common/NarrativeCallout';
-import { KpiCard } from '../components/common/KpiCard';
 import { PolicyBriefModal } from '../components/modals/PolicyBriefModal';
 import { PlanningCycleModal } from '../components/modals/PlanningCycleModal';
 import { useFilterStore } from '../store/useFilterStore';
@@ -231,67 +229,39 @@ export const PriorityImplications: React.FC<PageProps> = ({
         </div>
       </div>
 
-      {/* Row 1: 4 Interactive Quadrant KPI Cards Strip (Click-to-Filter) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        <KpiCard
-          label="Kuadran I: Prioritas Beban Ganda"
-          value={`${quadrantStats.q1.count} Daerah`}
-          unit={`(${quadrantStats.q1.pct.toFixed(1)}%)`}
-          benchmarkText={`Kriteria: P0 ≥ ${medianP0.toFixed(2)}% & V_struc ≥ ${medianVStruc.toFixed(3)}`}
-          contextText="Kemiskinan konsumsi tinggi & defisit fisik parah · Prioritas DAK Fisik & Bansos"
-          badge={{
-            text: selectedQuadrantCode === 'Q1' ? "Aktif Terpilih" : "Prioritas Utama",
-            type: selectedQuadrantCode === 'Q1' ? "filter" : "critical",
-          }}
-          accentColor="#D55E00"
-          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q1' ? 'ALL' : 'Q1')}
-          isActive={selectedQuadrantCode === 'Q1'}
-        />
-
-        <KpiCard
-          label="Kuadran II: Kerentanan Tersembunyi"
-          value={`${quadrantStats.q2.count} Daerah`}
-          unit={`(${quadrantStats.q2.pct.toFixed(1)}%)`}
-          benchmarkText={`Kriteria: P0 < ${medianP0.toFixed(2)}% & V_struc ≥ ${medianVStruc.toFixed(3)}`}
-          contextText="Moneter tampak aman, sanitasi/air rapuh · Intervensi preventif infrastruktur dasar"
-          badge={{
-            text: selectedQuadrantCode === 'Q2' ? "Aktif Terpilih" : "Rentan Fisik",
-            type: selectedQuadrantCode === 'Q2' ? "filter" : "warning",
-          }}
-          accentColor="#E69F00"
-          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q2' ? 'ALL' : 'Q2')}
-          isActive={selectedQuadrantCode === 'Q2'}
-        />
-
-        <KpiCard
-          label="Kuadran III: Kantong Daya Beli"
-          value={`${quadrantStats.q3.count} Daerah`}
-          unit={`(${quadrantStats.q3.pct.toFixed(1)}%)`}
-          benchmarkText={`Kriteria: P0 ≥ ${medianP0.toFixed(2)}% & V_struc < ${medianVStruc.toFixed(3)}`}
-          contextText="Fasilitas dasar baik, daya beli lemah · Stimulus pasar kerja & padat karya"
-          badge={{
-            text: selectedQuadrantCode === 'Q3' ? "Aktif Terpilih" : "Defisit Moneter",
-            type: selectedQuadrantCode === 'Q3' ? "filter" : "default",
-          }}
-          accentColor="#CC79A7"
-          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q3' ? 'ALL' : 'Q3')}
-          isActive={selectedQuadrantCode === 'Q3'}
-        />
-
-        <KpiCard
-          label="Kuadran IV: Wilayah Terbina / Mapan"
-          value={`${quadrantStats.q4.count} Daerah`}
-          unit={`(${quadrantStats.q4.pct.toFixed(1)}%)`}
-          benchmarkText={`Kriteria: P0 < ${medianP0.toFixed(2)}% & V_struc < ${medianVStruc.toFixed(3)}`}
-          contextText="Layanan dasar lengkap & konsumsi stabil · Perluasan kemandirian fiskal PAD"
-          badge={{
-            text: selectedQuadrantCode === 'Q4' ? "Aktif Terpilih" : "Wilayah Mapan",
-            type: selectedQuadrantCode === 'Q4' ? "filter" : "positive",
-          }}
-          accentColor="#0072B2"
-          onClick={() => handleSelectQuadrant(selectedQuadrantCode === 'Q4' ? 'ALL' : 'Q4')}
-          isActive={selectedQuadrantCode === 'Q4'}
-        />
+      {/* Contextual Action Subtitle & Benchmark Reference Strip */}
+      <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2 shadow-2xs">
+        <div>
+          <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-okabe-blue shrink-0"></span>
+            <span>
+              {activeCasePin === 'resource_curse'
+                ? "Anomali Kutukan Sumber Daya: PDRB Tinggi, P0 & Kerentanan Ekstrem"
+                : activeCasePin === 'madura'
+                ? "Anomali Disparitas Madura: Kantong Kemiskinan Terisolasi di Jawa Timur"
+                : activeCasePin === 'barito_kuala'
+                ? "Kerentanan Tersembunyi Barito Kuala: Moneter Aman, Sanitasi Kritis"
+                : "Matriks Penapisan Beban Ganda 2x2: Memetakan 514 Daerah ke 4 Kuadran Intervensi"}
+            </span>
+          </h3>
+          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+            Garis ambang batas kuadran berbasis median nasional: <strong>Median P0 ({medianP0.toFixed(2)}%)</strong> &amp; <strong>Median V_struc ({medianVStruc.toFixed(3)})</strong>.
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 text-[11px]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 font-semibold" title="Kuadran I: Prioritas Beban Ganda">
+            Q1: {quadrantStats.q1.count} ({quadrantStats.q1.pct.toFixed(1)}%)
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold" title="Kuadran II: Kerentanan Tersembunyi">
+            Q2: {quadrantStats.q2.count} ({quadrantStats.q2.pct.toFixed(1)}%)
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded bg-pink-50 text-pink-800 border border-pink-200 font-semibold" title="Kuadran III: Kantong Daya Beli">
+            Q3: {quadrantStats.q3.count} ({quadrantStats.q3.pct.toFixed(1)}%)
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold" title="Kuadran IV: Wilayah Terbina">
+            Q4: {quadrantStats.q4.count} ({quadrantStats.q4.pct.toFixed(1)}%)
+          </span>
+        </div>
       </div>
 
       {/* Grid: 2x2 Scatterplot (7-Col) & Policy Recommendation Panel (5-Col) */}
@@ -309,31 +279,36 @@ export const PriorityImplications: React.FC<PageProps> = ({
         <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
           <div className="bg-surface rounded-xl border border-slate-200/80 p-5 shadow-subtle h-full flex flex-col justify-between">
             <div>
-              {/* Quadrant Selector Tabs */}
-              <div className="flex items-center space-x-1 pb-3 border-b border-slate-100">
+              {/* Quadrant Selector Tabs with Counts & Pct */}
+              <div className="grid grid-cols-5 gap-1 pb-3 border-b border-slate-100">
                 <button
                   onClick={() => handleSelectQuadrant('ALL')}
-                  className={`py-1.5 px-2.5 rounded-lg text-xs font-bold text-center transition-all ${
+                  className={`py-1.5 px-1 rounded-lg text-[11px] font-bold text-center transition-all ${
                     selectedQuadrantCode === 'ALL'
                       ? 'bg-slate-900 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   Semua
+                  <span className="block text-[10px] font-normal opacity-75">514</span>
                 </button>
-                {QUADRANTS.map(q => (
-                  <button
-                    key={q.code}
-                    onClick={() => handleSelectQuadrant(q.code)}
-                    className={`flex-1 py-1.5 px-1.5 rounded-lg text-xs font-bold text-center transition-all ${
-                      selectedQuadrantCode === q.code
-                        ? 'bg-slate-900 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {q.code} <span className="text-xs opacity-75">({q.count})</span>
-                  </button>
-                ))}
+                {QUADRANTS.map(q => {
+                  const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
+                  return (
+                    <button
+                      key={q.code}
+                      onClick={() => handleSelectQuadrant(q.code)}
+                      className={`py-1.5 px-1 rounded-lg text-[11px] font-bold text-center transition-all ${
+                        selectedQuadrantCode === q.code
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {q.code}
+                      <span className="block text-[10px] font-normal opacity-75">{stats.count} ({stats.pct.toFixed(0)}%)</span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Contextual Policy Misallocation Warning Alert for Active Quadrant */}
@@ -536,38 +511,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
         </div>
       </div>
 
-      {/* Narrative Callout for Active Pin or General Action */}
-      <NarrativeCallout
-        title={
-          activeCasePin === 'resource_curse' 
-            ? "ANOMALI KUTUKAN SUMBER DAYA" 
-            : (activeCasePin === 'madura' 
-                ? "ANOMALI DISPARITAS MADURA" 
-                : (activeCasePin === 'barito_kuala'
-                    ? "KERENTANAN TERSEMBUNYI BARITO KUALA"
-                    : "PENAPISAN BEBAN GANDA KUADRAN I"))
-        }
-        insight={
-          activeCasePin === 'resource_curse'
-            ? PARADOXES.resourceCurse.insightCallout
-            : (activeCasePin === 'madura' 
-                ? PARADOXES.maduraDisparity.insightCallout 
-                : (activeCasePin === 'barito_kuala'
-                    ? PARADOXES.baritoKuala.insightCallout
-                    : "Matriks 2x2 mendiferensiasikan intervensi: wilayah beban ganda (Kuadran I) wajib memadukan bansos tunai dan belanja modal fisik, sedangkan daerah defisit moneter murni cukup perluasan kerja formal dan subsidi."))
-        }
-        evidence={
-          activeCasePin === 'resource_curse'
-            ? PARADOXES.resourceCurse.evidence
-            : (activeCasePin === 'madura' 
-                ? PARADOXES.maduraDisparity.evidence 
-                : (activeCasePin === 'barito_kuala'
-                    ? PARADOXES.baritoKuala.evidence
-                    : "N_Kuadran_I = 162 daerah, Kuadran II = 95 daerah, Kuadran III = 95 daerah, Kuadran IV = 162 daerah."))
-        }
-      />
-
-      {/* Filtered Screening Table with Row Selection */}
+      {/* Filtered Screening Table with Row Selection & Direct Policy Brief Action */}
       <DataTable
         districts={displayedDistricts}
         title={
@@ -575,11 +519,16 @@ export const PriorityImplications: React.FC<PageProps> = ({
             ? "Daftar Skrining Wilayah Penapisan Kebijakan (Semua Daerah)"
             : `Daftar Skrining Wilayah Penapisan Kebijakan (${selectedQuadrantCode} · ${displayedDistricts.length} Daerah)`
         }
-        subtitle="Data tersaring yang siap diekspor ke format CSV. Klik salah satu baris daerah untuk meninjau Policy Brief."
+        subtitle="Daftar wilayah siap tindak lanjut. Klik nama daerah untuk memilih, atau klik tombol Draf Brief untuk membuka templat advokasi Bappeda & DPRD."
         defaultSortField="vulnerability_score"
         defaultSortAsc={false}
         onSelectDistrict={handleSelectDistrict}
         selectedDistrictKey={selectedDistrict ? `${selectedDistrict.provinsi}-${selectedDistrict.kab_kota}` : undefined}
+        onActionClick={(d) => {
+          setSelectedDistrict(d);
+          setIsPolicyBriefOpen(true);
+        }}
+        actionLabel="Draf Brief →"
       />
 
       {/* Policy Brief Modal Dialog */}

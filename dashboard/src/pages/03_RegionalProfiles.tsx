@@ -104,40 +104,52 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
                   <p className="text-[10px] text-slate-400 mt-1">Klaster ini tidak memiliki perwakilan pada seleksi saat ini.</p>
                 </div>
               ) : (
-                <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs">
-                  <div className="flex justify-between items-baseline gap-1">
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs">
+                  <div className="flex justify-between items-center gap-1">
                     <span className="text-slate-500 font-medium">Kemiskinan P0:</span>
-                    <div className="flex items-baseline space-x-1 shrink-0">
+                    <div className="flex items-center space-x-1.5 shrink-0">
                       <strong className="text-sm font-bold tabular-nums text-ink-primary">{formatPercent(meanP0)}</strong>
-                      <span className={`text-[10px] font-mono font-bold ${deltaP0 > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                        ({deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}% vs Rata-Rata)
+                      <span 
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaP0 > 0 ? 'bg-red-50 text-red-700 border-red-200/80' : 'bg-emerald-50 text-emerald-800 border-emerald-200/80'}`}
+                        title={`Deviasi ${deltaP0 >= 0 ? '+' : ''}${deltaP0.toFixed(1)}% vs Rata-Rata Nasional (${formatPercent(natMeanP0)})`}
+                      >
+                        {deltaP0 >= 0 ? '+' : ''}{deltaP0.toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-baseline gap-1">
+                  <div className="flex justify-between items-center gap-1">
                     <span className="text-slate-500 font-medium">Akses Sanitasi:</span>
-                    <div className="flex items-baseline space-x-1 shrink-0">
+                    <div className="flex items-center space-x-1.5 shrink-0">
                       <span className="tabular-nums font-semibold text-slate-700">{formatPercent(meanSan)}</span>
-                      <span className={`text-[10px] font-mono font-bold ${deltaSan >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                        ({deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}% vs Rata-Rata)
+                      <span 
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaSan >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
+                        title={`Deviasi ${deltaSan >= 0 ? '+' : ''}${deltaSan.toFixed(1)}% vs Rata-Rata Nasional (${formatPercent(natMeanSan)})`}
+                      >
+                        {deltaSan >= 0 ? '+' : ''}{deltaSan.toFixed(1)}%
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-baseline gap-1">
+                  <div className="flex justify-between items-center gap-1">
                     <span className="text-slate-500 font-medium">Rata-Rata RLS:</span>
-                    <div className="flex items-baseline space-x-1 shrink-0">
+                    <div className="flex items-center space-x-1.5 shrink-0">
                       <span className="tabular-nums font-semibold text-slate-700">{formatYears(meanRls)}</span>
-                      <span className={`text-[10px] font-mono font-bold ${deltaRls >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                        ({deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)} thn)
+                      <span 
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaRls >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
+                        title={`Deviasi ${deltaRls >= 0 ? '+' : ''}${deltaRls.toFixed(1)} thn vs Rata-Rata Nasional (${formatYears(natMeanRls)})`}
+                      >
+                        {deltaRls >= 0 ? '+' : ''}{deltaRls.toFixed(1)}th
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-baseline gap-1">
+                  <div className="flex justify-between items-center gap-1">
                     <span className="text-slate-500 font-medium">Pengeluaran:</span>
-                    <div className="flex items-baseline space-x-1 shrink-0">
+                    <div className="flex items-center space-x-1.5 shrink-0">
                       <span className="tabular-nums font-semibold text-slate-700">{formatCurrencyMillion(meanExp)}</span>
-                      <span className={`text-[10px] font-mono font-bold ${deltaExp >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                        ({deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt)
+                      <span 
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${deltaExp >= 0 ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-red-50 text-red-700 border-red-200/80'}`}
+                        title={`Deviasi ${deltaExp >= 0 ? '+' : ''}Rp${(deltaExp / 1000).toFixed(1)}jt vs Rata-Rata Nasional`}
+                      >
+                        {deltaExp >= 0 ? '+' : ''}Rp{(deltaExp / 1000).toFixed(1)}jt
                       </span>
                     </div>
                   </div>
@@ -150,27 +162,39 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
 
       {/* Visual Profiling View Switcher & Chart */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setViewMode('small_multiples')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              viewMode === 'small_multiples'
-                ? 'bg-okabe-blue text-white shadow-2xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            Small Multiples Bar Charts (Z-Score)
-          </button>
-          <button
-            onClick={() => setViewMode('heatmap')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              viewMode === 'heatmap'
-                ? 'bg-okabe-blue text-white shadow-2xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            Matriks Heatmap (28 Sel)
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h3 className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
+              <span>Deviasi Relatif 7 Indikator Struktural terhadap Median Nasional (N=514)</span>
+            </h3>
+            <p className="text-[10.5px] text-slate-500 mt-0.5">
+              Klaster 4 lumpuh akibat defisit fasilitas dasar (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 unggul layanan dasar (&gt;92%) namun menghadapi tantangan pengangguran terbuka formal tertinggi.
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-2 shrink-0">
+            <button
+              onClick={() => setViewMode('small_multiples')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                viewMode === 'small_multiples'
+                  ? 'bg-okabe-blue text-white shadow-2xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Small Multiples Bar Charts (Z-Score)
+            </button>
+            <button
+              onClick={() => setViewMode('heatmap')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                viewMode === 'heatmap'
+                  ? 'bg-okabe-blue text-white shadow-2xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Matriks Heatmap (28 Sel)
+            </button>
+          </div>
         </div>
 
         {viewMode === 'small_multiples' ? (
@@ -179,13 +203,6 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
           <ClusterHeatmap districts={districts} allDistricts={allDistricts} />
         )}
       </div>
-
-      {/* Narrative Callout: Differentiated Root Causes */}
-      <NarrativeCallout
-        title="DIFERENSIASI AKAR MASALAH ANTAR-KLASTER"
-        insight="Profil empat klaster membuktikan akar kemiskinan bervariasi: Klaster 4 lumpuh akibat defisit sanitasi dan isolasi fisik, sedangkan Klaster 3 terhambat rendahnya produktivitas agraris dan modal manusia."
-        evidence="Klaster 4 (Sanitasi 31.2%, RLS 5.26 thn, P0 29.5%) vs Klaster 3 (Sanitasi 72.3%, RLS 8.13 thn, P0 13.7%) vs Klaster 1 (P0 6.6%, Sanitasi 92.4%)."
-      />
     </motion.div>
   );
 };
