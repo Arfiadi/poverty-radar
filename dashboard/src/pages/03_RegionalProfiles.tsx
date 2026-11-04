@@ -41,33 +41,15 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
       transition={{ duration: 0.2 }}
       className="space-y-4"
     >
-      {/* Editorial Headline & Model Diagnostics Strip */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2 pb-0.5">
-        <div>
-          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-okabe-teal shrink-0"></span>
-            <span>Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi</span>
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Model K-Means memetakan konfigurasi defisit fasilitas dasar (sanitasi, air, RLS) bebas target leakage.
-          </p>
-        </div>
-
-        {/* Model Diagnostics Pill Badges */}
-        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs shrink-0">
-          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 font-bold text-xs">
-            k = 4 Klaster
-          </span>
-          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 text-xs">
-            Siluet: <strong>0.2028</strong>
-          </span>
-          <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 text-xs">
-            DBI: <strong>1.4522</strong>
-          </span>
-          <span className="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-md border border-emerald-200 font-bold text-xs">
-            ARI: 0.9803
-          </span>
-        </div>
+      {/* Editorial Headline Strip */}
+      <div className="pb-0.5">
+        <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-okabe-teal shrink-0"></span>
+          <span>Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi</span>
+        </h2>
+        <p className="text-xs text-slate-500 mt-0.5">
+          Model K-Means memetakan konfigurasi defisit fasilitas dasar (sanitasi, air, RLS) bebas target leakage.
+        </p>
       </div>
 
       {/* 4 Cluster Persona Cards */}
