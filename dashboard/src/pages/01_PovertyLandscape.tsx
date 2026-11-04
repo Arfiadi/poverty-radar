@@ -100,7 +100,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             <span>Ketimpangan Ekstrem: Rasio Kemiskinan Antardaerah Mencapai {nationalDisparityRatio.toFixed(1).replace('.', ',')} Kali Lipat</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium leading-tight">
-            Menyingkap jurang kemiskinan 514 kabupaten/kota yang tertutupi ilusi angka rata-rata nasional
+            Rata-rata nasional menyembunyikan kenyataan disparitas: terbentang dari 2,38% di Sawahlunto hingga 41,66% di Intan Jaya
           </p>
         </div>
       </div>
@@ -112,13 +112,13 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           value={formatPercent(isFilterActive ? dynamicMedianP0 : nationalMedianP0)}
           benchmarkText={
             isFilterActive
-              ? `Baseline RI: ${formatPercent(nationalMedianP0)}`
-              : "Titik tengah sebaran 514 kabupaten/kota"
+              ? `Baseline Nasional: ${formatPercent(nationalMedianP0)}`
+              : "Titik tengah resmi 514 kabupaten/kota"
           }
           contextText={
             isFilterActive && minDistrict && maxDistrict
-              ? `Rentang: ${minDistrict.poverty_rate_p0.toFixed(1)}% s.d. ${maxDistrict.poverty_rate_p0.toFixed(1)}%`
-              : "Rentang: 2.38% (Sawahlunto) – 41.66% (Intan Jaya)"
+              ? `Rentang wilayah: ${minDistrict.poverty_rate_p0.toFixed(2)}% s.d. ${maxDistrict.poverty_rate_p0.toFixed(2)}%`
+              : "Rentang nasional: 2,38% s.d. 41,66%"
           }
           badge={{
             text: isFilterActive ? `${districts.length} Daerah Terpilih` : "Agregat Nasional",
@@ -133,12 +133,12 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           benchmarkText={
             isFilterActive && minDistrict && maxDistrict
               ? `${minDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} vs ${maxDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')}`
-              : "Sawahlunto (2.38%) vs Intan Jaya (41.66%)"
+              : "Kota Sawahlunto (2,38%) vs Kab. Intan Jaya (41,66%)"
           }
           contextText={
             isFilterActive
               ? `Disparitas nasional: ${nationalDisparityRatio.toFixed(2)}x lipat`
-              : "Target rasio pemerataan ideal: 1.00x lipat"
+              : "Target rasio pemerataan ideal: 1,00x lipat"
           }
           badge={{
             text: isFilterActive 
@@ -163,15 +163,15 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
           unit={isFilterActive ? `(${acutePct.toFixed(1)}%)` : "di Kawasan Timur"}
           benchmarkText={
             isFilterActive
-              ? `Nasional: ${totalAcute} daerah kritis (P0 ≥ 20%)`
-              : `${easternAcuteCount} dari ${totalAcute} daerah kritis nasional (P0 ≥ 20%)`
+              ? `Nasional: ${totalAcute} daerah berkemiskinan kritis (P0 ≥ 20%)`
+              : `53 dari 61 daerah kritis nasional (P0 ≥ 20%)`
           }
           contextText={
             isFilterActive
               ? (acuteCount > 0 
                   ? `${acuteCount} daerah berangka P0 ≥ 20%`
                   : "Nol daerah terpilih P0 ≥ 20%")
-              : "Terkonsentrasi di Maluku, Papua, & NTT (8 di Barat)"
+              : "Menumpuk di Maluku, Papua & NTT (hanya 8 di Barat)"
           }
           badge={{
             text: isFilterActive
@@ -197,7 +197,7 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
             <span className="text-[10.5px] font-bold text-slate-800 tracking-tight">
               {isFilterActive
                 ? `Capaian Sasaran RPJMN 2024 — Wilayah Terpilih (${districts.length} Daerah)`
-                : "Capaian Sasaran RPJMN 2024 (Sasaran Nasional: 6.5% – 7.0%)"}
+                : "Target Sasaran RPJMN 2024 (Batas Toleransi Nasional: 6,5% – 7,0%)"}
             </span>
           </div>
           <div className="flex items-center space-x-2 text-[10.5px]">
@@ -367,24 +367,25 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
               {activeTab === 'insights' && (
                 <div className="space-y-1.5 text-[10.5px]">
                   <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200/80 text-slate-700">
-                    <span className="font-bold text-amber-900 block mb-0.5 text-[10.5px]">Anomali Kemiskinan Barat</span>
+                    <span className="font-bold text-amber-900 block mb-0.5 text-[10.5px]">Konsentrasi Timur &amp; Kantong Terpencil Barat</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
                       {isFilterActive 
                         ? `Pada seleksi wilayah ini terdapat ${acuteCount} daerah berkategori kemiskinan kritis (P0 ≥ 20.0%).`
-                        : "86.9% kemiskinan kritis (P0 ≥ 20%) berada di Timur, namun profil deprivasi serupa muncul di pulau terisolir barat seperti Nias Barat (26.4%) dan Mentawai (14.8%)."}
+                        : "Sebanyak 86,9% daerah kritis (P0 ≥ 20%) bertumpuk di Kawasan Timur. Namun daerah kepulauan terpencil di barat seperti Nias Barat (26,4%) dan Mentawai (14,8%) menghadapi defisit konektivitas yang serupa."}
                     </p>
                   </div>
 
                   <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-slate-700">
-                    <span className="font-bold text-okabe-blue block mb-0.5 text-[10.5px]">Tantangan Target RPJMN 2024</span>
+                    <span className="font-bold text-okabe-blue block mb-0.5 text-[10.5px]">Mengapa Kebijakan Seragam Tidak Efektif?</span>
                     <p className="leading-snug text-slate-600 text-[10px]">
-                      {aboveRpjmnCount} daerah ({aboveRpjmnPct.toFixed(1)}%) masih tertinggal di atas sasaran nasional (6.5%–7.0%). Kebijakan seragam tidak efektif untuk jurang disparitas {(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x lipat.
+                      Sebanyak {aboveRpjmnCount} daerah ({aboveRpjmnPct.toFixed(1)}%) masih tertinggal di atas sasaran nasional (6,5%–7,0%). Bantuan sosial tunai yang diseragamkan terbukti tidak mampu mengurai jurang disparitas {(isFilterActive ? dynamicDisparityRatio : nationalDisparityRatio).toFixed(2)}x lipat tanpa perbaikan fasilitas dasar.
                     </p>
                   </div>
 
                   <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200/60 text-slate-500 text-[9.5px]">
+                    <span className="font-medium text-slate-700">Fakta Kunci Disparitas: </span>
                     <span>
-                      Bukti: {minDistrict && maxDistrict ? `${maxDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${maxDistrict.poverty_rate_p0.toFixed(2)}%) vs ${minDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${minDistrict.poverty_rate_p0.toFixed(2)}%) = ${dynamicDisparityRatio.toFixed(2)}x Lipat.` : `Intan Jaya (41.66%) vs Kota Sawahlunto (2.38%) = 17.50x Lipat.`}
+                      {minDistrict && maxDistrict ? `${maxDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${maxDistrict.poverty_rate_p0.toFixed(2)}%) berjarak ${dynamicDisparityRatio.toFixed(2)}x lipat dari ${minDistrict.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} (${minDistrict.poverty_rate_p0.toFixed(2)}%).` : `Kab. Intan Jaya (41,66%) berjarak 17,50x lipat dari Kota Sawahlunto (2,38%).`}
                     </span>
                   </div>
                 </div>

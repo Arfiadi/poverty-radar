@@ -212,12 +212,14 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
             formatter: (params: any) => {
               const d: District = params.data?.rawDistrict;
               if (!d) return '';
+              const cleanName = d.kab_kota.replace(/^(Kabupaten|Kota)\s+/i, '');
+              const fullName = `${d.tipe_wilayah.toLowerCase() === 'kabupaten' ? 'Kab.' : 'Kota'} ${cleanName}`;
               return `
-                <div style="font-weight: 700;">${d.tipe_wilayah} ${d.kab_kota}</div>
-                <div style="color: #64748B; font-size: 11px;">${d.provinsi} · ${d.region_pulau}</div>
+                <div style="font-weight: 700; color: #0F172A;">${fullName}</div>
+                <div style="color: #64748B; font-size: 11px;">${d.provinsi} · Gugus ${d.region_pulau}</div>
                 <div style="border-top: 1px solid #F1F5F9; margin-top: 4px; padding-top: 4px; font-size: 11px;">
                   <div>Kemiskinan P0: <strong style="color: #D55E00;">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
-                  <div>Klaster: <strong style="color: ${CLUSTER_COLORS[d.cluster_id]};">${d.cluster_name.split(':')[0]}</strong></div>
+                  <div style="margin-top: 2px;">Tipologi: <strong style="color: ${CLUSTER_COLORS[d.cluster_id]};">${d.cluster_name.split(':')[0]}</strong></div>
                 </div>
               `;
             }
@@ -316,12 +318,12 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           <h3 className="text-xs font-bold text-slate-900 tracking-tight">
             {districts.length < 514 
               ? `Polarisasi Kepulauan: Sebaran ${districts.length} Daerah Terfilter` 
-              : "Polarisasi Kepulauan: 86.9% Kemiskinan Kritis (P0 ≥ 20%) di Timur"}
+              : "Polarisasi Kepulauan: 86,9% Kemiskinan Kritis (P0 ≥ 20%) Berada di Timur"}
           </h3>
           <p className="text-[10px] text-slate-500 mt-0.5">
             {districts.length < 514
-              ? `Sebaran ${districts.length} daerah vs median nasional (10.46%) & sasaran RPJMN (7.0%)`
-              : "Sebaran 514 daerah di 6 gugus pulau vs median nasional (10.46%) & sasaran RPJMN (7.0%)"}
+              ? `Sebaran ${districts.length} daerah vs titik tengah nasional (10,46%) & sasaran RPJMN (7,0%)`
+              : "Sebaran 514 daerah di 6 gugus pulau vs titik tengah nasional (10,46%) & sasaran RPJMN (7,0%)"}
           </p>
         </div>
 
