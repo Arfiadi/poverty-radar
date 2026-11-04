@@ -53,7 +53,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
             Arketipe Profil Daerah: 4 Tipologi Klaster Sosio-Ekonomi
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Pengelompokan tanpa pengawasan (K-Means, k=4) terhadap 7 indikator struktural dasar (P0 dievaluasi eksternal).
+            Pengelompokan tanpa pengawasan (K-Means, k=4) terhadap 7 indikator struktural dasar.
           </p>
         </div>
 
