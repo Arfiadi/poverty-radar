@@ -202,16 +202,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
         axisLabel: {
           color: '#1E293B',
           fontWeight: 700,
-          fontSize: 10,
-          formatter: (isl: string) => {
-            const stat = statsMap.get(isl);
-            if (!stat) return isl;
-            return `{title|${isl}}\n{sub|(N=${stat.count} · Med: ${stat.median.toFixed(1)}%)}`;
-          },
-          rich: {
-            title: { fontWeight: 'bold', color: '#1E293B', fontSize: 10.5, lineHeight: 14 },
-            sub: { color: '#64748B', fontSize: 9, lineHeight: 12 }
-          }
+          fontSize: 10.5,
+          formatter: (isl: string) => isl,
         }
       },
       series: [
