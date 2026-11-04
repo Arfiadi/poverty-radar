@@ -114,16 +114,16 @@ export const TheGreatDualismBar: React.FC<DualismProps> = ({ districts }) => {
   };
 
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3">
+    <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
       {/* Chart Header & Action Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
         <div>
           <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            The Great Dualism: Jurang Kemiskinan vs Paradoks Pengangguran
+            Dualisme Wilayah: Kemiskinan Moneter vs Pengangguran
           </h3>
-          <p className="text-xs text-slate-600 mt-0.5">
+          <p className="text-xs text-slate-500 mt-1">
             {hasBothTypes
-              ? `Kabupaten ~${p0Ratio}x lebih miskin dari Kota, sebaliknya pengangguran terbuka Kota ~${tptRatio}x lebih tinggi.`
+              ? `Kemiskinan Kabupaten ~${p0Ratio}x lebih tinggi dari Kota, sebaliknya pengangguran terbuka Kota ~${tptRatio}x Kabupaten.`
               : `Perbandingan tidak tersedia (${countKab} Kabupaten, ${countKota} Kota pada seleksi aktif).`}
           </p>
         </div>

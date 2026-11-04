@@ -204,24 +204,14 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
 
   return (
     <div 
-      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3"
+      className="w-full relative space-y-2"
       role="region"
       aria-label="Small Multiples Z-Score Profil Standarisasi 4 Klaster"
     >
-      {/* Chart Header & Action Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-        <div>
-          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            Profil Struktural 4 Klaster: Konfigurasi Defisit Fasilitas Dasar (Anchor Z = 0)
-          </h3>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Deviasi terstandarisasi 7 indikator terhadap acuan populasi nasional (bebas kebocoran target P0)
-          </p>
-        </div>
-
+      <div className="flex justify-end">
         <button
           onClick={handleExportImage}
-          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
           title="Unduh visualisasi grafik (PNG)"
           aria-label="Unduh grafik PNG"
         >
@@ -239,7 +229,7 @@ export const SmallMultiplesZScore: React.FC<SmallMultiplesProps> = ({ districts,
         <ReactECharts 
           ref={echartsRef}
           option={option} 
-          style={{ height: '560px', width: '100%' }} 
+          style={{ height: '540px', width: '100%' }} 
           opts={{ renderer: 'canvas' }} 
         />
 

@@ -157,21 +157,12 @@ export const ClusterHeatmap: React.FC<HeatmapProps> = ({ districts, allDistricts
   };
 
   return (
-    <div className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3">
-      {/* Chart Header & Action Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-        <div>
-          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            Matriks Karakteristik Klaster (28 Sel Z-Score Divergen)
-          </h3>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Biru (#0072B2) = Unggul di atas rata-rata nasional · Vermillion (#D55E00) = Defisit kritis di bawah rata-rata (Palet Okabe-Ito)
-          </p>
-        </div>
-
+    <div className="w-full relative space-y-2" role="region" aria-label="Matriks Heatmap 28 Sel Deviasi Z-score">
+      <div className="flex items-center justify-between text-xs text-slate-500">
+        <span>Legenda: <strong className="text-okabe-blue">Biru</strong> = Unggul di atas rata-rata (Z &gt; 0) · <strong className="text-okabe-vermillion">Oranye</strong> = Defisit fasilitas dasar (Z &lt; 0)</span>
         <button
           onClick={handleExportImage}
-          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors self-end sm:self-auto shrink-0"
+          className="inline-flex items-center space-x-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
           title="Unduh visualisasi grafik (PNG)"
           aria-label="Unduh grafik PNG"
         >

@@ -172,7 +172,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
 
   return (
     <div 
-      className="bg-surface rounded-xl border border-slate-200/90 p-4 shadow-subtle space-y-3"
+      className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3"
       role="region"
       aria-label="Scatter Plot Korelasi Positif Paradoks Ketenagakerjaan The Working Poor"
     >
@@ -180,11 +180,11 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
         <div>
           <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            The Working Poor: Tekanan Kerja Subsistensi vs Kemiskinan
+            The Working Poor: Subsistensi vs Kemiskinan
           </h3>
-          <p className="text-xs text-slate-600 mt-0.5">
+          <p className="text-xs text-slate-500 mt-1">
             {hasEnoughSample && rValue !== null
-              ? `Asosiasi linier (r = ${rValue >= 0 ? '+' : ''}${rValue.toFixed(3)}): Partisipasi kerja beriringan positif dengan kemiskinan akibat dominasi sektor subsistensi.`
+              ? `Partisipasi kerja (TPAK) beriringan positif dengan kemiskinan akibat dominasi sektor subsistensi agraris.`
               : `Korelasi tidak tersedia (sampel daerah tidak mencukupi, n < 3).`}
           </p>
         </div>
@@ -209,7 +209,7 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
         <ReactECharts 
           ref={echartsRef}
           option={option} 
-          style={{ height: '340px', width: '100%' }} 
+          style={{ height: '310px', width: '100%' }} 
           opts={{ renderer: 'canvas' }} 
         />
       </div>

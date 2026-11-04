@@ -234,17 +234,14 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
           <div className="bg-white rounded-xl border border-slate-200/80 p-3 shadow-2xs grid grid-cols-2 md:grid-cols-4 gap-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
             {/* Metric 1: Median Nasional */}
             <div className="pt-1 md:pt-0 md:px-2 first:px-0">
-              <span className="text-[11px] font-medium text-slate-500 block">Median 514 Daerah</span>
+              <span className="text-[11px] font-medium text-slate-500 block">Median Nasional</span>
               <div className="flex items-baseline space-x-1.5 mt-0.5">
                 <span className="text-base font-extrabold text-slate-900 tabular-nums">
                   {formatIndicatorVal(medianVal)}
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">
-                  ({validDistricts.length} Kab/Kota)
-                </span>
               </div>
               <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate">
-                Titik tengah sebaran indikator
+                Titik tengah 514 daerah
               </span>
             </div>
 
@@ -288,13 +285,13 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
 
             {/* Metric 4: Rasio Disparitas */}
             <div className="pt-2 md:pt-0 md:px-3 last:pr-0">
-              <span className="text-[11px] font-medium text-slate-500 block">Disparitas Tertinggi vs Terendah</span>
+              <span className="text-[11px] font-medium text-slate-500 block">Rasio Disparitas Wilayah</span>
               <div className="flex items-baseline space-x-1.5 mt-0.5">
                 <span className="text-base font-extrabold text-okabe-blue tabular-nums">
                   {disparityRatio !== null ? `${disparityRatio.toFixed(1)}x` : formatIndicatorVal(disparitySpan)}
                 </span>
                 <span className="text-xs text-slate-500">
-                  {disparityRatio !== null ? "Kesenjangan" : "Rentang"}
+                  {disparityRatio !== null ? "Lipat" : "Rentang"}
                 </span>
               </div>
               <span className="text-[10.5px] text-slate-500 block mt-0.5 truncate" title={minRegion && maxRegion ? `${minRegion.kab_kota} vs ${maxRegion.kab_kota}` : ''}>
@@ -304,7 +301,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
           </div>
 
           {/* Primary Hero Visualization (Choropleth Map or Ranking Bar) */}
-          <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
+          <div>
             {viewMode === 'map' ? (
               <IndonesiaChoroplethMap
                 districts={districts}
@@ -324,43 +321,9 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
         </div>
       ) : (
         /* Mode B: Dua Paradoks Sosio-Ekonomi */
-        <div className="space-y-3">
-          {/* Inline Analytical Callouts Banner */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="bg-blue-50/70 border border-blue-200/70 rounded-xl p-3 flex items-start space-x-2.5">
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200 shrink-0 mt-0.5 font-mono">
-                [Fakta Terverifikasi]
-              </span>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900">Dualisme Wilayah: Kesenjangan Fasilitas Fisik Dasar</h4>
-                <p className="text-[11.5px] text-slate-600 mt-0.5 leading-relaxed">
-                  Kemiskinan di kabupaten (11.5%) hampir dua kali lipat kota (6.9%). Kesenjangan terbesar berada pada akses sanitasi layak (82.4% di kota vs 64.1% di kabupaten).
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-amber-50/70 border border-amber-200/70 rounded-xl p-3 flex items-start space-x-2.5">
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 shrink-0 mt-0.5 font-mono">
-                [Asosiasi Empiris]
-              </span>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900">Paradoks The Working Poor: Subsistensi vs Pengangguran</h4>
-                <p className="text-[11.5px] text-slate-600 mt-0.5 leading-relaxed">
-                  TPAK berkorelasi positif dengan kemiskinan (r = +0.462) karena keharusan bertahan hidup di sektor agraris/informal, sedangkan TPT justru berkorelasi negatif (r = -0.401).
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Symmetrical 2-Column Paradox Visualizations Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
-              <TheGreatDualismBar districts={districts} />
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200/80 shadow-subtle p-3 sm:p-4">
-              <WorkingPoorScatter districts={districts} />
-            </div>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <TheGreatDualismBar districts={districts} />
+          <WorkingPoorScatter districts={districts} />
         </div>
       )}
     </motion.div>

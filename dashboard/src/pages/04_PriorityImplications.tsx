@@ -326,40 +326,35 @@ export const PriorityImplications: React.FC<PageProps> = ({
             <div className="lg:col-span-4 flex flex-col justify-between bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3.5">
               <div className="space-y-3">
                 {/* Quadrant Selector Segmented Tabs */}
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
-                    Pilih Kuadran Penapisan
-                  </span>
-                  <div className="grid grid-cols-5 gap-1">
-                    <button
-                      onClick={() => handleSelectQuadrant('ALL')}
-                      className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
-                        selectedQuadrantCode === 'ALL'
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      Semua
-                      <span className="block text-[9.5px] font-normal opacity-80">514</span>
-                    </button>
-                    {QUADRANTS.map(q => {
-                      const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
-                      return (
-                        <button
-                          key={q.code}
-                          onClick={() => handleSelectQuadrant(q.code)}
-                          className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
-                            selectedQuadrantCode === q.code
-                              ? 'bg-slate-900 text-white shadow-xs'
-                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }`}
-                        >
-                          {q.code}
-                          <span className="block text-[9.5px] font-normal opacity-80">{stats.count}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="grid grid-cols-5 gap-1">
+                  <button
+                    onClick={() => handleSelectQuadrant('ALL')}
+                    className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
+                      selectedQuadrantCode === 'ALL'
+                        ? 'bg-slate-900 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    Semua
+                    <span className="block text-[9.5px] font-normal opacity-80">514</span>
+                  </button>
+                  {QUADRANTS.map(q => {
+                    const stats = q.code === 'Q1' ? quadrantStats.q1 : q.code === 'Q2' ? quadrantStats.q2 : q.code === 'Q3' ? quadrantStats.q3 : quadrantStats.q4;
+                    return (
+                      <button
+                        key={q.code}
+                        onClick={() => handleSelectQuadrant(q.code)}
+                        className={`py-1.5 px-0.5 rounded-lg text-[11px] font-bold text-center transition-all ${
+                          selectedQuadrantCode === q.code
+                            ? 'bg-slate-900 text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                      >
+                        {q.code}
+                        <span className="block text-[9.5px] font-normal opacity-80">{stats.count}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {activePolicy ? (
@@ -379,13 +374,13 @@ export const PriorityImplications: React.FC<PageProps> = ({
                       </div>
                     </div>
 
-                    {/* Subtle Strategic Focus Callout Banner */}
+                    {/* Subtle Structural Diagnosis Banner (No Redundancy with Fiscal Pillar) */}
                     <div className="border-l-3 border-amber-500 bg-amber-50/50 pl-2.5 pr-2 py-1.5 rounded-r text-[11px] leading-relaxed text-slate-700">
-                      <strong className="text-slate-900 block font-semibold">Arah Portofolio Fiskal:</strong>
-                      {selectedQuadrantCode === 'Q2' && "Kemiskinan konsumsi rendah (P0 < 10.46%) menyamarkan defisit jamban/air bersih. Prioritaskan DAK Fisik Sanitasi & Biofilter melengkapi bansos."}
-                      {selectedQuadrantCode === 'Q3' && "Sarana fisik telah memadai; tantangan utama ada pada daya beli rendah. Prioritaskan pembiayaan mikro (UMi), BUMDes, dan Padat Karya Tunai."}
-                      {selectedQuadrantCode === 'Q1' && "Konvergensi Ganda Mandatori: Wajib memadukan bantalan sosial tunai (PKH/BLT) dan belanja modal infrastruktur fisik dasar secara simultan."}
-                      {selectedQuadrantCode === 'Q4' && "Wilayah Terbina: Menjaga stabilitas daya beli dari inflasi pangan, penyerapan kerja formal, dan pembinaan rantai pasok daerah penyangga."}
+                      <strong className="text-slate-900 block font-semibold">Diagnosis Struktural Utama:</strong>
+                      {selectedQuadrantCode === 'Q2' && "Kerentanan Tersembunyi: Kemiskinan konsumsi rendah menyamarkan defisit fasilitas fisik (sanitasi 44.7% belum layak)."}
+                      {selectedQuadrantCode === 'Q3' && "Kantong Daya Beli Rendah: Sarana fisik telah memadai, namun kapasitas konsumsi riil dan penyerapan off-taker terbatas."}
+                      {selectedQuadrantCode === 'Q1' && "Prioritas Beban Ganda: Kemiskinan konsumsi tinggi beriringan dengan keterbelakangan fasilitas fisik dasar."}
+                      {selectedQuadrantCode === 'Q4' && "Wilayah Terbina: Indikator modal manusia dan infrastruktur telah melampaui median nasional."}
                     </div>
 
                     {/* Structured Policy Pillars */}

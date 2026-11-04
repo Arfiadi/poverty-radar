@@ -110,7 +110,7 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
             Pengaruh Relatif Determinan Struktural: Koefisien Baku OLS Multivariat
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
-            Estimasi kovariansi linier ceteris paribus (R² = 51.64%, p &lt; 0.001) · [Asosiasi Statistik] Bukan hubungan kausal langsung
+            Estimasi kovariansi linier ceteris paribus (R² = 51.64%, p &lt; 0.001) tanpa klaim hubungan kausal langsung
           </p>
         </div>
 

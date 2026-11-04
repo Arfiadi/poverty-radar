@@ -513,9 +513,6 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
                 <div style="font-size: 11px; color: #475569; border-top: 1px dashed #E2E8F0; padding-top: 4px; margin-top: 4px;">
                   Klaster: <b>Klaster ${raw?.cluster_id}</b> · ${raw?.vulnerability_quadrant}
                 </div>
-                <div style="font-size: 10px; color: #64748B; font-style: italic; margin-top: 4px;">
-                  💡 Klik poligon untuk menyorot kartu daerah
-                </div>
               </div>
             `;
           }
@@ -667,9 +664,9 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
                 </span>
               </div>
             ) : (
-              <div className="flex items-center space-x-1.5 font-medium text-slate-700">
-                <MapPin className="w-4 h-4 text-okabe-blue shrink-0" />
-                <span>Peta 34 Provinsi · Klik poligon provinsi untuk zoom kabupaten/kota</span>
+              <div className="flex items-center space-x-1.5 font-semibold text-slate-800">
+                <MapPin className="w-3.5 h-3.5 text-okabe-blue shrink-0" />
+                <span>Sebaran Spasial 34 Provinsi</span>
               </div>
             )}
           </div>
@@ -786,8 +783,8 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-4">
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-okabe-blue">
-                  Inspektur Disparitas Wilayah
+                <span className="text-[11px] font-bold uppercase tracking-wider text-okabe-blue">
+                  Rincian Provinsi
                 </span>
                 {mapLevel === 'national' && (
                   <button
