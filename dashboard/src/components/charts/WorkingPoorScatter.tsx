@@ -2,7 +2,6 @@ import React, { useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { District } from '../../types';
 import { CLUSTER_COLORS } from '../../constants/okabeItoPalette';
-import { EPISTEMIC_DISCLAIMER } from '../../constants/paradoxes';
 import { Download } from 'lucide-react';
 
 interface WorkingPoorProps {
@@ -185,8 +184,8 @@ export const WorkingPoorScatter: React.FC<WorkingPoorProps> = ({ districts }) =>
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
             {hasEnoughSample && rValue !== null
-              ? `Asosiasi linier (r = ${rValue >= 0 ? '+' : ''}${rValue.toFixed(3)}): warga wilayah miskin dominan bekerja subsistensi bertahan hidup · ${EPISTEMIC_DISCLAIMER}`
-              : `Korelasi (r = N/A): sampel daerah tidak mencukupi (n < 3) · ${EPISTEMIC_DISCLAIMER}`}
+              ? `Semakin tinggi kemiskinan suatu daerah, semakin tinggi tingkat partisipasi kerja warganya (r = ${rValue >= 0 ? '+' : ''}${rValue.toFixed(3)}).`
+              : `Korelasi tidak tersedia (sampel daerah tidak mencukupi, n < 3).`}
           </p>
         </div>
 
