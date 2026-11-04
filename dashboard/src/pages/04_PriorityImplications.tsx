@@ -330,15 +330,15 @@ export const PriorityImplications: React.FC<PageProps> = ({
                     }`} />
                     <div>
                       <strong className="font-bold block">
-                        {selectedQuadrantCode === 'Q2' && "Peringatan Alokasi Anggaran Kuadran II (Cegah Bantuan Sosial Murni):"}
-                        {selectedQuadrantCode === 'Q3' && "Peringatan Alokasi Anggaran Kuadran III (Dilarang Proyek Fisik Baru):"}
+                        {selectedQuadrantCode === 'Q2' && "Arah Alokasi Anggaran Kuadran II (Prioritas Sarana Fisik Dasar):"}
+                        {selectedQuadrantCode === 'Q3' && "Arah Alokasi Anggaran Kuadran III (Optimalisasi Efisiensi Belanja Modal):"}
                         {selectedQuadrantCode === 'Q1' && "Prinsip Alokasi Anggaran Kuadran I (Konvergensi Ganda Mandatori):"}
-                        {selectedQuadrantCode === 'Q4' && "Fokus Anggaran Kuadran IV (Stabilitas & Pembina Rantai Pasok):"}
+                        {selectedQuadrantCode === 'Q4' && "Fokus Anggaran Kuadran IV (Stabilitas Pasar Kerja & Rantai Pasok):"}
                       </strong>
                       <p className="mt-0.5">
-                        {selectedQuadrantCode === 'Q2' && "Dilarang hanya mengandalkan bansos tunai semata! Kemiskinan moneter tampak rendah (P0 < 10.46%) karena ditopang ketahanan pangan kebun sendiri/remitansi, namun daerah menyimpan 'bom waktu' krisis sanitasi (55%). Prioritaskan DAK Fisik Sanitasi & Tangki Biofilter Pasang Surut."}
-                        {selectedQuadrantCode === 'Q3' && "Hindari memboroskan APBD membangun fisik jamban/sekolah baru! Sarana fisik telah memadai (V_struc < 0.2720); masalah utama adalah daya beli rendah dan ketiadaan off-taker komoditas. Alihkan anggaran ke subsidi UMi, BUMDes, dan Padat Karya Tunai."}
-                        {selectedQuadrantCode === 'Q1' && "Wajib memadukan bantalan sosial tunai jangka pendek (PKH/BLT) dengan belanja modal fisik infrastruktur dasar secara simultan. Bantuan tunai tanpa sarana air/sanitasi tidak memutus kemiskinan antargenerasi."}
+                        {selectedQuadrantCode === 'Q2' && "Prioritaskan intervensi fisik sarana dasar daripada bertumpu semata pada bantuan sosial tunai. Kemiskinan konsumsi tampak rendah (P0 < 10.46%) karena ditopang ketahanan pangan lokal, namun daerah menyimpan defisit sanitasi tinggi (44.7% belum layak). Fokuskan pada DAK Fisik Sanitasi & Tangki Biofilter Pasang Surut."}
+                        {selectedQuadrantCode === 'Q3' && "Optimalkan efisiensi belanja modal dengan tidak menambah proyek sarana fisik baru. Fasilitas dasar telah memadai (V_struc < 0.2720); tantangan utama terletak pada daya beli rendah dan ketiadaan off-taker komoditas. Alokasi anggaran diprioritaskan ke subsidi pembiayaan mikro (UMi), penguatan BUMDes, dan Padat Karya Tunai."}
+                        {selectedQuadrantCode === 'Q1' && "Wajib memadukan bantalan sosial tunai jangka pendek (PKH/BLT) dengan belanja modal fisik infrastruktur dasar secara simultan. Pemenuhan konsumsi tanpa sarana air dan sanitasi layak tidak memutus rantai kemiskinan antargenerasi."}
                         {selectedQuadrantCode === 'Q4' && "Menjaga stabilitas daya beli dari inflasi pangan, penyerapan tenaga kerja formal, peremajaan permukiman kumuh kantong marginal, serta pembinaan rantai pasok bagi kabupaten sekitar."}
                       </p>
                     </div>

@@ -169,7 +169,7 @@ export const RegionalProfiles: React.FC<PageProps> = ({ districts, allDistricts,
               <span>Deviasi Relatif 7 Indikator Struktural terhadap Median Nasional (N=514)</span>
             </h3>
             <p className="text-[10.5px] text-slate-500 mt-0.5">
-              Klaster 4 lumpuh akibat defisit fasilitas dasar (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 unggul layanan dasar (&gt;92%) namun menghadapi tantangan pengangguran terbuka formal tertinggi.
+              Klaster 4 mengalami defisit fasilitas dasar paling tajam (sanitasi 31.2% &amp; air 52.7%), sedangkan Klaster 1 unggul layanan dasar (&gt;92%) namun menghadapi tantangan pengangguran terbuka formal tertinggi.
             </p>
           </div>
 
