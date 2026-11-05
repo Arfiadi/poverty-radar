@@ -180,58 +180,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts, allDistricts }) =
 
       {activeSubTab === 'spatial' ? (
         <div className="space-y-3">
-          {/* 2. Indicator Controls Toolbar */}
-          <div className="bg-white rounded-xl border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-slate-700 flex items-center space-x-1 shrink-0">
-                <Layers className="w-3.5 h-3.5 text-okabe-blue" />
-                <span>Pilih Indikator:</span>
-              </span>
-              <div className="relative">
-                <select
-                  value={selectedIndicator}
-                  onChange={(e) => setSelectedIndicator(e.target.value as keyof District)}
-                  aria-label="Pilih Indikator Spasial"
-                  className="appearance-none bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-slate-900 font-bold focus:ring-2 focus:ring-okabe-blue/20 focus:border-okabe-blue focus:bg-white focus:outline-hidden cursor-pointer shadow-2xs hover:border-slate-400 transition-colors"
-                >
-                  {indicatorOptions.map(opt => (
-                    <option key={opt.key} value={opt.key}>{opt.label}</option>
-                  ))}
-                </select>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* View Mode Toggle: Peta vs Peringkat */}
-            <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-2xs self-end sm:self-auto">
-              <button
-                onClick={() => setViewMode('map')}
-                className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                  viewMode === 'map'
-                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Tampilan Peta Geospasial 34 Provinsi"
-              >
-                <Map className="w-3.5 h-3.5" />
-                <span>Peta Geospasial</span>
-              </button>
-              <button
-                onClick={() => setViewMode('ranking')}
-                className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-                  viewMode === 'ranking'
-                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Tampilan Peringkat Bar Horizontal"
-              >
-                <BarChart3 className="w-3.5 h-3.5" />
-                <span>Peringkat Daerah</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 3. 4 Standalone KPI Cards (Tidak Disambung) */}
+          {/* 2. 4 Standalone KPI Cards (Tidak Disambung) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* Metric 1: Median Nasional */}
             <div className="bg-white rounded-xl border border-slate-200/80 p-3 sm:py-2.5 sm:px-3.5 shadow-2xs flex flex-col justify-between hover:shadow-subtle transition-all">
@@ -298,6 +247,57 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts, allDistricts }) =
               <span className="text-[10.5px] text-slate-400 block mt-1 truncate" title={minRegion && maxRegion ? `${minRegion.kab_kota} vs ${maxRegion.kab_kota}` : ''}>
                 {minRegion && maxRegion ? `${minRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')} ↔ ${maxRegion.kab_kota.replace(/^(Kabupaten|Kota)\s+/, '')}` : `Rentang: ${formatIndicatorVal(disparitySpan)}`}
               </span>
+            </div>
+          </div>
+
+          {/* 3. Indicator Controls Toolbar */}
+          <div className="bg-white rounded-xl border border-slate-200/80 px-3.5 py-2.5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-bold text-slate-700 flex items-center space-x-1 shrink-0">
+                <Layers className="w-3.5 h-3.5 text-okabe-blue" />
+                <span>Pilih Indikator:</span>
+              </span>
+              <div className="relative">
+                <select
+                  value={selectedIndicator}
+                  onChange={(e) => setSelectedIndicator(e.target.value as keyof District)}
+                  aria-label="Pilih Indikator Spasial"
+                  className="appearance-none bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-1.5 text-xs text-slate-900 font-bold focus:ring-2 focus:ring-okabe-blue/20 focus:border-okabe-blue focus:bg-white focus:outline-hidden cursor-pointer shadow-2xs hover:border-slate-400 transition-colors"
+                >
+                  {indicatorOptions.map(opt => (
+                    <option key={opt.key} value={opt.key}>{opt.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* View Mode Toggle: Peta vs Peringkat */}
+            <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-2xs self-end sm:self-auto">
+              <button
+                onClick={() => setViewMode('map')}
+                className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                  viewMode === 'map'
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Tampilan Peta Geospasial 34 Provinsi"
+              >
+                <Map className="w-3.5 h-3.5" />
+                <span>Peta Geospasial</span>
+              </button>
+              <button
+                onClick={() => setViewMode('ranking')}
+                className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                  viewMode === 'ranking'
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Tampilan Peringkat Bar Horizontal"
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                <span>Peringkat Daerah</span>
+              </button>
             </div>
           </div>
 
