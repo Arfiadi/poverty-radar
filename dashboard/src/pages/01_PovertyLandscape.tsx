@@ -89,6 +89,31 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
   const lowestKotaPct = displayedLowest.length > 0 ? (lowestKotaCount / displayedLowest.length) * 100 : 0;
   const lowestBadgeText = `${lowestKotaPct.toFixed(0)}% Kota Modern`;
 
+  const chartToggle = (
+    <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
+      <button
+        onClick={() => setChartView('stripplot')}
+        className={`px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all ${
+          chartView === 'stripplot'
+            ? 'bg-white text-okabe-blue shadow-2xs'
+            : 'text-slate-600 hover:text-slate-900'
+        }`}
+      >
+        Titik Kepulauan
+      </button>
+      <button
+        onClick={() => setChartView('histogram')}
+        className={`px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all ${
+          chartView === 'histogram'
+            ? 'bg-white text-okabe-blue shadow-2xs'
+            : 'text-slate-600 hover:text-slate-900'
+        }`}
+      >
+        Distribusi Frekuensi
+      </button>
+    </div>
+  );
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 6 }}
@@ -227,47 +252,14 @@ export const PovertyLandscape: React.FC<PageProps> = ({ districts, benchmarks })
         </div>
       </div>
 
-      {/* Visual Switcher Bar: Titik Kepulauan vs Histogram Frekuensi */}
-      <div className="flex items-center justify-between pb-0.5">
-        <div className="flex items-center space-x-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-okabe-blue"></span>
-          <span className="text-xs font-bold text-slate-800 tracking-tight">
-            Visualisasi Sebaran Kemiskinan Moneter (P0):
-          </span>
-        </div>
-
-        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
-          <button
-            onClick={() => setChartView('stripplot')}
-            className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
-              chartView === 'stripplot'
-                ? 'bg-white text-okabe-blue shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Titik Kepulauan (Strip Plot)
-          </button>
-          <button
-            onClick={() => setChartView('histogram')}
-            className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all ${
-              chartView === 'histogram'
-                ? 'bg-white text-okabe-blue shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Distribusi Frekuensi (Histogram)
-          </button>
-        </div>
-      </div>
-
       {/* Row 2: Dual Hero Side-by-Side Canvas (Grid 12 Kolom, Rasio 8:4, True Zero-Scroll) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 sm:gap-2 items-stretch">
         {/* Kolom Kiri: Single Hero Visual (8 Kolom / ~67% Lebar) */}
         <div className="lg:col-span-8 flex flex-col">
           {chartView === 'stripplot' ? (
-            <ArchipelagoStripPlot districts={districts} />
+            <ArchipelagoStripPlot districts={districts} headerAction={chartToggle} />
           ) : (
-            <DistributionHistogram districts={districts} />
+            <DistributionHistogram districts={districts} headerAction={chartToggle} />
           )}
         </div>
 

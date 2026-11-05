@@ -7,6 +7,7 @@ import { Download } from 'lucide-react';
 interface StripPlotProps {
   districts: District[];
   onSelectDistrict?: (district: District) => void;
+  headerAction?: React.ReactNode;
 }
 
 interface IslandStat {
@@ -19,7 +20,7 @@ interface IslandStat {
   p75: number;
 }
 
-export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) => {
+export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts, headerAction }) => {
   // Compute distribution metrics and rank islands descending by median poverty rate
   const islandStats = useMemo<IslandStat[]>(() => {
     const rawIslands = [
@@ -313,7 +314,7 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
       aria-label="Jittered Strip Plot Sebaran Kemiskinan Moneter per Wilayah Kepulauan"
     >
       {/* Chart Header & Action Toolbar */}
-      <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-1.5 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-slate-100 pb-1.5 shrink-0">
         <div>
           <h3 className="text-xs font-bold text-slate-900 tracking-tight">
             {districts.length < 514 
@@ -327,15 +328,18 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts }) =>
           </p>
         </div>
 
-        <button
-          onClick={handleExportImage}
-          className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10.5px] font-semibold rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
-          title="Unduh visualisasi grafik (PNG)"
-          aria-label="Unduh grafik PNG"
-        >
-          <Download className="w-3 h-3" />
-          <span>Ekspor PNG</span>
-        </button>
+        <div className="flex items-center space-x-1.5 self-end sm:self-auto shrink-0">
+          {headerAction}
+          <button
+            onClick={handleExportImage}
+            className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10.5px] font-semibold rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            title="Unduh visualisasi grafik (PNG)"
+            aria-label="Unduh grafik PNG"
+          >
+            <Download className="w-3 h-3" />
+            <span>Ekspor PNG</span>
+          </button>
+        </div>
       </div>
 
       {/* Chart Visualization */}
