@@ -1,13 +1,15 @@
 [flake8]
-max-line-length = 100
+max-line-length = 120
 extend-ignore = E203, W503
+per-file-ignores =
+    src/poverty_radar/visualization/plots.py: E501
+    tests/*: E501
 exclude =
     .venv,
     venv,
     .git,
     __pycache__,
     dashboard,
-    dashboard-Joshua,
     scratch,
     node_modules,
     build,

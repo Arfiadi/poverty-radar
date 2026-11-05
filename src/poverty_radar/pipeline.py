@@ -97,7 +97,11 @@ def run_pipeline(
 
         plot_elbow_and_silhouette(X_scaled, save_path=FIGURES_DIR / "08_pemilihan_jumlah_klaster_elbow.png")
         plot_algorithm_comparison_barchart(save_path=FIGURES_DIR / "09_perbandingan_algoritma_clustering.png")
-        plot_multiseed_robustness(X_scaled, df_out['cluster_id'].values, save_path=FIGURES_DIR / "02_multiseed_robustness_ari.png")
+        plot_multiseed_robustness(
+            X_scaled,
+            df_out['cluster_id'].values,
+            save_path=FIGURES_DIR / "02_multiseed_robustness_ari.png"
+        )
 
         # Add PCA columns to df_out for plotting
         pca_1, pca_2 = clusterer.transform_pca(X_scaled)
@@ -107,7 +111,11 @@ def run_pipeline(
 
         plot_pca_2d(df_plot, save_path=FIGURES_DIR / "03_pca_cluster_projection_2d.png")
         plot_cluster_heatmap(df_plot, X_scaled, save_path=FIGURES_DIR / "04_cluster_characteristics_heatmap.png")
-        plot_cluster_small_multiples(df_plot, X_scaled, save_path=FIGURES_DIR / "04_cluster_profiles_small_multiples.png")
+        plot_cluster_small_multiples(
+            df_plot,
+            X_scaled,
+            save_path=FIGURES_DIR / "04_cluster_profiles_small_multiples.png"
+        )
         plot_p0_stripplot(df_plot, save_path=FIGURES_DIR / "05_poverty_distribution_stripplot.png")
         plot_vulnerability_matrix_2x2(df_plot, save_path=FIGURES_DIR / "06_relative_vulnerability_matrix_2x2.png")
         logger.info("All presentation figures successfully generated.")
