@@ -233,14 +233,14 @@ const MACRO_STAGES: MacroStageInfo[] = [
     id: 'ingestion',
     stepNum: '01',
     title: 'Data Ingestion & Understanding',
-    subtitle: 'Metadata Sensus BPS 2021, Audit Nilai Batas 0.00% di 3T, & Kamus Data 13 Variabel',
+    subtitle: 'Metadata Sensus BPS 2021, Audit Nilai Batas 0.00% 3T, & Kamus Data 13 Variabel',
     icon: Database,
     tag: '514 Daerah Lengkap · 0 Missing Values',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    objective: 'Menjamin kelengkapan sensus 514 daerah BPS 2021, meluruskan skala semantik PDRB, dan membuktikan bahwa angka 0.00% adalah fakta lapangan wilayah 3T, bukan data cacat.',
-    inputData: '514 Kabupaten/Kota di 34 Provinsi, 13 indikator mentah BPS 2021 (SIRUSA Jawa Tengah terverifikasi 100% cocok).',
-    methodology: 'Audit matriks missing value (0 NaN), koreksi semantik unit PDRB (Juta vs Ribu Rp), serta konfirmasi geografis nilai batas 0.00% pada sanitasi & air minum di pegunungan karst Papua.',
-    verifiedOutput: 'Dataset mentah bersih 514 baris utuh (100% Data Retention), 13 variabel terstandardisasi semantik dan siap diproses.',
+    objective: 'Verifikasi kelengkapan 514 daerah BPS 2021, standardisasi satuan semantik PDRB, dan validasi fisik nilai batas 0.00% wilayah 3T.',
+    inputData: '514 Kabupaten/Kota (34 Provinsi), 13 indikator mentah BPS 2021 (validasi silang SIRUSA cocok 100%).',
+    methodology: 'Audit nilai hilang (0 NaN), koreksi semantik PDRB (skala Juta Rp), dan konfirmasi geografis nilai 0.00% sanitasi/air di Papua.',
+    verifiedOutput: 'Dataset mentah bersih 514 baris utuh (100% data retention) dengan 13 variabel terstandardisasi.',
     deepDiveLabel: 'Kamus Data 13 Indikator, Pencarian Interaktif, & Audit Batas 0.00% Wilayah 3T'
   },
   {
@@ -251,10 +251,10 @@ const MACRO_STAGES: MacroStageInfo[] = [
     icon: Scale,
     tag: 'Skewness PDRB: +5.85 → +0.23',
     tagColor: 'bg-blue-50 text-okabe-blue border-blue-200',
-    objective: 'Mengatasi disparitas skala masif antardaerah (PDRB Jakarta 52x median) tanpa membuang daerah miskin ekstrem (SDG 1: Leave No One Behind).',
-    inputData: 'Variabel sosio-ekonomi kontinu dengan rentang dan satuan berbeda (Persentase, Tahun, Ribu Rp, Juta Rp).',
-    methodology: 'Transformasi logaritmik ln(1 + PDRB) untuk menormalkan kemencengan, deteksi anomali multivariat Isolation Forest (c=0.05), dan penskalaan berbasis Median & IQR menggunakan RobustScaler.',
-    verifiedOutput: 'Skewness PDRB berhasil dipangkas dari +5.85 menjadi +0.23 (simetris), 26 daerah anomali dipertahankan 100%, fitur bebas distorsi rata-rata.',
+    objective: 'Mengatasi disparitas skala ekonomi ekstrem antardaerah tanpa membuang daerah tertinggal (mandat UN SDG 1).',
+    inputData: '7 fitur sosio-ekonomi kontinu dengan rentang skala yang berbeda drastis.',
+    methodology: 'Transformasi ln(1 + PDRB), deteksi 26 anomali Isolation Forest (c=0.05), dan penskalaan RobustScaler (Median & IQR).',
+    verifiedOutput: 'Skewness PDRB turun dari +5.85 ke +0.23 (simetris); 26 anomali dipertahankan 100% (0 baris dihapus).',
     deepDiveLabel: 'Audit Skewness log1p, Diagram Tukey Boxplot P0, & Protokol RobustScaler'
   },
   {
@@ -265,10 +265,10 @@ const MACRO_STAGES: MacroStageInfo[] = [
     icon: ShieldCheck,
     tag: '100% Bebas Kebocoran Target',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    objective: 'Mencegah penalaran melingkar (circular reasoning) dan memastikan analisis murni bersifat pembelajaran tak terarah (Unsupervised Exploration).',
-    inputData: 'Kolom label biner bawaan uploader Kaggle (Klasifikasi Kemiskinan 0/1), angka kemiskinan P0, dan indeks komposit IPM.',
-    methodology: 'Reverse-engineering aljabar membuktikan label Kaggle dapat direkonstruksi 98.83% dengan aturan biner sederhana. Mengeliminasi 100% label biner, mengisolasi P0 dan IPM dari ruang klastering K-Means, serta menegakkan aturan Knaflic & Few larangan radar chart.',
-    verifiedOutput: 'Penolakan model klasifikasi terawasi palsu, eliminasi target leakage, isolasi multikolinieritas IPM (r > 0.86), dan visualisasi terstandarisasi Small Multiples.',
+    objective: 'Mencegah penalaran melingkar (circular reasoning) dan menolak klasifikasi terawasi artifisial.',
+    inputData: 'Kolom label biner bawaan Kaggle (Klasifikasi Kemiskinan 0/1), angka kemiskinan P0, dan IPM.',
+    methodology: 'Reverse-engineering aljabar label biner, eliminasi total label bawaan, isolasi P0 & IPM dari fitur jarak, serta larangan radar chart.',
+    verifiedOutput: 'Label bawaan terbukti 98.83% formula heuristik; model beroperasi 100% murni unsupervised clustering.',
     deepDiveLabel: 'Bukti Forensik Formula Kaggle 98.83%, Matriks Isolasi Variabel, & 4 Pilar Integritas'
   },
   {
@@ -279,10 +279,10 @@ const MACRO_STAGES: MacroStageInfo[] = [
     icon: Layers,
     tag: 'Stabilitas ARI = 0.9803 · OLS R² = 51.64%',
     tagColor: 'bg-slate-900 text-white border-slate-700',
-    objective: 'Membentuk tipologi objektif wilayah dan memvalidasi signifikansi determinan sosio-ekonomi secara ekonometrika inferensial.',
+    objective: 'Membentuk tipologi objektif wilayah dan memvalidasi signifikansi determinan sosio-ekonomi secara ekonometrika.',
     inputData: '7 fitur terstandarisasi RobustScaler untuk 514 daerah, dilengkapi benchmark eksternal P0 dan IPM.',
-    methodology: 'Dual-Engine: (1) K-Means k=4 yang stabil terhadap 20 multi-seed (ARI=0.9803); (2) Skrining Kerentanan 2x2 V_struc (bobot setara 25% sanitasi, air, RLS, UHH); (3) Regresi Linear Berganda OLS untuk menguji determinan kemiskinan moneter.',
-    verifiedOutput: '4 klaster tipologi wilayah tervalidasi inferensial (ANOVA F=155.94, p < 0.001), formula skrining 2x2, dan OLS dengan daya jelas R² = 51.64% membuktikan signifikansi pengeluaran, sanitasi, dan Employment Paradox.',
+    methodology: 'K-Means k=4 (20 multi-seed), matriks skrining kerentanan 2x2 (V_struc bobot setara 25%), dan regresi multivariat OLS.',
+    verifiedOutput: '4 klaster tipologi wilayah stabil (ARI = 0.9803) dan model OLS dengan R² = 51.64% (p < 0.001).',
     deepDiveLabel: 'Diagnostik Benchmark k=4 vs k=3, Formula Matematis V_struc, & Grafik Koefisien OLS β'
   }
 ];
@@ -352,7 +352,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
             Transparansi Metodologi, Audit Data, &amp; Validasi Pemodelan Ilmiah
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Alur berurutan dari data mentah BPS 2021, mitigasi bias matematis, hingga pembuktian ekonometrika (UN SDG 1).
+            Pipa sains data BPS 2021: ingestion, preprocessing robust, anti-leakage, dan pemodelan dual-engine.
           </p>
         </div>
       </div>
@@ -407,7 +407,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
               Pipa Metodologi Sains Data End-to-End (Gambaran Mental Model Makro)
             </h3>
             <p className="text-[11px] text-slate-500 font-medium">
-              Alur 4 tahap mengalir dari hulu ke hilir. Klik tombol rincian teknis pada tiap tahap untuk melakukan audit mendalam (*details-on-demand*).
+              Alur metodologi 4 tahap. Klik tombol rincian teknis pada tiap tahap untuk audit mendalam.
             </p>
           </div>
         </div>
@@ -1034,7 +1034,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
                             </div>
 
                             <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg text-[11.5px] text-slate-700 leading-relaxed">
-                              <strong className="text-slate-900 font-bold block mb-0.5">Pembongkaran Ilusi Matematis k = 3:</strong>
+                              <strong className="text-slate-900 font-bold block mb-0.5">Rasional Pemilihan k = 4 dibanding k = 3:</strong>
                               Meskipun k=3 memiliki Silhouette sedikit lebih tinggi (0.2863), pola tersebut menumpuk 322 daerah (62.6% Indonesia) ke dalam 1 klaster raksasa seragam. Pada k=4, kelompok 322 daerah tersebut terurai proporsional menjadi Klaster 2 (Penyangga Mapan, N=187) dan Klaster 3 (Agraris Rentan, N=216) yang memiliki disparitas sanitasi (Δ = 12.38%) dan derajat kesehatan (Δ = 3.72 tahun).
                             </div>
                           </div>
@@ -1119,10 +1119,10 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           </div>
           <div>
             <h4 className="text-xs sm:text-sm font-bold text-white">
-              Sertifikasi Kepatuhan Metodologi Sains Data &amp; UN SDG 1
+              Audit Integritas Metodologi Sains Data
             </h4>
             <p className="text-[11px] text-slate-300 mt-0.5 font-medium">
-              Seluruh pipa komputasi mematuhi prinsip anti-overclaim, reproducibilitas multi-seed, dan eliminasi total kebocoran data.
+              514 daerah tervalidasi · Bebas kebocoran target · Reproducible multi-seed (random_state=42).
             </p>
           </div>
         </div>
