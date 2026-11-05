@@ -96,9 +96,12 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
         name: island,
         type: 'bar',
         stack: 'total',
+        barCategoryGap: '0%', // Menempel antar bin (zero-gap true statistical histogram)
         data: countsByIsland[island],
         itemStyle: {
           color: ISLAND_COLORS[island],
+          borderColor: '#FFFFFF',
+          borderWidth: 0.5,
         },
         emphasis: {
           focus: 'series',
@@ -115,7 +118,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
                   formatter: 'RPJMN: 7.0%',
                   position: 'insideEndTop',
                   color: '#059669',
-                  fontSize: 9.5,
+                  fontSize: 10,
                   fontWeight: 'bold',
                   backgroundColor: '#ECFDF5',
                   padding: [2, 5],
@@ -125,14 +128,14 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
               },
               {
                 xAxis: medianBinLabel,
-                lineStyle: { type: 'dashed', color: '#DC2626', width: 1.5 },
+                lineStyle: { type: 'dashed', color: '#D55E00', width: 1.5 },
                 label: {
                   formatter: 'Median: 10.46%',
                   position: 'insideEndTop',
-                  color: '#DC2626',
-                  fontSize: 9.5,
+                  color: '#D55E00',
+                  fontSize: 10,
                   fontWeight: 'bold',
-                  backgroundColor: '#FFF5F5',
+                  backgroundColor: '#FFF7ED',
                   padding: [2, 5],
                   borderRadius: 4,
                   distance: 6,
@@ -183,7 +186,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
         data: [...ISLAND_ORDER],
         top: 2,
         right: 0,
-        textStyle: { fontSize: 9.5, color: '#475569', fontWeight: 500 },
+        textStyle: { fontSize: 10, color: '#475569', fontWeight: 500 },
         itemWidth: 10,
         itemHeight: 10,
         itemGap: 8,
@@ -202,7 +205,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
         axisTick: { alignWithLabel: true },
         axisLabel: {
           color: '#64748B',
-          fontSize: 9.5,
+          fontSize: 10,
           interval: 1,
           formatter: (_val: string, idx: number) => `${idx * 3}%`,
         }
@@ -210,9 +213,9 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
       yAxis: {
         type: 'value',
         name: 'Jumlah Daerah',
-        nameTextStyle: { color: '#64748B', fontSize: 9.5 },
+        nameTextStyle: { color: '#64748B', fontSize: 10 },
         splitLine: { show: false },
-        axisLabel: { color: '#64748B', fontSize: 9.5 },
+        axisLabel: { color: '#64748B', fontSize: 10 },
       },
       series,
     };
@@ -254,7 +257,7 @@ export const DistributionHistogram: React.FC<HistogramProps> = ({ districts, hea
           {headerAction}
           <button
             onClick={handleExportImage}
-            className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10.5px] font-semibold rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            className="inline-flex items-center space-x-1 px-2.5 py-0.5 text-xs font-semibold rounded-md border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             title="Unduh visualisasi grafik (PNG)"
             aria-label="Unduh grafik PNG"
           >

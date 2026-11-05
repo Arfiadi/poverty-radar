@@ -109,23 +109,25 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts, head
     });
 
     // 4. District points clamped strictly within row tracks (+-0.10)
+    // Decluttered: Single-accent highlight on acute poverty (P0 >= 20%), neutral blue for standard districts
     const scatterPointsData = districts.map((d, i) => {
       const yIdx = yAxisCategories.indexOf(d.region_pulau);
       if (yIdx === -1) return null;
 
       const pseudoJitter = ((Math.sin(i * 12.9898 + d.poverty_rate_p0) * 43758.5453) % 1) * 0.20 - 0.10;
+      const isCritical = d.poverty_rate_p0 >= 20.0;
 
       return {
         name: d.kab_kota,
         value: [d.poverty_rate_p0, yIdx + pseudoJitter],
         rawDistrict: d,
         itemStyle: {
-          color: CLUSTER_COLORS[d.cluster_id] || '#0072B2',
-          opacity: 0.45,
+          color: isCritical ? '#D55E00' : '#0072B2',
+          opacity: isCritical ? 0.90 : 0.40,
           borderColor: '#FFFFFF',
-          borderWidth: 0.5,
+          borderWidth: isCritical ? 0.8 : 0.4,
         },
-        symbolSize: 5.5,
+        symbolSize: isCritical ? 6.5 : 5.0,
       };
     }).filter(Boolean);
 
@@ -219,8 +221,8 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts, head
                 <div style="font-weight: 700; color: #0F172A;">${fullName}</div>
                 <div style="color: #64748B; font-size: 11px;">${d.provinsi} · Gugus ${d.region_pulau}</div>
                 <div style="border-top: 1px solid #F1F5F9; margin-top: 4px; padding-top: 4px; font-size: 11px;">
-                  <div>Kemiskinan P0: <strong style="color: #D55E00;">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
-                  <div style="margin-top: 2px;">Tipologi: <strong style="color: ${CLUSTER_COLORS[d.cluster_id]};">${d.cluster_name.split(':')[0]}</strong></div>
+                  <div>Kemiskinan P0: <strong style="color: ${d.poverty_rate_p0 >= 20 ? '#D55E00' : '#0072B2'};">${d.poverty_rate_p0.toFixed(2)}%</strong></div>
+                  <div style="margin-top: 2px;">Status: <strong style="color: ${d.poverty_rate_p0 >= 20 ? '#D55E00' : d.poverty_rate_p0 <= 7 ? '#047857' : '#0072B2'};">${d.poverty_rate_p0 >= 20 ? 'Kemiskinan Kritis (≥ 20%)' : d.poverty_rate_p0 <= 7 ? 'Memenuhi Batas RPJMN (≤ 7%)' : 'Kemiskinan Moderat'}</strong></div>
                 </div>
               `;
             }
@@ -263,24 +265,24 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts, head
                 xAxis: 7.00,
                 lineStyle: { type: 'dashed', color: '#047857', width: 1.5 },
                 label: {
-                  formatter: 'Target RPJMN: 7.0%',
+                  formatter: 'Sasaran RPJMN: 7.0%',
                   position: 'end',
                   align: 'right',
                   color: '#047857',
-                  fontSize: 9.5,
+                  fontSize: 10,
                   fontWeight: 'bold',
                   distance: 6,
                 }
               },
               {
                 xAxis: nationalMedian,
-                lineStyle: { type: 'dashed', color: '#DC2626', width: 1.5 },
+                lineStyle: { type: 'dashed', color: '#D55E00', width: 1.5 },
                 label: {
                   formatter: 'Median RI: 10.46%',
                   position: 'end',
                   align: 'left',
-                  color: '#DC2626',
-                  fontSize: 9.5,
+                  color: '#D55E00',
+                  fontSize: 10,
                   fontWeight: 'bold',
                   distance: 6,
                 }
@@ -321,10 +323,18 @@ export const ArchipelagoStripPlot: React.FC<StripPlotProps> = ({ districts, head
               ? `Polarisasi Kepulauan: Sebaran ${districts.length} Daerah Terfilter` 
               : "Polarisasi Kepulauan: 86,9% Kemiskinan Kritis (P0 ≥ 20%) Berada di Timur"}
           </h3>
-          <p className="text-[10px] text-slate-500 mt-0.5">
-            {districts.length < 514
-              ? `Sebaran ${districts.length} daerah vs titik tengah nasional (10,46%) & sasaran RPJMN (7,0%)`
-              : "Sebaran 514 daerah di 6 gugus pulau vs titik tengah nasional (10,46%) & sasaran RPJMN (7,0%)"}
+          <p className="text-[10.5px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-1.5">
+            <span>{districts.length < 514 ? `Sebaran ${districts.length} daerah` : '514 daerah di 6 gugus pulau'}</span>
+            <span className="text-slate-300">·</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-slate-700">
+              <span className="w-2 h-2 rounded-full bg-[#D55E00] shrink-0" />
+              <span>Oranye: Kritis (≥ 20%)</span>
+            </span>
+            <span className="text-slate-300">·</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-slate-700">
+              <span className="w-2 h-2 rounded-full bg-[#0072B2] shrink-0" />
+              <span>Biru: Non-Kritis</span>
+            </span>
           </p>
         </div>
 
