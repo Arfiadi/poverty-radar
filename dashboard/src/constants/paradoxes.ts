@@ -33,10 +33,10 @@ export const PARADOXES: Record<string, ParadoxItem> = {
     id: "paradox-3",
     name: "The Resource Curse",
     page: "04_PriorityImplications",
-    actionTitle: "Kutukan Sumber Daya: 29 Daerah Tambang Skala Besar Berada di Atas Median Kemiskinan Nasional",
-    insightCallout: "Sebanyak 29 daerah lumbung tambang (PDRB ≥ Rp 25 Triliun) memiliki tingkat kemiskinan di atas median nasional, sejalan dengan keterbatasan penyerapan tenaga kerja lokal pada sektor industri ekstraktif modal padat.",
+    actionTitle: "Kutukan Sumber Daya: Enklave Tambang & Migas Skala Besar Berada di Atas Median Kemiskinan Nasional",
+    insightCallout: "Sentra pertambangan dan migas utama (seperti Mimika, Morowali, Teluk Bintuni, Bojonegoro, dan Muara Enim) memiliki tingkat kemiskinan di atas median nasional, sejalan dengan keterbatasan penyerapan tenaga kerja lokal pada sektor industri ekstraktif modal padat.",
     evidence: "Kab. Mimika (PDRB Rp69.6T, P0 14.17%), Bojonegoro (Rp65.8T, P0 13.27%), Morowali (Rp54.9T, P0 13.75%), Musi Banyuasin (Rp46.1T, P0 15.84%), Teluk Bintuni (Rp25.1T, P0 29.79%).",
-    caseDistricts: ["Mimika", "Bojonegoro", "Morowali", "Musi Banyuasin", "Teluk Bintuni"]
+    caseDistricts: ["Mimika", "Bojonegoro", "Morowali", "Musi Banyuasin", "Teluk Bintuni", "Muara Enim", "Tanjung Jabung Barat", "Tuban", "Sumbawa Barat"]
   },
   basicServices: {
     id: "paradox-4",

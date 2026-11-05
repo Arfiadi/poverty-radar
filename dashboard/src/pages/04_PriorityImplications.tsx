@@ -270,9 +270,9 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         ? 'bg-amber-600 text-white'
                         : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
                     }`}
-                    title="Anomali PDRB Tambang/Migas Jumbo (≥Rp25T) vs Kemiskinan di Atas Median (29 Daerah, cth: Mimika, Morowali)"
+                    title="Kutukan SDA: 10 Enklave Tambang & Migas (PDRB Masif vs Kemiskinan di Atas Median, cth: Mimika, Morowali, Bintuni, Bojonegoro)"
                   >
-                    Tambang Jumbo
+                    Tambang & Migas
                   </button>
                 </div>
               </div>

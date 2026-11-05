@@ -188,7 +188,7 @@ export const TopBar: React.FC<TopBarProps> = ({ totalDistricts, filteredCount })
             {activeCasePin !== 'none' && (
               <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-purple-50 text-purple-800 border border-purple-200 shrink-0">
                 <Sparkles className="w-3 h-3 text-purple-600" />
-                <span>Pin Kasus: {activeCasePin === 'resource_curse' ? 'Kutukan Tambang' : (activeCasePin === 'madura' ? 'Kantong Madura' : 'Barito Kuala')}</span>
+                <span>Pin Kasus: {activeCasePin === 'resource_curse' ? 'Tambang & Migas' : (activeCasePin === 'madura' ? 'Kantong Madura' : 'Barito Kuala')}</span>
                 <button
                   onClick={clearCasePin}
                   className="hover:bg-purple-100 rounded p-0.5 ml-0.5"
