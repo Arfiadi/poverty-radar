@@ -16,7 +16,15 @@ import {
   Target,
   BarChart3,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
+  BookOpen,
+  Eye,
+  EyeOff,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { District, OLSResult, BoundaryCase } from '../types';
 import { OLSCoefficientsBar } from '../components/charts/OLSCoefficientsBar';
@@ -31,7 +39,7 @@ interface PageProps {
   boundaryCases: BoundaryCase[];
 }
 
-type PipelineStage = 'ingestion' | 'preprocessing' | 'integrity' | 'validation';
+type PipelineStageId = 'ingestion' | 'preprocessing' | 'integrity' | 'validation';
 
 interface DataDictionaryItem {
   key: string;
@@ -120,52 +128,52 @@ const DATA_DICTIONARY: DataDictionaryItem[] = [
     description: "Kloset leher angsa dan tangki septik. Pembeda sebaran paling tajam (spread 3.11 SD). Nilai 0.00% riil di Deiyai."
   },
   {
-    key: "clean_water_access_pct",
-    labelBps: "Akses Rumah Tangga Air Minum Layak",
+    key: "water_access_pct",
+    labelBps: "Akses Sumber Air Minum Layak",
     dimension: "Layanan Dasar WASH",
     sdgTag: "SDG 6: Clean Water & San.",
     dataType: "Float64",
     unit: "%",
-    rangeEmpirical: "0.00% — 100.00%",
+    rangeEmpirical: "0.00% — 99.99%",
     role: "feature",
     roleLabel: "Fitur Model K-Means",
-    description: "Sumber air minum terlindung/perpipaan. Nilai 0.00% riil di Mamberamo Tengah."
+    description: "Akses air leding/perpipaan/mata air terlindung. Nilai 0.00% terbukti riil di Intan Jaya (topografi tebing karst)."
   },
   {
     key: "unemployment_rate_tpt",
     labelBps: "Tingkat Pengangguran Terbuka (TPT)",
-    dimension: "Pasar Kerja Formal",
+    dimension: "Ketenagakerjaan",
     sdgTag: "SDG 8: Decent Work",
     dataType: "Float64",
     unit: "%",
-    rangeEmpirical: "0.00% — 13.37%",
+    rangeEmpirical: "0.25% — 13.06%",
     role: "feature",
     roleLabel: "Fitur Model K-Means",
-    description: "Pembeda tajam pasar kerja formal perkotaan (tinggi) vs subsisten perdesaan (rendah). Nilai 0.00% riil di Nduga."
+    description: "Proksi friksi pasar kerja perkotaan. Menghasilkan paradoks kemiskinan: r = -0.401 dengan tingkat kemiskinan."
   },
   {
-    key: "labor_participation_tpak",
+    key: "labor_force_particip_tpak",
     labelBps: "Tingkat Partisipasi Angkatan Kerja (TPAK)",
-    dimension: "Pasar Kerja Agregat",
+    dimension: "Ketenagakerjaan",
     sdgTag: "SDG 8: Decent Work",
     dataType: "Float64",
     unit: "%",
-    rangeEmpirical: "56.39% — 97.93%",
+    rangeEmpirical: "54.76% — 93.63%",
     role: "contextual",
     roleLabel: "Atribut Kontekstual",
-    description: "Dikeluarkan dari klastering untuk mencegah redundansi (r = -0.582 dengan TPT). Digunakan untuk audit fenomena Working Poor."
+    description: "Dikeluarkan dari klastering K-Means demi menghindari redundansi dengan TPT (korelasi r = -0.582). r = +0.462 terhadap P0."
   },
   {
     key: "grdp_constant_million_idr",
-    labelBps: "PDRB Konstan 2010 menurut Pengeluaran",
-    dimension: "Skala Ekonomi Makro",
-    sdgTag: "Perekonomian Riil",
-    dataType: "Int64",
+    labelBps: "PDRB Atas Dasar Harga Konstan (ADHK 2010)",
+    dimension: "Kapasitas Fiskal & Makro",
+    sdgTag: "SDG 8: Economic Growth",
+    dataType: "Float64",
     unit: "Juta Rupiah",
-    rangeEmpirical: "147,485 — 460,081,046",
+    rangeEmpirical: "Rp147.6 Rb — Rp460.1 Jt",
     role: "feature",
-    roleLabel: "Fitur Model (log1p)",
-    description: "PDRB riil BPS berskala Juta Rupiah (Rp147 Miliar s.d. Rp460 Triliun). Ditransformasi log1p untuk menekan skewness dari +5.85 ke +0.23."
+    roleLabel: "Fitur Model K-Means (log1p)",
+    description: "Output agregat ekonomi daerah. Ditransformasikan via ln(1+x) untuk mereduksi skewness dari +5.85 menjadi +0.23."
   },
   {
     key: "provinsi",
@@ -205,14 +213,115 @@ const DATA_DICTIONARY: DataDictionaryItem[] = [
   }
 ];
 
+interface MacroStageInfo {
+  id: PipelineStageId;
+  stepNum: string;
+  title: string;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tag: string;
+  tagColor: string;
+  objective: string;
+  inputData: string;
+  methodology: string;
+  verifiedOutput: string;
+  deepDiveLabel: string;
+}
+
+const MACRO_STAGES: MacroStageInfo[] = [
+  {
+    id: 'ingestion',
+    stepNum: '01',
+    title: 'Data Ingestion & Understanding',
+    subtitle: 'Metadata Sensus BPS 2021, Audit Nilai Batas 0.00% di 3T, & Kamus Data 13 Variabel',
+    icon: Database,
+    tag: '514 Daerah Lengkap · 0 Missing Values',
+    tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    objective: 'Menjamin kelengkapan sensus 514 daerah BPS 2021, meluruskan skala semantik PDRB, dan membuktikan bahwa angka 0.00% adalah fakta lapangan wilayah 3T, bukan data cacat.',
+    inputData: '514 Kabupaten/Kota di 34 Provinsi, 13 indikator mentah BPS 2021 (SIRUSA Jawa Tengah terverifikasi 100% cocok).',
+    methodology: 'Audit matriks missing value (0 NaN), koreksi semantik unit PDRB (Juta vs Ribu Rp), serta konfirmasi geografis nilai batas 0.00% pada sanitasi & air minum di pegunungan karst Papua.',
+    verifiedOutput: 'Dataset mentah bersih 514 baris utuh (100% Data Retention), 13 variabel terstandardisasi semantik dan siap diproses.',
+    deepDiveLabel: 'Kamus Data 13 Indikator, Pencarian Interaktif, & Audit Batas 0.00% Wilayah 3T'
+  },
+  {
+    id: 'preprocessing',
+    stepNum: '02',
+    title: 'Audit Distribusi & Preprocessing',
+    subtitle: 'Koreksi Skewness PDRB log1p, Tukey Boxplot Outlier, Preservasi 26 Anomali, & RobustScaler',
+    icon: Scale,
+    tag: 'Skewness PDRB: +5.85 → +0.23',
+    tagColor: 'bg-blue-50 text-okabe-blue border-blue-200',
+    objective: 'Mengatasi disparitas skala masif antardaerah (PDRB Jakarta 52x median) tanpa membuang daerah miskin ekstrem (SDG 1: Leave No One Behind).',
+    inputData: 'Variabel sosio-ekonomi kontinu dengan rentang dan satuan berbeda (Persentase, Tahun, Ribu Rp, Juta Rp).',
+    methodology: 'Transformasi logaritmik ln(1 + PDRB) untuk menormalkan kemencengan, deteksi anomali multivariat Isolation Forest (c=0.05), dan penskalaan berbasis Median & IQR menggunakan RobustScaler.',
+    verifiedOutput: 'Skewness PDRB berhasil dipangkas dari +5.85 menjadi +0.23 (simetris), 26 daerah anomali dipertahankan 100%, fitur bebas distorsi rata-rata.',
+    deepDiveLabel: 'Audit Skewness log1p, Diagram Tukey Boxplot P0, & Protokol RobustScaler'
+  },
+  {
+    id: 'integrity',
+    stepNum: '03',
+    title: 'Integritas Sains Data & Anti-Leakage',
+    subtitle: 'Dekonstruksi Label 98.83%, Zero Target Leakage, Isolasi Variabel, & Larangan Radar Chart',
+    icon: ShieldCheck,
+    tag: '100% Bebas Kebocoran Target',
+    tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    objective: 'Mencegah penalaran melingkar (circular reasoning) dan memastikan analisis murni bersifat pembelajaran tak terarah (Unsupervised Exploration).',
+    inputData: 'Kolom label biner bawaan uploader Kaggle (Klasifikasi Kemiskinan 0/1), angka kemiskinan P0, dan indeks komposit IPM.',
+    methodology: 'Reverse-engineering aljabar membuktikan label Kaggle dapat direkonstruksi 98.83% dengan aturan biner sederhana. Mengeliminasi 100% label biner, mengisolasi P0 dan IPM dari ruang klastering K-Means, serta menegakkan aturan Knaflic & Few larangan radar chart.',
+    verifiedOutput: 'Penolakan model klasifikasi terawasi palsu, eliminasi target leakage, isolasi multikolinieritas IPM (r > 0.86), dan visualisasi terstandarisasi Small Multiples.',
+    deepDiveLabel: 'Bukti Forensik Formula Kaggle 98.83%, Matriks Isolasi Variabel, & 4 Pilar Integritas'
+  },
+  {
+    id: 'validation',
+    stepNum: '04',
+    title: 'Pemodelan Dual-Engine & Ekonometrika',
+    subtitle: 'Klastering K-Means k=4, Formula Skrining Kerentanan V_struc 2x2, & Regresi Multivariat OLS',
+    icon: Layers,
+    tag: 'Stabilitas ARI = 0.9803 · OLS R² = 51.64%',
+    tagColor: 'bg-slate-900 text-white border-slate-700',
+    objective: 'Membentuk tipologi objektif wilayah dan memvalidasi signifikansi determinan sosio-ekonomi secara ekonometrika inferensial.',
+    inputData: '7 fitur terstandarisasi RobustScaler untuk 514 daerah, dilengkapi benchmark eksternal P0 dan IPM.',
+    methodology: 'Dual-Engine: (1) K-Means k=4 yang stabil terhadap 20 multi-seed (ARI=0.9803); (2) Skrining Kerentanan 2x2 V_struc (bobot setara 25% sanitasi, air, RLS, UHH); (3) Regresi Linear Berganda OLS untuk menguji determinan kemiskinan moneter.',
+    verifiedOutput: '4 klaster tipologi wilayah tervalidasi inferensial (ANOVA F=155.94, p < 0.001), formula skrining 2x2, dan OLS dengan daya jelas R² = 51.64% membuktikan signifikansi pengeluaran, sanitasi, dan Employment Paradox.',
+    deepDiveLabel: 'Diagnostik Benchmark k=4 vs k=3, Formula Matematis V_struc, & Grafik Koefisien OLS β'
+  }
+];
+
 export const MethodologyAudit: React.FC<PageProps> = ({
   districts,
   olsResults,
   boundaryCases,
 }) => {
-  const [activeStage, setActiveStage] = useState<PipelineStage>('ingestion');
+  // State for which stages have their deep dive expanded (details-on-demand)
+  const [expandedStages, setExpandedStages] = useState<Record<string, boolean>>({});
+  
+  // State for Data Dictionary search & role filter
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'feature' | 'benchmark' | 'contextual' | 'dropped'>('all');
+
+  const toggleStage = (stageId: PipelineStageId) => {
+    setExpandedStages(prev => ({
+      ...prev,
+      [stageId]: !prev[stageId]
+    }));
+  };
+
+  const expandAll = () => {
+    setExpandedStages({
+      ingestion: true,
+      preprocessing: true,
+      integrity: true,
+      validation: true
+    });
+  };
+
+  const collapseAll = () => {
+    setExpandedStages({});
+  };
+
+  const isAllExpanded = useMemo(() => {
+    return MACRO_STAGES.every(s => !!expandedStages[s.id]);
+  }, [expandedStages]);
 
   // Filtered Data Dictionary items
   const filteredDictionary = useMemo(() => {
@@ -228,39 +337,6 @@ export const MethodologyAudit: React.FC<PageProps> = ({
       return matchesSearch && matchesRole;
     });
   }, [searchQuery, roleFilter]);
-
-  const STAGES: { id: PipelineStage; stepNum: string; title: string; subtitle: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    {
-      id: 'ingestion',
-      stepNum: '01',
-      title: 'Data Understanding & Kamus Data',
-      subtitle: 'Integritas 514 Daerah BPS 2021, 13 Variabel & Nilai Batas 0.00%',
-      icon: Database
-    },
-    {
-      id: 'preprocessing',
-      stepNum: '02',
-      title: 'Audit Distribusi & Preprocessing',
-      subtitle: 'Skewness log1p, Tukey Boxplot Outlier, 26 Anomali & RobustScaler',
-      icon: Scale
-    },
-    {
-      id: 'integrity',
-      stepNum: '03',
-      title: 'Integritas Sains Data & Anti-Leakage',
-      subtitle: 'Dekonstruksi Label 98.8%, Zero Target Leakage & Isolasi Variabel',
-      icon: ShieldCheck
-    },
-    {
-      id: 'validation',
-      stepNum: '04',
-      title: 'Pemodelan Dual-Engine & Ekonometrika',
-      subtitle: 'Diagnostik K-Means k=4, Formula V_struc & Regresi OLS β',
-      icon: Layers
-    }
-  ];
-
-  const currentStageIndex = STAGES.findIndex(s => s.id === activeStage);
 
   return (
     <motion.div
@@ -320,691 +396,742 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         />
       </div>
 
-      {/* Pipeline Stepper: 4 Sequential Flow Stages */}
-      <div className="bg-white rounded-xl border border-slate-200/80 p-2 shadow-2xs">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5">
-          {STAGES.map((s, idx) => {
-            const Icon = s.icon;
-            const isActive = activeStage === s.id;
-            const isCompleted = idx < currentStageIndex;
+      {/* Section Header: Macro Mental Model & Global Expand/Collapse Toggle */}
+      <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <SlidersHorizontal className="w-4 h-4 text-amber-400" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+              Pipa Metodologi Sains Data End-to-End (Gambaran Mental Model Makro)
+            </h3>
+            <p className="text-[11px] text-slate-500 font-medium">
+              Alur 4 tahap mengalir dari hulu ke hilir. Klik tombol rincian teknis pada tiap tahap untuk melakukan audit mendalam (*details-on-demand*).
+            </p>
+          </div>
+        </div>
 
-            return (
-              <button
-                key={s.id}
-                onClick={() => setActiveStage(s.id)}
-                className={`flex items-start space-x-2.5 p-2.5 rounded-lg text-left transition-all ${
-                  isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : isCompleted
-                    ? 'bg-slate-50/80 text-slate-700 hover:bg-slate-100/90 border border-slate-200/60'
-                    : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-200/60'
-                }`}
-              >
-                <div className={`p-1.5 rounded-md shrink-0 mt-0.5 ${
-                  isActive ? 'bg-white/15 text-white' : isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                }`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center space-x-1.5">
-                    <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
-                      isActive ? 'text-amber-400' : 'text-slate-400'
-                    }`}>
-                      Tahap {s.stepNum}
-                    </span>
-                    {isCompleted && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    )}
-                  </div>
-                  <h3 className={`text-xs font-bold truncate mt-0.5 ${isActive ? 'text-white' : 'text-slate-900'}`}>
-                    {s.title}
-                  </h3>
-                  <p className={`text-[10.5px] truncate mt-0.5 font-medium ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>
-                    {s.subtitle}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+        <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
+          {isAllExpanded ? (
+            <button
+              onClick={collapseAll}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 text-xs font-semibold transition shadow-2xs"
+            >
+              <Minimize2 className="w-3.5 h-3.5 text-slate-500" />
+              <span>Tutup Semua Rincian (Mode Makro)</span>
+            </button>
+          ) : (
+            <button
+              onClick={expandAll}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-okabe-blue/30 text-okabe-blue bg-blue-50/70 hover:bg-blue-100 text-xs font-bold transition shadow-2xs"
+            >
+              <Maximize2 className="w-3.5 h-3.5 text-okabe-blue" />
+              <span>Buka Semua Rincian Teknis</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Main Flow Content Container */}
-      <AnimatePresence mode="wait">
-        {/* TAHAP 1: DATA UNDERSTANDING & KAMUS DATA */}
-        {activeStage === 'ingestion' && (
-          <motion.div
-            key="stage-ingestion"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-4"
-          >
-            {/* Stage Sub-header */}
-            <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-okabe-blue">
-                  Tahap 01 · Data Ingestion &amp; Understanding
-                </span>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">
-                  Metadata Resmi, Integritas Sensus BPS 2021, &amp; Kamus 13 Indikator
-                </h3>
-              </div>
-              <div className="flex items-center space-x-2 shrink-0">
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  514 Daerah · 0 Missing Values
-                </span>
-              </div>
-            </div>
+      {/* Sequential Pipeline: Stepper Vertikal seperti Sidebar saat ini */}
+      <div className="relative pl-6 sm:pl-8 space-y-4">
+        {/* Continuous Vertical Rail Line behind Step Nodes */}
+        <div 
+          className="absolute left-[13px] sm:left-[17px] top-6 bottom-6 w-0.5 bg-slate-200 pointer-events-none" 
+          aria-hidden="true" 
+        />
 
-            {/* 3 Metric Provenance Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Cakupan Geografis</span>
-                <div className="text-base font-extrabold text-slate-900">514 Kabupaten / Kota</div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  413 Kabupaten (80.35%) dan 101 Kota (19.65%) di 34 Provinsi. 100% lengkap mewakili baseline nasional pra-pemekaran Papua.
-                </p>
-              </div>
+        {MACRO_STAGES.map((stage, idx) => {
+          const Icon = stage.icon;
+          const isExpanded = !!expandedStages[stage.id];
 
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Verifikasi Silang BPS 2021</span>
-                <div className="text-base font-extrabold text-emerald-700">100% Identik SIRUSA</div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Kota Surakarta (P0 9.40%, IPM 82.62) dan Cilacap (P0 11.67%, IPM 70.42) terbukti cocok sempurna dengan publikasi resmi BPS 2021.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Koreksi Semantik PDRB</span>
-                <div className="text-base font-extrabold text-okabe-blue">Skala Juta Rupiah</div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Header mentah mencantumkan "(Rupiah)", namun nilai riil BPS berskala Juta Rupiah (Jakarta Pusat Rp460 Triliun, Tambrauw Rp147 Miliar).
-                </p>
-              </div>
-            </div>
-
-            {/* Interactive Data Dictionary Table */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
-                    Kamus Data Terstandar (13 Variabel Sensus Sosio-Ekonomi)
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Inventaris variabel semantik, satuan baku, rentang nilai empiris lapangan, dan peran metodologis.
-                  </p>
-                </div>
-
-                {/* Filter & Search Bar */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="relative">
-                    <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Cari indikator..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8 pr-3 py-1 text-xs rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-okabe-blue w-40 sm:w-48 transition"
-                    />
-                  </div>
-
-                  <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
-                    <button
-                      onClick={() => setRoleFilter('all')}
-                      className={`px-2 py-0.5 rounded transition ${roleFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600'}`}
-                    >
-                      Semua (13)
-                    </button>
-                    <button
-                      onClick={() => setRoleFilter('feature')}
-                      className={`px-2 py-0.5 rounded transition ${roleFilter === 'feature' ? 'bg-white text-okabe-blue shadow-2xs font-bold' : 'text-slate-600'}`}
-                    >
-                      Fitur Model (7)
-                    </button>
-                    <button
-                      onClick={() => setRoleFilter('benchmark')}
-                      className={`px-2 py-0.5 rounded transition ${roleFilter === 'benchmark' ? 'bg-white text-amber-800 shadow-2xs font-bold' : 'text-slate-600'}`}
-                    >
-                      Benchmark (2)
-                    </button>
-                    <button
-                      onClick={() => setRoleFilter('dropped')}
-                      className={`px-2 py-0.5 rounded transition ${roleFilter === 'dropped' ? 'bg-white text-okabe-vermillion shadow-2xs font-bold' : 'text-slate-600'}`}
-                    >
-                      Dieliminasi (1)
-                    </button>
-                  </div>
+          return (
+            <div key={stage.id} className="relative z-10 group">
+              {/* Step Node Indicator: Circle aligned with vertical line */}
+              <div className="absolute -left-6 sm:-left-8 top-3.5 flex items-center justify-center">
+                <div 
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-mono text-[11px] font-bold shadow-xs transition-all ${
+                    isExpanded 
+                      ? 'bg-okabe-blue text-white ring-4 ring-blue-100' 
+                      : 'bg-white border-2 border-slate-300 text-slate-700 group-hover:border-slate-500'
+                  }`}
+                >
+                  {stage.stepNum}
                 </div>
               </div>
 
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50/70 text-[10.5px] uppercase font-bold text-slate-500">
-                      <th className="py-2.5 px-3">Nama Kolom Teknis</th>
-                      <th className="py-2.5 px-3">Label Indikator BPS</th>
-                      <th className="py-2.5 px-3">Dimensi &amp; Pilar SDG</th>
-                      <th className="py-2.5 px-3">Satuan</th>
-                      <th className="py-2.5 px-3">Rentang Empiris</th>
-                      <th className="py-2.5 px-3">Peran Metodologis</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
-                    {filteredDictionary.map((item) => (
-                      <tr key={item.key} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-2.5 px-3 font-mono font-semibold text-slate-900 text-[11px]">
-                          {item.key}
-                        </td>
-                        <td className="py-2.5 px-3 font-medium text-slate-800">
-                          {item.labelBps}
-                        </td>
-                        <td className="py-2.5 px-3 text-slate-600">
-                          <span className="font-semibold text-slate-900 block">{item.dimension}</span>
-                          <span className="text-[10px] text-slate-400 font-mono">{item.sdgTag}</span>
-                        </td>
-                        <td className="py-2.5 px-3 font-mono text-[11px] text-slate-600">
-                          {item.unit}
-                        </td>
-                        <td className="py-2.5 px-3 font-mono text-[11px] text-slate-800 font-medium">
-                          {item.rangeEmpirical}
-                        </td>
-                        <td className="py-2.5 px-3">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border ${
-                            item.role === 'feature'
-                              ? 'bg-blue-50 text-okabe-blue border-blue-200'
-                              : item.role === 'benchmark'
-                              ? 'bg-amber-50 text-amber-800 border-amber-200'
-                              : item.role === 'dropped'
-                              ? 'bg-red-50 text-okabe-vermillion border-red-200'
-                              : 'bg-slate-100 text-slate-700 border-slate-200'
-                          }`}>
-                            {item.roleLabel}
+              {/* Main Card: Macro Overview First + Details-on-Demand Drawer */}
+              <div className={`bg-white rounded-xl border transition-all duration-200 overflow-hidden shadow-2xs ${
+                isExpanded ? 'border-okabe-blue/50 ring-1 ring-okabe-blue/20' : 'border-slate-200/80 hover:border-slate-300'
+              }`}>
+                {/* Macro Card Header */}
+                <div className="p-3.5 sm:p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
+                    <div className="flex items-start space-x-3">
+                      <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                        isExpanded ? 'bg-blue-50 text-okabe-blue' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-okabe-blue">
+                            Tahap {stage.stepNum}
                           </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                          <span className="text-slate-300 text-xs">·</span>
+                          <span className={`text-[10px] font-mono font-semibold px-2 py-0.2 rounded border ${stage.tagColor}`}>
+                            {stage.tag}
+                          </span>
+                        </div>
+                        <h3 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight mt-0.5">
+                          {stage.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">
+                          {stage.subtitle}
+                        </p>
+                      </div>
+                    </div>
 
-            {/* Special Audit: 3T Extreme Boundary Cases (0.00%) */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <div>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
-                  Audit Khusus Nilai Batas Lapangan Ekstrem (0.00%) di Wilayah 3T Papua
-                </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                  Angka 0.00% pada variabel berikut bukan kesalahan pengetikan (*clerical error*), melainkan cerminan faktual isolasi geografis:
-                </p>
-              </div>
+                    {/* Toggle Button for Details-on-Demand */}
+                    <button
+                      onClick={() => toggleStage(stage.id)}
+                      className={`inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 shadow-2xs ${
+                        isExpanded 
+                          ? 'bg-slate-900 text-white hover:bg-slate-800' 
+                          : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/80'
+                      }`}
+                      aria-expanded={isExpanded}
+                    >
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Tutup Rincian Teknis</span>
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3.5 h-3.5 text-okabe-blue" />
+                          <span>Buka Rincian Teknis</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {boundaryCases.map(b => (
-                  <div key={b.region} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-slate-900">{b.region}</span>
-                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">
-                        {b.value.toFixed(2)}{b.unit}
+                  {/* Macro Triad Matrix: Input -> Method -> Output */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3 pt-3 border-t border-slate-100 text-xs">
+                    <div className="p-2.5 rounded-lg bg-slate-50/80 border border-slate-100 space-y-1">
+                      <div className="flex items-center space-x-1.5 font-bold text-slate-800 text-[11px]">
+                        <Target className="w-3.5 h-3.5 text-okabe-blue shrink-0" />
+                        <span>1. Masalah &amp; Tujuan</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        {stage.objective}
+                      </p>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-slate-50/80 border border-slate-100 space-y-1">
+                      <div className="flex items-center space-x-1.5 font-bold text-slate-800 text-[11px]">
+                        <SlidersHorizontal className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <span>2. Metode &amp; Algoritma</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        {stage.methodology}
+                      </p>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-slate-50/80 border border-slate-100 space-y-1">
+                      <div className="flex items-center space-x-1.5 font-bold text-slate-800 text-[11px]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>3. Output Tervalidasi</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        {stage.verifiedOutput}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Quick Expand Prompt Bar when collapsed */}
+                  {!isExpanded && (
+                    <div 
+                      onClick={() => toggleStage(stage.id)}
+                      className="mt-2.5 pt-2 flex items-center justify-between text-[11px] text-slate-500 hover:text-okabe-blue cursor-pointer transition border-t border-dashed border-slate-200"
+                    >
+                      <span className="font-medium flex items-center space-x-1">
+                        <BookOpen className="w-3 h-3 text-slate-400" />
+                        <span>Klik untuk deep-dive: {stage.deepDiveLabel}</span>
+                      </span>
+                      <span className="font-bold inline-flex items-center space-x-0.5 text-okabe-blue">
+                        <span>Lihat Bukti</span>
+                        <ChevronDown className="w-3.5 h-3.5" />
                       </span>
                     </div>
-                    <div className="text-[11px] text-okabe-blue font-semibold">
-                      Indikator: {b.variable_label} (P0: {b.p0.toFixed(2)}%)
-                    </div>
-                    <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                      {b.context}
-                    </p>
-                  </div>
-                ))}
+                  )}
+                </div>
+
+                {/* DETAILS-ON-DEMAND ACCORDION DRAWER */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="border-t border-slate-200 bg-slate-50/40 p-3.5 sm:p-5 space-y-4"
+                    >
+                      {/* Sub-header of Deep Dive */}
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
+                        <div className="flex items-center space-x-2">
+                          <span className="w-2 h-2 rounded-full bg-okabe-blue"></span>
+                          <span className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                            Bukti Forensik &amp; Rincian Teknis · Tahap {stage.stepNum}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-500 font-mono">
+                          {stage.deepDiveLabel}
+                        </span>
+                      </div>
+
+                      {/* --- TAHAP 01 DEEP DIVE: KAMUS DATA & AUDIT 3T --- */}
+                      {stage.id === 'ingestion' && (
+                        <div className="space-y-4">
+                          {/* 3 Metric Provenance Cards */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Cakupan Geografis</span>
+                              <div className="text-base font-extrabold text-slate-900">514 Kabupaten / Kota</div>
+                              <p className="text-[11px] text-slate-500 leading-relaxed">
+                                413 Kabupaten (80.35%) dan 101 Kota (19.65%) di 34 Provinsi. 100% lengkap mewakili baseline nasional pra-pemekaran Papua.
+                              </p>
+                            </div>
+
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Verifikasi Silang BPS 2021</span>
+                              <div className="text-base font-extrabold text-emerald-700">100% Identik SIRUSA</div>
+                              <p className="text-[11px] text-slate-500 leading-relaxed">
+                                Kota Surakarta (P0 9.40%, IPM 82.62) dan Cilacap (P0 11.67%, IPM 70.42) terbukti cocok sempurna dengan publikasi resmi BPS 2021.
+                              </p>
+                            </div>
+
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-3.5 shadow-2xs space-y-1">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Koreksi Semantik PDRB</span>
+                              <div className="text-base font-extrabold text-okabe-blue">Skala Juta Rupiah</div>
+                              <p className="text-[11px] text-slate-500 leading-relaxed">
+                                Header mentah mencantumkan "(Rupiah)", namun nilai riil BPS berskala Juta Rupiah (Jakarta Pusat Rp460 Triliun, Tambrauw Rp147 Miliar).
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Interactive Data Dictionary Table */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
+                              <div>
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+                                  Kamus Data Terstandar (13 Variabel Sensus Sosio-Ekonomi)
+                                </h3>
+                                <p className="text-[11px] text-slate-500 mt-0.5">
+                                  Inventaris variabel semantik, satuan baku, rentang nilai empiris lapangan, dan peran metodologis.
+                                </p>
+                              </div>
+
+                              {/* Filter & Search Bar */}
+                              <div className="flex flex-wrap items-center gap-2">
+                                <div className="relative">
+                                  <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                  <input
+                                    type="text"
+                                    placeholder="Cari indikator..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-8 pr-3 py-1 text-xs rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-okabe-blue w-40 sm:w-48 transition"
+                                  />
+                                </div>
+
+                                <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
+                                  <button
+                                    onClick={() => setRoleFilter('all')}
+                                    className={`px-2 py-0.5 rounded transition ${roleFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600'}`}
+                                  >
+                                    Semua (13)
+                                  </button>
+                                  <button
+                                    onClick={() => setRoleFilter('feature')}
+                                    className={`px-2 py-0.5 rounded transition ${roleFilter === 'feature' ? 'bg-white text-okabe-blue shadow-2xs font-bold' : 'text-slate-600'}`}
+                                  >
+                                    Fitur Model (7)
+                                  </button>
+                                  <button
+                                    onClick={() => setRoleFilter('benchmark')}
+                                    className={`px-2 py-0.5 rounded transition ${roleFilter === 'benchmark' ? 'bg-white text-amber-800 shadow-2xs font-bold' : 'text-slate-600'}`}
+                                  >
+                                    Benchmark (2)
+                                  </button>
+                                  <button
+                                    onClick={() => setRoleFilter('dropped')}
+                                    className={`px-2 py-0.5 rounded transition ${roleFilter === 'dropped' ? 'bg-white text-okabe-vermillion shadow-2xs font-bold' : 'text-slate-600'}`}
+                                  >
+                                    Dieliminasi (1)
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Table */}
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left text-xs border-collapse">
+                                <thead>
+                                  <tr className="border-b border-slate-200 bg-slate-50/70 text-[10.5px] uppercase font-bold text-slate-500">
+                                    <th className="py-2.5 px-3">Nama Kolom Teknis</th>
+                                    <th className="py-2.5 px-3">Label Indikator BPS</th>
+                                    <th className="py-2.5 px-3">Dimensi &amp; Pilar SDG</th>
+                                    <th className="py-2.5 px-3">Satuan</th>
+                                    <th className="py-2.5 px-3">Rentang Empiris</th>
+                                    <th className="py-2.5 px-3">Peran Metodologis</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 text-slate-700">
+                                  {filteredDictionary.map((item) => (
+                                    <tr key={item.key} className="hover:bg-slate-50/80 transition-colors">
+                                      <td className="py-2.5 px-3 font-mono font-semibold text-slate-900 text-[11px]">
+                                        {item.key}
+                                      </td>
+                                      <td className="py-2.5 px-3 font-medium text-slate-800">
+                                        {item.labelBps}
+                                      </td>
+                                      <td className="py-2.5 px-3 text-slate-600">
+                                        <span className="font-semibold text-slate-900 block">{item.dimension}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{item.sdgTag}</span>
+                                      </td>
+                                      <td className="py-2.5 px-3 font-mono text-[11px] text-slate-600">
+                                        {item.unit}
+                                      </td>
+                                      <td className="py-2.5 px-3 font-mono text-[11px] text-slate-800 font-medium">
+                                        {item.rangeEmpirical}
+                                      </td>
+                                      <td className="py-2.5 px-3">
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold font-mono border ${
+                                          item.role === 'feature'
+                                            ? 'bg-blue-50 text-okabe-blue border-blue-200'
+                                            : item.role === 'benchmark'
+                                            ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                            : item.role === 'dropped'
+                                            ? 'bg-red-50 text-okabe-vermillion border-red-200'
+                                            : 'bg-slate-100 text-slate-700 border-slate-200'
+                                        }`}>
+                                          {item.roleLabel}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          {/* Special Audit: 3T Extreme Boundary Cases (0.00%) */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <div>
+                              <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+                                Audit Khusus Nilai Batas Lapangan Ekstrem (0.00%) di Wilayah 3T Papua
+                              </h3>
+                              <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                                Angka 0.00% pada variabel berikut bukan kesalahan pengetikan (*clerical error*), melainkan cerminan faktual isolasi geografis:
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              {boundaryCases.map(b => (
+                                <div key={b.region} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-extrabold text-slate-900">{b.region}</span>
+                                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">
+                                      {b.value.toFixed(2)}{b.unit}
+                                    </span>
+                                  </div>
+                                  <div className="text-[11px] text-okabe-blue font-semibold">
+                                    Indikator: {b.variable_label} (P0: {b.p0.toFixed(2)}%)
+                                  </div>
+                                  <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                                    {b.context}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* --- TAHAP 02 DEEP DIVE: PREPROCESSING & DISTRIBUSI --- */}
+                      {stage.id === 'preprocessing' && (
+                        <div className="space-y-4">
+                          {/* Skewness Correction & log1p banner */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                              Normalisasi Kemencengan Ekstrem PDRB Makro via Transformasi log1p
+                            </h3>
+                            <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                              PDRB riil konstan 2010 memiliki koefisien kemiringan (*skewness*) awal sebesar <strong>+5.85</strong> karena PDRB Kota Jakarta Pusat (Rp460,08 Triliun) mencapai <strong>52 kali lipat</strong> dari median nasional (Rp8,81 Triliun). Tanpa koreksi, algoritma K-Means berbasis jarak Euclidean akan terdistorsi 100% oleh skala PDRB Jakarta.
+                            </p>
+                            <div className="p-3 bg-slate-900 text-emerald-400 font-mono text-xs rounded-lg shadow-inner flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <code>x_log_pdrb = ln(1 + grdp_constant_million_idr)</code>
+                              <span className="text-slate-300 text-[11px] font-sans">
+                                Hasil: Skewness turun dari <strong>+5.85</strong> menjadi <strong>+0.23</strong> (distribusi simetris normal).
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Direct Embedded Tukey Boxplot Outlier Inspection */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                              <div>
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
+                                  Audit Outlier Univariat: Diagram Distribusi Tukey Boxplot (P0 Kemiskinan Moneter)
+                                </h3>
+                                <p className="text-[11px] text-slate-500 mt-0.5">
+                                  Evaluasi sebaran 514 daerah berbasis rentang interkuartil (1.5x IQR) untuk mengidentifikasi kantong kemiskinan kritis.
+                                </p>
+                              </div>
+                              <div className="inline-flex items-center space-x-1.5 text-xs text-slate-600 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                                <span>36 Pencilan Atas (&gt; 26.47%)</span>
+                              </div>
+                            </div>
+
+                            {/* Chart Component */}
+                            <TukeyBoxplot districts={districts} />
+
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 text-center text-xs">
+                              <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                <span className="text-[10px] text-slate-400 block font-semibold">Min (Bawah)</span>
+                                <strong className="text-xs text-slate-900 font-mono">2.38%</strong>
+                              </div>
+                              <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                <span className="text-[10px] text-slate-400 block font-semibold">Kuartil 1 (Q1)</span>
+                                <strong className="text-xs text-slate-900 font-mono">7.15%</strong>
+                              </div>
+                              <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
+                                <span className="text-[10px] text-okabe-blue block font-semibold">Median Nasional</span>
+                                <strong className="text-xs text-okabe-blue font-mono font-bold">10.46%</strong>
+                              </div>
+                              <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                <span className="text-[10px] text-slate-400 block font-semibold">Kuartil 3 (Q3)</span>
+                                <strong className="text-xs text-slate-900 font-mono">14.89%</strong>
+                              </div>
+                              <div className="p-2 bg-amber-50 rounded-lg border border-amber-100">
+                                <span className="text-[10px] text-amber-800 block font-semibold">Batas Atas Whisker</span>
+                                <strong className="text-xs text-amber-900 font-mono">26.47%</strong>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 26 Multivariate Anomalies & RobustScaler Protocol */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Isolation Forest Card */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2.5">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                  26 Anomali Multivariat Isolation Forest (Prinsip SDG 1)
+                                </h3>
+                                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
+                                  Contamination: 0.05
+                                </span>
+                              </div>
+                              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                                Deteksi multivariat menemukan 26 observasi ekstrim pada 2 kutub: <strong>Kutub 3T Tertinggal</strong> (Nduga, Intan Jaya, Mamberamo Tengah) dan <strong>Kutub Megapolitan</strong> (Jakarta Pusat, Jakarta Selatan).
+                              </p>
+                              <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 text-xs">
+                                <strong className="block font-bold">Kebijakan Mutlak: Strictly DO NOT DROP</strong>
+                                Menghapus daerah 3T melanggar etika mandat UN SDG 1 (<em>"Leave No One Behind"</em>). Seluruh 514 daerah dipertahankan penuh melalui penskalaan robust.
+                              </div>
+                            </div>
+
+                            {/* RobustScaler Card */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2.5">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                  Protokol Penskalaan: RobustScaler vs StandardScaler
+                                </h3>
+                                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
+                                  Median &amp; IQR
+                                </span>
+                              </div>
+                              <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                                Menggunakan rumus standarisasi <code>z = (x - median) / IQR</code>. Berbeda dengan StandardScaler yang memakai mean dan varians yang rentan terdistorsi oleh 26 anomali, RobustScaler memastikan titik pusat klaster stabil bagi 488 kabupaten mayoritas.
+                              </p>
+                              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs font-mono">
+                                <span>Median P0 = 10.46% · IQR P0 = 7.74%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* --- TAHAP 03 DEEP DIVE: ANTI-LEAKAGE & KAGGLE DECONSTRUCTION --- */}
+                      {stage.id === 'integrity' && (
+                        <div className="space-y-4">
+                          {/* Reverse-Engineering Kaggle Label Banner */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3">
+                            <div>
+                              <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                Dekonstruksi Reverse-Engineering Formula Heuristik Label Kaggle
+                              </h3>
+                              <p className="text-[11.5px] text-slate-600 mt-1 leading-relaxed">
+                                Tim peneliti membuktikan secara matematis bahwa kolom label bawaan <code>Klasifikasi Kemiskinan</code> pada berkas mentah 
+                                dapat direkonstruksi sempurna sebesar <strong>98.83% (508 dari 514 daerah)</strong> hanya dengan rumus deterministik logika biner sederhana berikut:
+                              </p>
+                            </div>
+
+                            <div className="p-3.5 bg-slate-900 text-emerald-400 font-mono text-xs rounded-xl overflow-x-auto shadow-inner space-y-1">
+                              <code>
+                                Class 1 (Miskin) &lt;=&gt; (poverty_rate_p0 &gt; 20.0%) OR (expenditure_per_capita &le; 6,250 AND sanitation_access_pct &le; 56.0%)
+                              </code>
+                              <p className="text-[10px] text-slate-400 font-sans">
+                                *Catatan: <code>expenditure_per_capita</code> bersatuan ribu rupiah disetahunkan (&le; 6.250 ribu = &le; Rp6,25 Juta/tahun).
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold">Tingkat Kecocokan</span>
+                                <div className="text-base font-extrabold text-okabe-blue mt-0.5">98.83% Cocok</div>
+                                <p className="text-[11px] text-slate-500 mt-0.5">508 observasi terbukti identik formula</p>
+                              </div>
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold">Implikasi Ilmiah</span>
+                                <div className="text-base font-extrabold text-amber-700 mt-0.5">Bukan Ground Truth</div>
+                                <p className="text-[11px] text-slate-500 mt-0.5">Aturan buatan uploader Kaggle</p>
+                              </div>
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-slate-400 text-[10px] uppercase font-bold">Keputusan Metodologi</span>
+                                <div className="text-base font-extrabold text-emerald-700 mt-0.5">Label Didrop 100%</div>
+                                <p className="text-[11px] text-slate-500 mt-0.5">Mencegah circular reasoning</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 4 Pillars of Data Science Integrity (2x2 Grid) */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+                            {/* Card 1: Zero Target Leakage */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <div className="flex items-center space-x-1.5 font-bold text-slate-900">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                  <span>1. Zero Target Leakage &amp; Tanpa Supervisi</span>
+                                </div>
+                                <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Passed
+                                </span>
+                              </div>
+                              <p className="text-slate-600 text-[11px] leading-relaxed">
+                                Penolakan mutlak terhadap model klasifikasi biner untuk mencegah kebocoran target:
+                              </p>
+                              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                                <li><strong>Label Biner Dibuang 100%:</strong> Kolom <code>Klasifikasi Kemiskinan</code> dieliminasi penuh.</li>
+                                <li><strong>Eksklusi P0 dari Fitur:</strong> Kemiskinan moneter $P_0$ hanya dipakai sebagai tolok ukur pengujian eksternal independen.</li>
+                              </ul>
+                            </div>
+
+                            {/* Card 2: Multikolinearitas */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <div className="flex items-center space-x-1.5 font-bold text-slate-900">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                  <span>2. Pencegahan Multikolinearitas (IPM &amp; TPAK)</span>
+                                </div>
+                                <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Passed
+                                </span>
+                              </div>
+                              <p className="text-slate-600 text-[11px] leading-relaxed">
+                                Menghindari pembobotan ganda (*double-counting*) dalam jarak Euclidean:
+                              </p>
+                              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                                <li><strong>Eksklusi IPM Komposit:</strong> Korelasi r &gt; 0.86 dengan komponennya akan menggelembungkan bobot modal manusia hingga 3x lipat dibanding sanitasi/air.</li>
+                                <li><strong>Eksklusi TPAK:</strong> Korelasi $r = -0.582$ dengan TPT; mempertahankan keduanya mereduksi Silhouette sebesar ~10%.</li>
+                              </ul>
+                            </div>
+
+                            {/* Card 3: Mandat SDG 1 */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <div className="flex items-center space-x-1.5 font-bold text-slate-900">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                  <span>3. Preservasi 26 Anomali (Leave No One Behind)</span>
+                                </div>
+                                <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Passed
+                                </span>
+                              </div>
+                              <p className="text-slate-600 text-[11px] leading-relaxed">
+                                Kepatuhan etis terhadap mandat UN SDG 1:
+                              </p>
+                              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                                <li><strong>0 Baris Dihapus:</strong> Anomali 3T mencerminkan fakta empiris disparitas nyata kepulauan dan pegunungan.</li>
+                                <li><strong>RobustScaler:</strong> Menjaga stabilitas partisi tanpa mengorbankan keterwakilan daerah paling terisolir.</li>
+                              </ul>
+                            </div>
+
+                            {/* Card 4: Larangan Spider Chart */}
+                            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <div className="flex items-center space-x-1.5 font-bold text-slate-900">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                  <span>4. Larangan Radar / Spider Chart</span>
+                                </div>
+                                <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Passed
+                                </span>
+                              </div>
+                              <p className="text-slate-600 text-[11px] leading-relaxed">
+                                Kepatuhan visualisasi Stephen Few &amp; Cole Knaflic:
+                              </p>
+                              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
+                                <li><strong>Axis-Order Bias:</strong> Luas poligon radar berubah drastis hanya dengan menukar posisi sumbu.</li>
+                                <li><strong>Solusi Standar:</strong> Digantikan secara baku oleh Small Multiples Z-Score batang dengan garis acuan $Z=0$.</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* --- TAHAP 04 DEEP DIVE: K-MEANS, V_STRUC & OLS --- */}
+                      {stage.id === 'validation' && (
+                        <div className="space-y-4">
+                          {/* Engine A: K-Means Benchmark Diagnostics */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                              <div>
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                  Engine A: Diagnostik Benchmark Pemilihan Jumlah Klaster (k = 4)
+                                </h3>
+                                <p className="text-[11px] text-slate-500 mt-0.5">
+                                  Titik infleksi kurva Elbow (WCSS) dan pembongkaran ilusi matematis k=3 ("The Giant Blob").
+                                </p>
+                              </div>
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-100 text-okabe-blue">
+                                Empirical Optimum
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Koefisien Siluet</span>
+                                <div className="text-base font-extrabold text-okabe-blue mt-0.5">0.2028</div>
+                                <span className="text-[9.5px] text-slate-500 block mt-0.5">Kontinum Gradasi Alami</span>
+                              </div>
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Davies-Bouldin (DBI)</span>
+                                <div className="text-base font-extrabold text-amber-700 mt-0.5">1.4522</div>
+                                <span className="text-[9.5px] text-slate-500 block mt-0.5">Separasi Antarklaster</span>
+                              </div>
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Adjusted Rand (ARI)</span>
+                                <div className="text-base font-extrabold text-emerald-700 mt-0.5">0.9803</div>
+                                <span className="text-[9.5px] text-slate-500 block mt-0.5">Stabilitas 20 Multi-Seed</span>
+                              </div>
+                              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Validasi Inferensial</span>
+                                <div className="text-base font-extrabold text-slate-900 mt-0.5">p &lt; 0.001</div>
+                                <span className="text-[9.5px] text-slate-500 block mt-0.5">ANOVA F = 155.94</span>
+                              </div>
+                            </div>
+
+                            <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg text-[11.5px] text-slate-700 leading-relaxed">
+                              <strong className="text-slate-900 font-bold block mb-0.5">Pembongkaran Ilusi Matematis k = 3:</strong>
+                              Meskipun k=3 memiliki Silhouette sedikit lebih tinggi (0.2863), pola tersebut menumpuk 322 daerah (62.6% Indonesia) ke dalam 1 klaster raksasa seragam. Pada k=4, kelompok 322 daerah tersebut terurai proporsional menjadi Klaster 2 (Penyangga Mapan, N=187) dan Klaster 3 (Agraris Rentan, N=216) yang memiliki disparitas sanitasi (Δ = 12.38%) dan derajat kesehatan (Δ = 3.72 tahun).
+                            </div>
+                          </div>
+
+                          {/* Engine B: Mathematical Formulation of V_struc */}
+                          <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                              <div>
+                                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                                  Engine B: Formulasi Objektif Indeks Kerentanan Struktural Relatif (V_struc)
+                                </h3>
+                                <p className="text-[11px] text-slate-500 mt-0.5">
+                                  Instrumen skrining fasilitas dasar non-moneter yang dinormalisasi Min-Max [0, 1] dengan bobot setara 25%.
+                                </p>
+                              </div>
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
+                                Ambang: 0.2720
+                              </span>
+                            </div>
+
+                            <div className="p-3.5 bg-slate-900 text-slate-100 font-mono text-xs rounded-xl shadow-inner space-y-1">
+                              <div className="text-amber-400 font-bold text-sm">
+                                V_struc = 0.25 × ( D̃_sanitasi + D̃_air + D̃_RLS + D̃_UHH )
+                              </div>
+                              <p className="text-[10.5px] text-slate-300 font-sans mt-1">
+                                Di mana masing-masing komponen defisit dihitung: D_san = (100 - Sanitasi), D_air = (100 - Air), D_RLS = (Max_RLS - RLS), D_UHH = (Max_UHH - UHH), lalu dinormalisasi Min-Max.
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span className="font-bold text-slate-900 block">Sumbu X: Kemiskinan Moneter Aktual (P0)</span>
+                                <span className="text-[11px] text-slate-500 block mt-0.5">
+                                  Garis potong median nasional: <strong>10.46%</strong>. Mengukur kedaruratan daya beli konsumsi jangka pendek.
+                                </span>
+                              </div>
+                              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span className="font-bold text-slate-900 block">Sumbu Y: Kerentanan Fasilitas Dasar (V_struc)</span>
+                                <span className="text-[11px] text-slate-500 block mt-0.5">
+                                  Garis potong median nasional: <strong>0.2720</strong>. Mengukur kedaruratan infrastruktur fisik publik jangka panjang.
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Engine C: Multivariate OLS Econometrics */}
+                          <div className="space-y-3">
+                            <OLSCoefficientsBar olsResults={olsResults} />
+                            <NarrativeCallout
+                              title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
+                              insight={PARADOXES.olsStandardizedBeta.insightCallout}
+                              evidence={PARADOXES.olsStandardizedBeta.evidence}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Close Drawer Button at the bottom of Deep Dive */}
+                      <div className="pt-2 flex justify-end">
+                        <button
+                          onClick={() => toggleStage(stage.id)}
+                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-xs font-semibold text-slate-700 shadow-2xs transition"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Tutup Rincian Tahap {stage.stepNum}</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
-          </motion.div>
-        )}
+          );
+        })}
+      </div>
 
-        {/* TAHAP 2: AUDIT DISTRIBUSI & PREPROCESSING */}
-        {activeStage === 'preprocessing' && (
-          <motion.div
-            key="stage-preprocessing"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-4"
-          >
-            {/* Stage Sub-header */}
-            <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-okabe-blue">
-                  Tahap 02 · Preprocessing &amp; Distribusi Data
-                </span>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">
-                  Koreksi Skewness PDRB log1p, Deteksi Outlier Tukey Boxplot, &amp; Standarisasi RobustScaler
-                </h3>
-              </div>
-              <div className="flex items-center space-x-2 shrink-0">
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
-                  Skewness: +5.85 → +0.23
-                </span>
-              </div>
-            </div>
-
-            {/* Skewness Correction & log1p banner */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                Normalisasi Kemencengan Ekstrem PDRB Makro via Transformasi log1p
-              </h3>
-              <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                PDRB riil konstan 2010 memiliki koefisien kemiringan (*skewness*) awal sebesar <strong>+5.85</strong> karena PDRB Kota Jakarta Pusat (Rp460,08 Triliun) mencapai <strong>52 kali lipat</strong> dari median nasional (Rp8,81 Triliun). Tanpa koreksi, algoritma K-Means berbasis jarak Euclidean akan terdistorsi 100% oleh skala PDRB Jakarta.
-              </p>
-              <div className="p-3 bg-slate-900 text-emerald-400 font-mono text-xs rounded-lg shadow-inner flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <code>x_log_pdrb = ln(1 + grdp_constant_million_idr)</code>
-                <span className="text-slate-300 text-[11px] font-sans">
-                  Hasil: Skewness turun dari <strong>+5.85</strong> menjadi <strong>+0.23</strong> (distribusi simetris normal).
-                </span>
-              </div>
-            </div>
-
-            {/* Direct Embedded Tukey Boxplot Outlier Inspection */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
-                    Audit Outlier Univariat: Diagram Distribusi Tukey Boxplot (P0 Kemiskinan Moneter)
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Evaluasi sebaran 514 daerah berbasis rentang interkuartil (1.5x IQR) untuk mengidentifikasi kantong kemiskinan kritis.
-                  </p>
-                </div>
-                <div className="inline-flex items-center space-x-1.5 text-xs text-slate-600 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
-                  <span>36 Pencilan Atas (&gt; 26.47%)</span>
-                </div>
-              </div>
-
-              {/* Chart Component */}
-              <TukeyBoxplot districts={districts} />
-
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 text-center text-xs">
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                  <span className="text-[10px] text-slate-400 block font-semibold">Min (Bawah)</span>
-                  <strong className="text-xs text-slate-900 font-mono">2.38%</strong>
-                </div>
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                  <span className="text-[10px] text-slate-400 block font-semibold">Kuartil 1 (Q1)</span>
-                  <strong className="text-xs text-slate-900 font-mono">7.15%</strong>
-                </div>
-                <div className="p-2 bg-blue-50 rounded-lg border border-blue-100">
-                  <span className="text-[10px] text-okabe-blue block font-semibold">Median Nasional</span>
-                  <strong className="text-xs text-okabe-blue font-mono font-bold">10.46%</strong>
-                </div>
-                <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                  <span className="text-[10px] text-slate-400 block font-semibold">Kuartil 3 (Q3)</span>
-                  <strong className="text-xs text-slate-900 font-mono">14.89%</strong>
-                </div>
-                <div className="p-2 bg-amber-50 rounded-lg border border-amber-100">
-                  <span className="text-[10px] text-amber-800 block font-semibold">Batas Atas Whisker</span>
-                  <strong className="text-xs text-amber-900 font-mono">26.47%</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* 26 Multivariate Anomalies & RobustScaler Protocol */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Isolation Forest Card */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2.5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                    26 Anomali Multivariat Isolation Forest (Prinsip SDG 1)
-                  </h3>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
-                    Contamination: 0.05
-                  </span>
-                </div>
-                <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                  Deteksi multivariat menemukan 26 observasi ekstrim pada 2 kutub: <strong>Kutub 3T Tertinggal</strong> (Nduga, Intan Jaya, Mamberamo Tengah) dan <strong>Kutub Megapolitan</strong> (Jakarta Pusat, Jakarta Selatan).
-                </p>
-                <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 text-xs">
-                  <strong className="block font-bold">Kebijakan Mutlak: Strictly DO NOT DROP</strong>
-                  Menghapus daerah 3T melanggar etika mandat UN SDG 1 (<em>"Leave No One Behind"</em>). Seluruh 514 daerah dipertahankan penuh melalui penskalaan robust.
-                </div>
-              </div>
-
-              {/* RobustScaler Card */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2.5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                    Protokol Penskalaan: RobustScaler vs StandardScaler
-                  </h3>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
-                    Median &amp; IQR
-                  </span>
-                </div>
-                <p className="text-[11.5px] text-slate-600 leading-relaxed">
-                  Menggunakan rumus standarisasi <code>z = (x - median) / IQR</code>. Berbeda dengan StandardScaler yang memakai mean dan varians yang rentan terdistorsi oleh 26 anomali, RobustScaler memastikan titik pusat klaster stabil bagi 488 kabupaten mayoritas.
-                </p>
-                <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs font-mono">
-                  <span>Median P0 = 10.46% · IQR P0 = 7.74%</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* TAHAP 3: INTEGRITAS SAINS DATA & ANTI-LEAKAGE */}
-        {activeStage === 'integrity' && (
-          <motion.div
-            key="stage-integrity"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-4"
-          >
-            {/* Stage Sub-header */}
-            <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-okabe-blue">
-                  Tahap 03 · Metodologi &amp; Integritas Ilmiah
-                </span>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">
-                  Dekonstruksi Label Kaggle 98.83%, Zero Target Leakage &amp; Mitigasi Multikolinearitas
-                </h3>
-              </div>
-              <div className="flex items-center space-x-2 shrink-0">
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  100% Lolos Audit Integritas
-                </span>
-              </div>
-            </div>
-
-            {/* Reverse-Engineering Kaggle Label Banner */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-subtle space-y-3">
-              <div>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                  Dekonstruksi Reverse-Engineering Formula Heuristik Label Kaggle
-                </h3>
-                <p className="text-[11.5px] text-slate-600 mt-1 leading-relaxed">
-                  Tim peneliti membuktikan secara matematis bahwa kolom label bawaan <code>Klasifikasi Kemiskinan</code> pada berkas mentah 
-                  dapat direkonstruksi sempurna sebesar <strong>98.83% (508 dari 514 daerah)</strong> hanya dengan rumus deterministik logika biner sederhana berikut:
-                </p>
-              </div>
-
-              <div className="p-3.5 bg-slate-900 text-emerald-400 font-mono text-xs rounded-xl overflow-x-auto shadow-inner space-y-1">
-                <code>
-                  Class 1 (Miskin) &lt;=&gt; (poverty_rate_p0 &gt; 20.0%) OR (expenditure_per_capita &lt;= 6,250 AND sanitation_access_pct &lt;= 56.0%)
-                </code>
-                <p className="text-[10px] text-slate-400 font-sans">
-                  *Catatan: <code>expenditure_per_capita</code> bersatuan ribu rupiah disetahunkan (&le; 6.250 ribu = &le; Rp6,25 Juta/tahun).
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold">Tingkat Kecocokan</span>
-                  <div className="text-base font-extrabold text-okabe-blue mt-0.5">98.83% Cocok</div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">508 observasi terbukti identik formula</p>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold">Implikasi Ilmiah</span>
-                  <div className="text-base font-extrabold text-amber-700 mt-0.5">Bukan Ground Truth</div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Aturan buatan uploader Kaggle</p>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold">Keputusan Metodologi</span>
-                  <div className="text-base font-extrabold text-emerald-700 mt-0.5">Label Didrop 100%</div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Mencegah circular reasoning</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 4 Pillars of Data Science Integrity (2x2 Grid) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
-              {/* Card 1: Zero Target Leakage */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <div className="flex items-center space-x-1.5 font-bold text-slate-900">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>1. Zero Target Leakage &amp; Tanpa Supervisi</span>
-                  </div>
-                  <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Passed
-                  </span>
-                </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Penolakan mutlak terhadap model klasifikasi biner untuk mencegah kebocoran target:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
-                  <li><strong>Label Biner Dibuang 100%:</strong> Kolom <code>Klasifikasi Kemiskinan</code> dieliminasi penuh.</li>
-                  <li><strong>Eksklusi P0 dari Fitur:</strong> Kemiskinan moneter $P_0$ hanya dipakai sebagai tolok ukur pengujian eksternal independen.</li>
-                </ul>
-              </div>
-
-              {/* Card 2: Multikolinearitas */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <div className="flex items-center space-x-1.5 font-bold text-slate-900">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>2. Pencegahan Multikolinearitas (IPM &amp; TPAK)</span>
-                  </div>
-                  <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Passed
-                  </span>
-                </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Menghindari pembobotan ganda (*double-counting*) dalam jarak Euclidean:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
-                  <li><strong>Eksklusi IPM Komposit:</strong> Korelasi r &gt; 0.86 dengan komponennya akan menggelembungkan bobot modal manusia hingga 3x lipat dibanding sanitasi/air.</li>
-                  <li><strong>Eksklusi TPAK:</strong> Korelasi $r = -0.582$ dengan TPT; mempertahankan keduanya mereduksi Silhouette sebesar ~10%.</li>
-                </ul>
-              </div>
-
-              {/* Card 3: Mandat SDG 1 */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <div className="flex items-center space-x-1.5 font-bold text-slate-900">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>3. Preservasi 26 Anomali (Leave No One Behind)</span>
-                  </div>
-                  <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Passed
-                  </span>
-                </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Kepatuhan etis terhadap mandat UN SDG 1:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
-                  <li><strong>0 Baris Dihapus:</strong> Anomali 3T mencerminkan fakta empiris disparitas nyata kepulauan dan pegunungan.</li>
-                  <li><strong>RobustScaler:</strong> Menjaga stabilitas partisi tanpa mengorbankan keterwakilan daerah paling terisolir.</li>
-                </ul>
-              </div>
-
-              {/* Card 4: Larangan Spider Chart */}
-              <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <div className="flex items-center space-x-1.5 font-bold text-slate-900">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>4. Larangan Radar / Spider Chart</span>
-                  </div>
-                  <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Passed
-                  </span>
-                </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
-                  Kepatuhan visualisasi Stephen Few &amp; Cole Knaflic:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] pl-1 leading-relaxed">
-                  <li><strong>Axis-Order Bias:</strong> Luas poligon radar berubah drastis hanya dengan menukar posisi sumbu.</li>
-                  <li><strong>Solusi Standar:</strong> Digantikan secara baku oleh Small Multiples Z-Score batang dengan garis acuan $Z=0$.</li>
-                </ul>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* TAHAP 4: PEMODELAN DUAL-ENGINE & VALIDASI EKONOMETRIKA */}
-        {activeStage === 'validation' && (
-          <motion.div
-            key="stage-validation"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-4"
-          >
-            {/* Stage Sub-header */}
-            <div className="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-okabe-blue">
-                  Tahap 04 · Pemodelan &amp; Validasi Inferensial
-                </span>
-                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">
-                  Benchmark K-Means (k=4), Formulasi V_struc 2x2, &amp; Regresi Multivariat OLS (β)
-                </h3>
-              </div>
-              <div className="flex items-center space-x-2 shrink-0">
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  ANOVA F = 155.94 (p &lt; 0.001)
-                </span>
-              </div>
-            </div>
-
-            {/* Engine A: K-Means Benchmark Diagnostics */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                    Engine A: Diagnostik Benchmark Pemilihan Jumlah Klaster (k = 4)
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Titik infleksi kurva Elbow (WCSS) dan pembongkaran ilusi matematis k=3 ("The Giant Blob").
-                  </p>
-                </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-100 text-okabe-blue">
-                  Empirical Optimum
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Koefisien Siluet</span>
-                  <div className="text-base font-extrabold text-okabe-blue mt-0.5">0.2028</div>
-                  <span className="text-[9.5px] text-slate-500 block mt-0.5">Kontinum Gradasi Alami</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Davies-Bouldin (DBI)</span>
-                  <div className="text-base font-extrabold text-amber-700 mt-0.5">1.4522</div>
-                  <span className="text-[9.5px] text-slate-500 block mt-0.5">Separasi Antarklaster</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Adjusted Rand (ARI)</span>
-                  <div className="text-base font-extrabold text-emerald-700 mt-0.5">0.9803</div>
-                  <span className="text-[9.5px] text-slate-500 block mt-0.5">Stabilitas 20 Multi-Seed</span>
-                </div>
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <span className="text-[9.5px] uppercase font-bold text-slate-400 block">Validasi Inferensial</span>
-                  <div className="text-base font-extrabold text-slate-900 mt-0.5">p &lt; 0.001</div>
-                  <span className="text-[9.5px] text-slate-500 block mt-0.5">ANOVA F = 155.94</span>
-                </div>
-              </div>
-
-              <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg text-[11.5px] text-slate-700 leading-relaxed">
-                <strong className="text-slate-900 font-bold block mb-0.5">Pembongkaran Ilusi Matematis k = 3:</strong>
-                Meskipun k=3 memiliki Silhouette sedikit lebih tinggi (0.2863), pola tersebut menumpuk 322 daerah (62.6% Indonesia) ke dalam 1 klaster raksasa seragam. Pada k=4, kelompok 322 daerah tersebut terurai proporsional menjadi Klaster 2 (Penyangga Mapan, N=187) dan Klaster 3 (Agraris Rentan, N=216) yang memiliki disparitas sanitasi (Δ = 12.38%) dan derajat kesehatan (Δ = 3.72 tahun).
-              </div>
-            </div>
-
-            {/* Engine B: Mathematical Formulation of V_struc */}
-            <div className="bg-white rounded-xl border border-slate-200/80 p-4 shadow-subtle space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
-                    Engine B: Formulasi Objektif Indeks Kerentanan Struktural Relatif (V_struc)
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Instrumen skrining fasilitas dasar non-moneter yang dinormalisasi Min-Max [0, 1] dengan bobot setara 25%.
-                  </p>
-                </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-okabe-blue border border-blue-200">
-                  Ambang: 0.2720
-                </span>
-              </div>
-
-              <div className="p-3.5 bg-slate-900 text-slate-100 font-mono text-xs rounded-xl shadow-inner space-y-1">
-                <div className="text-amber-400 font-bold text-sm">
-                  V_struc = 0.25 × ( D̃_sanitasi + D̃_air + D̃_RLS + D̃_UHH )
-                </div>
-                <p className="text-[10.5px] text-slate-300 font-sans mt-1">
-                  Di mana masing-masing komponen defisit dihitung: D_san = (100 - Sanitasi), D_air = (100 - Air), D_RLS = (Max_RLS - RLS), D_UHH = (Max_UHH - UHH), lalu dinormalisasi Min-Max.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Sumbu X: Kemiskinan Moneter Aktual (P0)</span>
-                  <span className="text-[11px] text-slate-500 block mt-0.5">
-                    Garis potong median nasional: <strong>10.46%</strong>. Mengukur kedaruratan daya beli konsumsi jangka pendek.
-                  </span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Sumbu Y: Kerentanan Fasilitas Dasar (V_struc)</span>
-                  <span className="text-[11px] text-slate-500 block mt-0.5">
-                    Garis potong median nasional: <strong>0.2720</strong>. Mengukur kedaruratan infrastruktur fisik publik jangka panjang.
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Engine C: Multivariate OLS Econometrics */}
-            <div className="space-y-3">
-              <OLSCoefficientsBar olsResults={olsResults} />
-              <NarrativeCallout
-                title="WAWASAN KOEFISIEN BAKU OLS MULTIVARIAT"
-                insight={PARADOXES.olsStandardizedBeta.insightCallout}
-                evidence={PARADOXES.olsStandardizedBeta.evidence}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Flow Footer Stepper Navigation Bar */}
-      <div className="flex items-center justify-between bg-white rounded-xl border border-slate-200/80 px-4 py-3 shadow-2xs">
-        <div>
-          {currentStageIndex > 0 ? (
-            <button
-              onClick={() => setActiveStage(STAGES[currentStageIndex - 1].id)}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Kembali: Tahap {STAGES[currentStageIndex - 1].stepNum}</span>
-            </button>
-          ) : (
-            <span className="text-xs text-slate-400 font-medium">Awal Alur Metodologi</span>
-          )}
+      {/* Audit Checklist & Integrity Footer Badge */}
+      <div className="bg-slate-900 text-white rounded-xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-xs sm:text-sm font-bold text-white">
+              Sertifikasi Kepatuhan Metodologi Sains Data &amp; UN SDG 1
+            </h4>
+            <p className="text-[11px] text-slate-300 mt-0.5 font-medium">
+              Seluruh pipa komputasi mematuhi prinsip anti-overclaim, reproducibilitas multi-seed, dan eliminasi total kebocoran data.
+            </p>
+          </div>
         </div>
 
-        <div className="text-[11px] font-mono text-slate-500 hidden sm:block">
-          Tahap <strong>{currentStageIndex + 1}</strong> dari <strong>4</strong> · {STAGES[currentStageIndex].title}
-        </div>
-
-        <div>
-          {currentStageIndex < STAGES.length - 1 ? (
-            <button
-              onClick={() => setActiveStage(STAGES[currentStageIndex + 1].id)}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-okabe-blue text-white hover:bg-blue-700 shadow-2xs transition"
-            >
-              <span>Lanjut ke Tahap {STAGES[currentStageIndex + 1].stepNum}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          ) : (
-            <span className="text-xs font-bold text-emerald-700 flex items-center space-x-1">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Selesai Seluruh Alur Audit</span>
-            </span>
-          )}
+        <div className="flex items-center space-x-3 text-xs font-mono shrink-0">
+          <div className="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-emerald-400 flex items-center space-x-1">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>514 Daerah Lolos Audit</span>
+          </div>
         </div>
       </div>
     </motion.div>
