@@ -3,5 +3,5 @@
   "accuracy_pct": 98.83,
   "matched_regions": 508,
   "total_regions": 514,
-  "conclusion": "Label biner Kaggle terbukti merupakan aturan heuristik deterministik sederhana, bukan ground truth BPS, memvalidasi penolakan model klasifikasi terawasi."
+  "conclusion": "Label biner Kaggle merupakan aturan heuristik deterministik sederhana, bukan ground truth BPS, memvalidasi penolakan model klasifikasi terawasi."
 }

@@ -2,9 +2,7 @@
 Unit tests for unsupervised clustering engine and persona standards.
 """
 
-import pytest
 import numpy as np
-import pandas as pd
 
 from poverty_radar.config import CLUSTER_LABELS
 from poverty_radar.data.preprocessor import get_feature_matrix
@@ -55,4 +53,3 @@ def test_compute_cluster_summary_output(processed_df):
     assert df_summary['total_regions'].sum() == 514
     assert set(df_summary['cluster_name']) == set(CLUSTER_LABELS.values())
     assert df_summary['poverty_rate_p0_median'].iloc[0] < df_summary['poverty_rate_p0_median'].iloc[3]
-

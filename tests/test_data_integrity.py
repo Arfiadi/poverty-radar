@@ -2,10 +2,6 @@
 Unit tests for data contracts, integrity, and target leakage prevention.
 """
 
-import pytest
-import pandas as pd
-from poverty_radar.config import FEATURE_COLS, EXCLUDED_COLS
-
 
 def test_row_count_and_nulls(processed_df):
     """Ensure exactly 514 districts and zero null values."""
@@ -58,5 +54,3 @@ def test_policy_recommendations_contract():
     for col in required_cols:
         assert col in df_policy.columns, f"Missing required column: {col}"
     assert df_policy.isnull().sum().sum() == 0, "Policy matrix must have zero null values"
-
-

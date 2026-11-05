@@ -23,4 +23,3 @@ __all__ = [
     "plot_p0_stripplot",
     "plot_vulnerability_matrix_2x2"
 ]
-

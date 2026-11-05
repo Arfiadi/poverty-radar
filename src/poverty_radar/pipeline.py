@@ -4,9 +4,9 @@ Executes raw ingestion -> interim cleaning -> clustering -> vulnerability screen
 """
 
 import logging
-from pathlib import Path
+
 import pandas as pd
-import numpy as np
+
 
 from poverty_radar.config import (
     RAW_DATA_PATH,
@@ -17,6 +17,7 @@ from poverty_radar.config import (
 )
 from poverty_radar.data.loader import load_raw_data
 from poverty_radar.data.preprocessor import clean_raw_data, get_feature_matrix
+from poverty_radar.data.exporter import export_dashboard_payloads
 from poverty_radar.models.clustering import RegionalClusterer, compute_cluster_summary
 from poverty_radar.models.vulnerability import VulnerabilityScorer
 from poverty_radar.visualization.plots import (
@@ -46,7 +47,10 @@ FINAL_COLUMN_ORDER = [
 ]
 
 
-def run_pipeline(generate_figures: bool = True) -> pd.DataFrame:
+def run_pipeline(
+    generate_figures: bool = True,
+    export_dashboard: bool = True
+) -> pd.DataFrame:
     """
     Run complete deterministic pipeline from raw BPS dataset to final processed dataset and figures.
     """
@@ -93,8 +97,12 @@ def run_pipeline(generate_figures: bool = True) -> pd.DataFrame:
 
         plot_elbow_and_silhouette(X_scaled, save_path=FIGURES_DIR / "08_pemilihan_jumlah_klaster_elbow.png")
         plot_algorithm_comparison_barchart(save_path=FIGURES_DIR / "09_perbandingan_algoritma_clustering.png")
-        plot_multiseed_robustness(X_scaled, df_out['cluster_id'].values, save_path=FIGURES_DIR / "02_multiseed_robustness_ari.png")
-        
+        plot_multiseed_robustness(
+            X_scaled,
+            df_out['cluster_id'].values,
+            save_path=FIGURES_DIR / "02_multiseed_robustness_ari.png"
+        )
+
         # Add PCA columns to df_out for plotting
         pca_1, pca_2 = clusterer.transform_pca(X_scaled)
         df_plot = df_out.copy()
@@ -103,10 +111,19 @@ def run_pipeline(generate_figures: bool = True) -> pd.DataFrame:
 
         plot_pca_2d(df_plot, save_path=FIGURES_DIR / "03_pca_cluster_projection_2d.png")
         plot_cluster_heatmap(df_plot, X_scaled, save_path=FIGURES_DIR / "04_cluster_characteristics_heatmap.png")
-        plot_cluster_small_multiples(df_plot, X_scaled, save_path=FIGURES_DIR / "04_cluster_profiles_small_multiples.png")
+        plot_cluster_small_multiples(
+            df_plot,
+            X_scaled,
+            save_path=FIGURES_DIR / "04_cluster_profiles_small_multiples.png"
+        )
         plot_p0_stripplot(df_plot, save_path=FIGURES_DIR / "05_poverty_distribution_stripplot.png")
         plot_vulnerability_matrix_2x2(df_plot, save_path=FIGURES_DIR / "06_relative_vulnerability_matrix_2x2.png")
         logger.info("All presentation figures successfully generated.")
+
+    if export_dashboard:
+        logger.info("Step 8: Exporting JSON payloads for frontend dashboard...")
+        export_dashboard_payloads()
+        logger.info("Dashboard payloads successfully refreshed.")
 
     logger.info("Pipeline execution complete! 100%% verified.")
     return df_out
@@ -114,4 +131,3 @@ def run_pipeline(generate_figures: bool = True) -> pd.DataFrame:
 
 if __name__ == "__main__":
     run_pipeline(generate_figures=True)
-

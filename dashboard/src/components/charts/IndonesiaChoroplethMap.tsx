@@ -4,6 +4,7 @@ import * as echarts from 'echarts';
 import { District } from '../../types';
 import { useFilterStore } from '../../store/useFilterStore';
 import { ClusterBadge, QuadrantBadge } from '../common/Badge';
+import { PROV_NAME_MAPPING, KNOWN_DISTRICT_ALIASES } from '../../constants/geoAliases';
 import { 
   MapPin, 
   Info, 
@@ -38,26 +39,7 @@ interface ProvinceStats {
   districts: District[];
 }
 
-// Mapping from BPS Susenas uppercase province names to GADM GeoJSON NAME_1
-const PROV_NAME_MAPPING: Record<string, string> = {
-  'DKI JAKARTA': 'Jakarta Raya',
-  'D I YOGYAKARTA': 'Yogyakarta',
-  'KEP. BANGKA BELITUNG': 'Bangka Belitung',
-};
-
-// Known phonetic / truncation aliases between GADM GeoJSON and BPS naming
-const KNOWN_DISTRICT_ALIASES: Record<string, string> = {
-  'tanjung jabung b': 'tanjung jabung barat',
-  'tanjung jabung t': 'tanjung jabung timur',
-  'pakpak barat': 'pakpak bharat',
-  'bolaang mongondow u': 'bolaang mongondow utara',
-  'bolaang mongondow s': 'bolaang mongondow selatan',
-  'bolaang mongondow t': 'bolaang mongondow timur',
-  'penajam paser u': 'penajam paser utara',
-  'memparwah': 'mempawah',
-  'bagan siapi-api': 'rokan hilir',
-  'kepulauan siau tagulandang biaro': 'siau tagulandang biaro',
-};
+// Province & District name mapping aliases imported from constants/geoAliases.ts
 
 // Strip prefixes and whitespace/punctuation for canonical matching key
 const cleanMatchKey = (str?: string): string => {

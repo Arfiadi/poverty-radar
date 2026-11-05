@@ -5,7 +5,7 @@ Validates F-01, F-02, F-03, F-04, F-05, F-06, F-12, F-15 findings.
 
 from pathlib import Path
 import json
-import pytest
+
 import pandas as pd
 
 REPO_DIR = Path(__file__).resolve().parents[1]
@@ -75,3 +75,15 @@ def test_resource_curse_count():
     df = pd.read_csv(REPO_DIR / "data" / "processed" / "poverty_clusters.csv")
     rc = df[(df["grdp_constant_million_idr"] >= 25_000_000) & (df["poverty_rate_p0"] >= 10.46)]
     assert len(rc) == 29
+
+
+def test_export_payloads_to_custom_dir(tmp_path):
+    from poverty_radar.data.exporter import export_dashboard_payloads
+    export_dashboard_payloads(target_dir=tmp_path)
+    assert (tmp_path / "national_benchmarks.json").exists()
+    assert (tmp_path / "ols_coefficients.json").exists()
+    assert (tmp_path / "boundary_cases.json").exists()
+    assert (tmp_path / "kaggle_rule_info.json").exists()
+    assert (tmp_path / "poverty_districts.json").exists()
+    assert (tmp_path / "cluster_summary.json").exists()
+    assert (tmp_path / "policy_matrix.json").exists()

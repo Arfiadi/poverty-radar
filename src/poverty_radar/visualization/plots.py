@@ -16,14 +16,14 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, adjusted_rand_score
-from sklearn.decomposition import PCA
+
 
 from poverty_radar.config import (
     CLUSTER_PALETTE,
     CLUSTER_LABELS,
     FEATURE_COLS,
     SEED,
-    FIGURES_DIR,
+
     QUADRANT_PALETTE
 )
 
@@ -63,13 +63,13 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
     ax1.plot(k_range, inertia_km, marker='o', markersize=7, color='#0072B2', linewidth=2.2, zorder=3)
     ax1.axvline(x=4, color='#D55E00', linestyle='--', linewidth=1.5, alpha=0.85, zorder=2)
     ax1.scatter([4], [inertia_km[2]], color='#D55E00', s=130, zorder=5, edgecolor='black', linewidth=1.2)
-    
+
     ax1.annotate('Titik Belok (k = 4)\nReduksi inersia melambat ke < 10%',
                  xy=(4, inertia_km[2]), xytext=(4.35, 1340),
                  fontsize=8.5, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.12', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.3', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.95))
-    
+
     ax1.set_title('1. Evaluasi Inersia WCSS (Metode Elbow)\nPenurunan melambat: -13.5% (k=4) ke -8.9% (k=5)',
                   fontsize=9.5, fontweight='bold', loc='left', pad=10, color='#222222')
     ax1.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold', labelpad=6)
@@ -89,14 +89,14 @@ def plot_elbow_and_silhouette(X_scaled: np.ndarray, save_path: Optional[Path] = 
                  fontsize=8.0, fontweight='bold', color='#444444',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.15', color='#777777', lw=1.0),
                  bbox=dict(boxstyle='round,pad=0.25', facecolor='#F5F5F5', edgecolor='#CCCCCC', alpha=0.95))
-    
+
     # Place k=4 annotation cleanly to the right (x=4.35 to 6.2)
     ax2.annotate('k = 4 (0.203): Mengurai mayoritas\nKab. Mapan (187) vs Agraris (216)',
                  xy=(4, sil_km[2]), xytext=(4.35, 0.225),
                  fontsize=8.0, fontweight='bold', color='#D55E00',
                  arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=-0.12', color='#D55E00', lw=1.2),
                  bbox=dict(boxstyle='round,pad=0.3', facecolor='#FFF5EB', edgecolor='#D55E00', alpha=0.95))
-    
+
     ax2.set_title('2. Evaluasi Separasi (Silhouette Score)\nk = 4 menjaga keterwakilan tanpa penumpukan 62% daerah',
                   fontsize=9.5, fontweight='bold', loc='left', pad=10, color='#222222')
     ax2.set_xlabel('Jumlah Klaster (k)', fontsize=10, fontweight='bold', labelpad=6)
@@ -122,7 +122,7 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     models_display = ['K-Means (Terpilih)', 'Bisecting K-Means', 'GMM (Mixture)', 'Agglomerative (Ward)']
     sil_scores = [0.203, 0.197, 0.183, 0.173]
     dbi_scores = [1.452, 1.454, 1.470, 1.490]
-    
+
     # Pre-attentive focus: Okabe-Ito Blue for chosen, muted grey for alternatives
     colors = ['#0072B2', '#B0B0B0', '#B0B0B0', '#B0B0B0']
     edge_colors = ['#004C75', '#888888', '#888888', '#888888']
@@ -134,20 +134,20 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     rev_colors = colors[::-1]
     rev_edges = edge_colors[::-1]
 
-    bars1 = ax1.barh(y_pos, rev_sil, color=rev_colors, edgecolor=rev_edges, height=0.55, linewidth=1.1, zorder=3)
+    ax1.barh(y_pos, rev_sil, color=rev_colors, edgecolor=rev_edges, height=0.55, linewidth=1.1, zorder=3)
     for i, (val, col) in enumerate(zip(rev_sil, rev_colors)):
         if col == '#0072B2':
-            ax1.text(val + 0.005, y_pos[i], f"{val:.3f} (Tertinggi - Terbaik)", 
+            ax1.text(val + 0.005, y_pos[i], f"{val:.3f} (Tertinggi - Terbaik)",
                      va='center', ha='left', fontsize=8.8, fontweight='bold', color='#0072B2')
         else:
-            ax1.text(val + 0.005, y_pos[i], f"{val:.3f}", 
+            ax1.text(val + 0.005, y_pos[i], f"{val:.3f}",
                      va='center', ha='left', fontsize=8.5, color='#444444')
 
     ax1.set_yticks(y_pos)
     ax1.set_yticklabels(rev_models, fontsize=9.0, fontweight='bold')
     ax1.set_xlim(0, 0.28)
     ax1.set_xlabel('Silhouette Score', fontsize=10, fontweight='bold', labelpad=6)
-    ax1.set_title('1. Separasi Antar-Klaster (Silhouette Score)\nSkor lebih tinggi = pemisahan batas lebih tegas', 
+    ax1.set_title('1. Separasi Antar-Klaster (Silhouette Score)\nSkor lebih tinggi = pemisahan batas lebih tegas',
                   fontsize=9.5, fontweight='bold', pad=8, loc='left', color='#222222')
     ax1.grid(axis='x', linestyle=':', alpha=0.5, zorder=0)
     ax1.grid(axis='y', visible=False)
@@ -171,7 +171,7 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     ax2.set_yticklabels(['', '', '', ''])  # Clean: Shared y-alignment with Panel 1
     ax2.set_xlim(1.42, 1.54)
     ax2.set_xlabel('Davies-Bouldin Index (DBI)', fontsize=10, fontweight='bold', labelpad=6)
-    ax2.set_title('2. Kepadatan Dalam Klaster (Davies-Bouldin Index)\nSkor lebih rendah = klaster lebih kompak & homogen', 
+    ax2.set_title('2. Kepadatan Dalam Klaster (Davies-Bouldin Index)\nSkor lebih rendah = klaster lebih kompak & homogen',
                   fontsize=9.5, fontweight='bold', pad=8, loc='left', color='#222222')
     ax2.grid(axis='x', linestyle=':', alpha=0.5, zorder=0)
     ax2.grid(axis='y', visible=False)
@@ -179,7 +179,7 @@ def plot_algorithm_comparison_barchart(save_path: Optional[Path] = None) -> plt.
     ax2.spines['right'].set_visible(False)
 
     fig.suptitle('Perbandingan Evaluasi Algoritma Klastering pada k = 4\n'
-                 'K-Means Terpilih: Silhouette Tertinggi (0.203) & DBI Terendah (1.452)', 
+                 'K-Means Terpilih: Silhouette Tertinggi (0.203) & DBI Terendah (1.452)',
                  fontsize=11.5, fontweight='bold', y=0.98, ha='center', color='#111111')
 
     plt.subplots_adjust(top=0.82, bottom=0.14, left=0.18, right=0.96, wspace=0.18)
@@ -202,17 +202,17 @@ def plot_multiseed_robustness(X_scaled: np.ndarray, baseline_labels: np.ndarray,
     mean_ari = np.mean(ari_scores)
 
     fig, ax = plt.subplots(figsize=(10.5, 4.8), dpi=300)
-    
+
     # Stable zone band
     ax.axhspan(0.85, 1.02, color='#EBF7EE', alpha=0.8, zorder=1, label='Zona Ketahanan (ARI >= 0.85)')
-    
+
     # Line graph
     ax.plot(seeds, ari_scores, marker='o', color='#0072B2', linewidth=2.2, markersize=6.5, zorder=3, label='Skor ARI Tiap Seed')
     ax.axhline(0.85, color='#D55E00', linestyle='--', linewidth=1.4, zorder=2, label='Batas Minimum Kestabilan (0.85)')
     ax.axhline(mean_ari, color='#009E73', linestyle='-', linewidth=2.0, zorder=2, label=f'Rata-rata: {mean_ari*100:.2f}%')
 
     # Direct labeling on the right edge
-    ax.text(20.3, mean_ari, f'Rata-rata\n{mean_ari*100:.1f}%\n(Stabil)', 
+    ax.text(20.3, mean_ari, f'Rata-rata\n{mean_ari*100:.1f}%\n(Stabil)',
             va='center', ha='left', fontsize=8.5, fontweight='bold', color='#009E73',
             bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFFFFF', edgecolor='#009E73', alpha=0.95))
 
@@ -347,7 +347,7 @@ def plot_cluster_heatmap(df: pd.DataFrame, X_scaled: np.ndarray, save_path: Opti
                  fontsize=11.5, fontweight='bold', pad=12, loc='left', color='#111111')
     ax.set_ylabel('')
     ax.tick_params(axis='x', pad=8)
-    
+
     # 0 rotation, clean font size 8.5, center aligned -> perfectly readable with zero word-bleeding
     plt.xticks(rotation=0, fontsize=8.5, fontweight='bold', ha='center')
     plt.yticks(fontsize=9.0, fontweight='bold')
@@ -395,13 +395,13 @@ def plot_cluster_small_multiples(df: pd.DataFrame, X_scaled: np.ndarray, save_pa
     for cid, ax in enumerate(axes.flat):
         vals = z_mean.loc[cid, FEATURE_COLS].values
         bar_colors = ['#0072B2' if v >= 0 else '#D55E00' for v in vals]
-        
-        bars = ax.barh(y_pos, vals, color=bar_colors, height=0.58, edgecolor='none', zorder=3)
+
+        ax.barh(y_pos, vals, color=bar_colors, height=0.58, edgecolor='none', zorder=3)
         ax.axvline(0, color='black', linewidth=1.2, zorder=4)
         ax.set_yticks(y_pos)
         ax.set_yticklabels(feature_display_names, fontsize=8.5)
         ax.invert_yaxis()
-        
+
         # Generous xlim (-3.4, 2.4) prevents bar labels from touching the boundary
         ax.set_xlim(-3.4, 2.4)
         ax.grid(axis='x', linestyle=':', alpha=0.6, zorder=0)
@@ -475,7 +475,7 @@ def plot_p0_stripplot(df: pd.DataFrame, save_path: Optional[Path] = None) -> plt
     ax.grid(axis='y', linestyle=':', alpha=0.5)
 
     # Footnote disclaimer well clear of x-axis label (Zero collision!)
-    fig.text(0.08, 0.015, '*Catatan: Mengindikasikan asosiasi statistik antarklaster, bukan hubungan sebab-akibat.', 
+    fig.text(0.08, 0.015, '*Catatan: Mengindikasikan asosiasi statistik antarklaster, bukan hubungan sebab-akibat.',
              fontsize=8, fontstyle='italic', color='#666666')
 
     plt.subplots_adjust(top=0.86, bottom=0.18, left=0.08, right=0.96)
@@ -493,7 +493,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     fig, ax = plt.subplots(figsize=(11.8, 7.8), dpi=300)
 
     med_p0 = df['poverty_rate_p0'].median()
-    med_v  = df['vulnerability_score'].median()
+    med_v = df['vulnerability_score'].median()
 
     sns.scatterplot(
         data=df,
@@ -513,11 +513,11 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     ax.axhline(med_v, color='#333333', linestyle='--', linewidth=1.3, alpha=0.85)
 
     # Clean divider annotations along edges
-    ax.text(med_p0 + 0.35, 0.68, f'Median P0: {med_p0:.2f}%\n(Pemisah Kemiskinan)', 
+    ax.text(med_p0 + 0.35, 0.68, f'Median P0: {med_p0:.2f}%\n(Pemisah Kemiskinan)',
             fontsize=8.5, color='#333333', fontweight='bold', va='center',
             bbox=dict(boxstyle='square,pad=0.25', facecolor='white', edgecolor='#B0B0B0', alpha=0.9))
 
-    ax.text(43.0, med_v + 0.015, f'Median V_struc: {med_v:.3f} (Pemisah Kerentanan)', 
+    ax.text(43.0, med_v + 0.015, f'Median V_struc: {med_v:.3f} (Pemisah Kerentanan)',
             fontsize=8.5, color='#333333', fontweight='bold', ha='right', va='bottom',
             bbox=dict(boxstyle='square,pad=0.25', facecolor='white', edgecolor='#B0B0B0', alpha=0.9))
 
@@ -527,22 +527,22 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     box_q4 = dict(boxstyle='round,pad=0.35', facecolor='#F0F7FA', edgecolor='#0072B2', linewidth=1.2, alpha=0.95)
 
     # Kuadran II: Top-Left (x in [1.0, 7.5], well clear of median line 10.46)
-    ax.text(1.0, 1.01, 
+    ax.text(1.0, 1.01,
             'KUADRAN II\nKerentanan Tersembunyi\n95 Daerah (18.5%)',
             fontsize=8.5, fontweight='bold', color='#B84D00', bbox=box_q2, va='top')
 
     # Kuadran I: Top-Right (x in [13.0, 20.0])
-    ax.text(13.0, 1.01, 
+    ax.text(13.0, 1.01,
             'KUADRAN I\nPrioritas Beban Ganda\n162 Daerah (31.5%)',
             fontsize=8.5, fontweight='bold', color='#B33000', bbox=box_q1, va='top')
 
     # Kuadran IV: Bottom-Left (placed safely above x-axis at y=0.015)
-    ax.text(1.0, 0.015, 
+    ax.text(1.0, 0.015,
             'KUADRAN IV\nWilayah Mapan\n162 Daerah (31.5%)',
             fontsize=8.5, fontweight='bold', color='#004C7A', bbox=box_q4, va='bottom')
 
     # Kuadran III: Bottom-Right (placed safely above x-axis at y=0.015)
-    ax.text(28.0, 0.015, 
+    ax.text(28.0, 0.015,
             'KUADRAN III\nKantong Daya Beli\n95 Daerah (18.5%)',
             fontsize=8.5, fontweight='bold', color='#8A3B66', bbox=box_q3, va='bottom')
 
@@ -578,7 +578,7 @@ def plot_vulnerability_matrix_2x2(df: pd.DataFrame, save_path: Optional[Path] = 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    fig.text(0.96, 0.015, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.', 
+    fig.text(0.96, 0.015, '*Catatan: Instrumen penapisan relatif (skrining awal), bukan pembuktian kausalitas penyebab kemiskinan.',
              fontsize=8, fontstyle='italic', color='#666666', ha='right')
 
     plt.subplots_adjust(top=0.88, bottom=0.12, left=0.08, right=0.96)
