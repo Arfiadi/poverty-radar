@@ -110,7 +110,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
             Transparansi Metodologi, Audit Data, &amp; Validasi Pemodelan Ilmiah
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Alur analitis 514 daerah BPS 2021: verifikasi sensus lengkap, penskalaan distribusi robust, seleksi fitur bebas kebocoran target, dan klastering tipologi tervalidasi ekonometrika.
+            Alur analitis 514 daerah BPS 2021: ingesti data dan verifikasi metadata, penskalaan distribusi robust, seleksi fitur bebas kebocoran target, dan klastering tipologi tervalidasi ekonometrika.
           </p>
         </div>
       </div>
@@ -134,7 +134,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
           label="Cakupan Observasi Nasional"
           value="514 Daerah (100%)"
           benchmarkText="0 Nilai Hilang (0 NaN)"
-          badge={{ text: "Sensus BPS 2021", type: "positive" }}
+          badge={{ text: "Agregat BPS 2021", type: "positive" }}
           accentColor="#009E73"
         />
 
@@ -404,7 +404,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100">
                         <div>
                           <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
-                            Kamus Data Terstandar (13 Variabel Sensus Sosio-Ekonomi)
+                            Kamus Data Terstandar (13 Indikator Sosio-Ekonomi BPS)
                           </h3>
                           <p className="text-[11px] text-slate-500 mt-0.5">
                             Inventaris variabel semantik, satuan baku, rentang nilai empiris lapangan, dan peran metodologis.
@@ -466,7 +466,7 @@ export const MethodologyAudit: React.FC<PageProps> = ({
                       {/* Table */}
                       <div className="overflow-x-auto max-h-80 overflow-y-auto">
                         <table className="w-full text-left text-xs border-collapse">
-                          <caption className="sr-only">Kamus Data 13 Variabel Sensus Sosio-Ekonomi BPS 2021</caption>
+                          <caption className="sr-only">Kamus Data 13 Indikator Sosio-Ekonomi BPS 2021</caption>
                           <thead className="sticky top-0 z-10">
                             <tr className="border-b border-slate-200 bg-slate-50 text-[10.5px] uppercase font-bold text-slate-500">
                               <th className="py-2.5 px-3">Nama Kolom Teknis</th>

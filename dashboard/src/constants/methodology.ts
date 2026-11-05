@@ -195,9 +195,9 @@ export const MACRO_STAGES: MacroStageInfo[] = [
   {
     id: 'ingestion',
     stepNum: '01',
-    shortTitle: 'Ingestion & Sensus',
-    title: 'Data Ingestion & Sensus Wilayah',
-    subtitle: 'Metadata Sensus BPS 2021, Audit Nilai Batas 0.00% 3T, & Kamus Data 13 Variabel',
+    shortTitle: 'Ingestion & Metadata',
+    title: 'Data Ingestion & Metadata Indikator',
+    subtitle: 'Metadata Indikator BPS 2021, Audit Nilai Batas 0.00% 3T, & Kamus Data 13 Variabel',
     icon: Database,
     tag: '514 Daerah · 0 Missing',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',

@@ -445,8 +445,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                           className="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer border border-slate-100 transition-all"
                         >
                           <div className="flex items-center space-x-2">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: q.color }}></span>
-                            <span className="font-bold text-slate-900">{q.code}</span>
+                            <span className="font-bold font-mono text-slate-900 text-xs w-6">{q.code}</span>
                             <span className="text-slate-600 text-[11px]">{q.label.split(':')[1]?.trim()}</span>
                           </div>
                           <span className="text-[10px] font-mono text-slate-400">({q.count})</span>
