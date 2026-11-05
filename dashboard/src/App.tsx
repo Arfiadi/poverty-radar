@@ -51,18 +51,15 @@ export const App: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-canvas flex items-center justify-center p-6">
-        <div className="bg-surface border border-red-200 rounded-2xl p-8 max-w-md text-center shadow-subtle">
-          <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
-            !
-          </div>
-          <h2 className="text-base font-bold text-slate-900">Gagal Memuat Data Analitis</h2>
-          <p className="text-xs text-slate-600 mt-2">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold"
+      <div className="flex items-center justify-center min-h-screen bg-canvas p-6">
+        <div className="bg-surface border border-red-200 p-6 rounded-xl max-w-md w-full text-center space-y-3">
+          <div className="text-red-500 font-bold text-lg">Gagal Memuat Data</div>
+          <p className="text-sm text-slate-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition"
           >
-            Muat Ulang Halaman
+            Muat Ulang
           </button>
         </div>
       </div>
@@ -103,7 +100,8 @@ export const App: React.FC = () => {
       case 4:
         pageComponent = (
           <MethodologyAudit
-            districts={filteredDistricts}
+            districts={districts}
+            filteredDistricts={filteredDistricts}
             olsResults={olsResults}
             boundaryCases={boundaryCases}
           />

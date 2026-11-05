@@ -108,10 +108,10 @@ export const OLSCoefficientsBar: React.FC<OLSProps> = ({ olsResults }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
         <div>
           <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            Pengaruh Relatif Determinan Struktural: Koefisien Baku OLS Multivariat
+            Asosiasi Relatif Determinan Struktural: Koefisien Baku OLS Multivariat
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
-            Estimasi kovariansi linier ceteris paribus (R² = 51.64%, p &lt; 0.001) tanpa klaim hubungan kausal langsung
+            Estimasi kovariansi linier terstandarisasi ceteris paribus (R² = 51.64%, p &lt; 0.001) tanpa asumsi hubungan kausal langsung
           </p>
         </div>
 

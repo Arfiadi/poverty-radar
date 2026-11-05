@@ -64,20 +64,20 @@ export const KpiCard: React.FC<KpiCardProps> = ({
       <dl className="flex flex-col justify-between h-full space-y-1.5 m-0">
         {/* Tier 1: Label + Badge */}
         <div className="flex items-start justify-between gap-1.5">
-          <dt className="text-xs font-bold tracking-wider uppercase text-slate-600 leading-tight">
+          <dt className="text-[11px] font-bold tracking-wider uppercase text-slate-500 leading-tight">
             {label}
           </dt>
           {badge && (
-            <span className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded border shrink-0 leading-none whitespace-nowrap mt-0.5 ${getBadgeStyle()}`}>
+            <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md border shrink-0 leading-none whitespace-nowrap mt-0.5 ${getBadgeStyle()}`}>
               {badge.text}
             </span>
           )}
         </div>
 
-        {/* Tier 2: Big Number + Unit */}
+        {/* Tier 2: Big Number + Unit with adaptive sizing */}
         <dd className="m-0 flex items-baseline space-x-1.5">
           <span
-            className="text-2xl sm:text-[26px] font-black tracking-tight tabular-nums font-mono leading-none"
+            className={`${String(value).length > 10 ? 'text-xl sm:text-[22px]' : 'text-2xl sm:text-[28px]'} font-black tracking-tight tabular-nums font-mono leading-none`}
             style={{ color: accentColor || '#0F172A' }}
           >
             {value}
@@ -89,18 +89,18 @@ export const KpiCard: React.FC<KpiCardProps> = ({
           )}
         </dd>
 
-        {/* Tier 3: Structured Benchmark & Context (2-line, zero awkward truncation) */}
+        {/* Tier 3: Structured Benchmark & Optional Clean Context */}
         <dd className="m-0 pt-1.5 border-t border-slate-100 text-[10.5px]">
           <div className="flex flex-col space-y-0.5 leading-snug">
             <span 
-              className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 truncate"
+              className="text-[10.5px] font-bold text-slate-800 line-clamp-1"
               title={benchmarkText}
             >
               {benchmarkText}
             </span>
             {contextText && (
               <span 
-                className="text-[9.5px] sm:text-[10px] text-slate-500 font-normal truncate"
+                className="text-[9.5px] sm:text-[10px] text-slate-500 font-medium line-clamp-1 leading-tight"
                 title={contextText}
               >
                 {contextText}

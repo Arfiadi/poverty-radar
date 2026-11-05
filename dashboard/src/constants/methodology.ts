@@ -19,6 +19,7 @@ export interface DataDictionaryItem {
 export interface MacroStageInfo {
   id: PipelineStageId;
   stepNum: string;
+  shortTitle: string;
   title: string;
   subtitle: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -62,11 +63,11 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     dimension: "Standar Hidup Layak",
     sdgTag: "Paritas Daya Beli (PPP)",
     dataType: "Int64",
-    unit: "Ribu Rp/Thn",
-    rangeEmpirical: "Rp3,976 — Rp23,888",
+    unit: "Ribu Rp/Tahun",
+    rangeEmpirical: "Rp3,98 Juta — Rp23,89 Juta",
     role: "feature",
     roleLabel: "Fitur Model K-Means",
-    description: "Pengeluaran konsumsi riil per orang per tahun (Rp3.98 jt s.d. Rp23.89 jt). Koefisien OLS β = -0.318."
+    description: "Pengeluaran konsumsi riil disetahunkan (Rp3.976 ribu s.d. Rp23.888 ribu/orang/tahun). Koefisien OLS β = -0.318."
   },
   {
     key: "human_dev_index",
@@ -105,7 +106,7 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     description: "Kloset leher angsa dan tangki septik. Pembeda sebaran paling tajam (spread 3.11 SD). Nilai 0.00% riil di Deiyai."
   },
   {
-    key: "water_access_pct",
+    key: "clean_water_access_pct",
     labelBps: "Akses Sumber Air Minum Layak",
     dimension: "Layanan Dasar WASH",
     sdgTag: "SDG 6: Clean Water & San.",
@@ -114,7 +115,7 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     rangeEmpirical: "0.00% — 99.99%",
     role: "feature",
     roleLabel: "Fitur Model K-Means",
-    description: "Akses air leding/perpipaan/mata air terlindung. Nilai 0.00% terbukti riil di Intan Jaya (topografi tebing karst)."
+    description: "Akses air leding/perpipaan/mata air terlindung. Nilai 0.00% terbukti riil di Kab. Mamberamo Tengah (aliran sungai mentah tanpa PDAM)."
   },
   {
     key: "unemployment_rate_tpt",
@@ -123,13 +124,13 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     sdgTag: "SDG 8: Decent Work",
     dataType: "Float64",
     unit: "%",
-    rangeEmpirical: "0.25% — 13.06%",
+    rangeEmpirical: "0.00% — 13.37%",
     role: "feature",
     roleLabel: "Fitur Model K-Means",
-    description: "Proksi friksi pasar kerja perkotaan. Menghasilkan paradoks kemiskinan: r = -0.401 dengan tingkat kemiskinan."
+    description: "Proksi friksi pasar kerja perkotaan. Menghasilkan korelasi r = -0.401 terhadap P0. Nilai 0.00% terbukti riil di Kab. Nduga."
   },
   {
-    key: "labor_force_particip_tpak",
+    key: "labor_participation_tpak",
     labelBps: "Tingkat Partisipasi Angkatan Kerja (TPAK)",
     dimension: "Ketenagakerjaan",
     sdgTag: "SDG 8: Decent Work",
@@ -137,8 +138,8 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     unit: "%",
     rangeEmpirical: "54.76% — 93.63%",
     role: "contextual",
-    roleLabel: "Atribut Kontekstual",
-    description: "Dikeluarkan dari klastering K-Means demi menghindari redundansi dengan TPT (korelasi r = -0.582). r = +0.462 terhadap P0."
+    roleLabel: "Atribut Kontekstual & OLS",
+    description: "Dikeluarkan dari klastering K-Means demi menghindari redundansi dengan TPT (korelasi r = -0.582). Dimodelkan pada OLS multivariat (β = +0.179)."
   },
   {
     key: "grdp_constant_million_idr",
@@ -147,10 +148,10 @@ export const DATA_DICTIONARY: DataDictionaryItem[] = [
     sdgTag: "SDG 8: Economic Growth",
     dataType: "Float64",
     unit: "Juta Rupiah",
-    rangeEmpirical: "Rp147.6 Rb — Rp460.1 Jt",
+    rangeEmpirical: "Rp147,5 Miliar — Rp460,1 Triliun",
     role: "feature",
-    roleLabel: "Fitur Model K-Means (log1p)",
-    description: "Output agregat ekonomi daerah. Ditransformasikan via ln(1+x) untuk mereduksi skewness dari +5.85 menjadi +0.23."
+    roleLabel: "Basis Fitur log_pdrb",
+    description: "Output agregat ekonomi daerah (147.485 s.d. 460.081.046 Juta Rp). Ditransformasikan via ln(1+x) menjadi log_pdrb untuk mereduksi skewness dari +5.85 menjadi +0.23."
   },
   {
     key: "provinsi",
@@ -194,10 +195,11 @@ export const MACRO_STAGES: MacroStageInfo[] = [
   {
     id: 'ingestion',
     stepNum: '01',
-    title: 'Data Ingestion & Understanding',
+    shortTitle: 'Ingestion & Sensus',
+    title: 'Data Ingestion & Sensus Wilayah',
     subtitle: 'Metadata Sensus BPS 2021, Audit Nilai Batas 0.00% 3T, & Kamus Data 13 Variabel',
     icon: Database,
-    tag: '514 Daerah Lengkap · 0 Missing Values',
+    tag: '514 Daerah · 0 Missing',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     objective: 'Verifikasi kelengkapan 514 daerah BPS 2021, standardisasi satuan semantik PDRB, dan validasi fisik nilai batas 0.00% wilayah 3T.',
     inputData: '514 Kabupaten/Kota (34 Provinsi), 13 indikator mentah BPS 2021 (validasi silang SIRUSA cocok 100%).',
@@ -208,10 +210,11 @@ export const MACRO_STAGES: MacroStageInfo[] = [
   {
     id: 'preprocessing',
     stepNum: '02',
-    title: 'Audit Distribusi & Preprocessing',
+    shortTitle: 'Distribusi & Penskalaan',
+    title: 'Audit Distribusi & Penskalaan Data',
     subtitle: 'Koreksi Skewness PDRB log1p, Tukey Boxplot Outlier, Preservasi 26 Anomali, & RobustScaler',
     icon: Scale,
-    tag: 'Skewness PDRB: +5.85 → +0.23',
+    tag: 'log1p · RobustScaler',
     tagColor: 'bg-blue-50 text-okabe-blue border-blue-200',
     objective: 'Mengatasi disparitas skala ekonomi ekstrem antardaerah tanpa membuang daerah tertinggal (mandat UN SDG 1).',
     inputData: '7 fitur sosio-ekonomi kontinu dengan rentang skala yang berbeda drastis.',
@@ -222,29 +225,31 @@ export const MACRO_STAGES: MacroStageInfo[] = [
   {
     id: 'integrity',
     stepNum: '03',
-    title: 'Integritas Sains Data & Anti-Leakage',
-    subtitle: 'Dekonstruksi Label 98.83%, Zero Target Leakage, Isolasi Variabel, & Larangan Radar Chart',
+    shortTitle: 'Seleksi Fitur & Isolasi',
+    title: 'Seleksi Fitur & Isolasi Target',
+    subtitle: 'Dekonstruksi Label Heuristik 98.83%, Zero Target Leakage, Partisi 4 Peran Fitur, & Larangan Radar Chart',
     icon: ShieldCheck,
-    tag: '100% Bebas Kebocoran Target',
+    tag: 'Bebas Kebocoran Target',
     tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    objective: 'Mencegah penalaran melingkar (circular reasoning) dan menolak klasifikasi terawasi artifisial.',
+    objective: 'Mencegah penalaran melingkar (circular reasoning), menolak klasifikasi terawasi artifisial, dan mempartisi 7 fitur independen klastering.',
     inputData: 'Kolom label biner bawaan Kaggle (Klasifikasi Kemiskinan 0/1), angka kemiskinan P0, dan IPM.',
     methodology: 'Reverse-engineering aljabar label biner, eliminasi total label bawaan, isolasi P0 & IPM dari fitur jarak, serta larangan radar chart.',
     verifiedOutput: 'Label bawaan terbukti 98.83% formula heuristik; model beroperasi 100% murni unsupervised clustering.',
-    deepDiveLabel: 'Bukti Forensik Formula Kaggle 98.83%, Matriks Isolasi Variabel, & 4 Pilar Integritas'
+    deepDiveLabel: 'Bukti Forensik Formula Kaggle 98.83%, Matriks Partisi Fitur, & 4 Pilar Integritas'
   },
   {
     id: 'validation',
     stepNum: '04',
-    title: 'Pemodelan Dual-Engine & Ekonometrika',
-    subtitle: 'Klastering K-Means k=4, Formula Skrining Kerentanan V_struc 2x2, & Regresi Multivariat OLS',
+    shortTitle: 'Klastering & Ekonometrika',
+    title: 'Klastering Tipologi & Validasi Ekonometrika',
+    subtitle: 'Benchmark 160 Model, K-Means k=4, Formula Skrining V_struc 2x2, Regresi OLS, & Limitasi',
     icon: Layers,
-    tag: 'Stabilitas ARI = 0.9803 · OLS R² = 51.64%',
+    tag: 'K-Means k=4 · OLS R² 51.6%',
     tagColor: 'bg-slate-900 text-white border-slate-700',
-    objective: 'Membentuk tipologi objektif wilayah dan memvalidasi signifikansi determinan sosio-ekonomi secara ekonometrika.',
-    inputData: '7 fitur terstandarisasi RobustScaler untuk 514 daerah, dilengkapi benchmark eksternal P0 dan IPM.',
-    methodology: 'K-Means k=4 (20 multi-seed), matriks skrining kerentanan 2x2 (V_struc bobot setara 25%), dan regresi multivariat OLS.',
-    verifiedOutput: '4 klaster tipologi wilayah stabil (ARI = 0.9803) dan model OLS dengan R² = 51.64% (p < 0.001).',
-    deepDiveLabel: 'Diagnostik Benchmark k=4 vs k=3, Formula Matematis V_struc, & Grafik Koefisien OLS β'
+    objective: 'Membentuk tipologi wilayah berbasis viabilitas kebijakan publik, memvalidasi signifikansi determinan sosio-ekonomi secara ekonometrik, dan mengukur kerentanan relatif.',
+    inputData: '7 fitur terstandarisasi RobustScaler untuk 514 daerah, benchmark eksternal P0, dan hasil benchmark 160 model.',
+    methodology: 'Benchmark 160 model (123 valid), K-Means k=4 (20 multi-seed), matriks skrining 2x2 (V_struc bobot setara 25%), regresi OLS multivariat, dan audit limitasi metodologi.',
+    verifiedOutput: '4 klaster tipologi wilayah stabil (ARI = 0.9803), model OLS multivariat dengan R² = 51.64%, dan dokumentasi limitasi inferensi.',
+    deepDiveLabel: 'Benchmark 160 Model, Diagnostik k=4 vs k=3, Formula V_struc, OLS β, & Limitasi'
   }
 ];
