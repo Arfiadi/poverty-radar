@@ -449,8 +449,8 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           realtime: true,
           calculable: true,
           orient: 'horizontal',
-          left: 'right',
-          bottom: 10,
+          right: 16,
+          top: 12,
           inRange: { color: colorScale },
           textStyle: { fontSize: 10, color: '#64748B' }
         },
@@ -567,8 +567,8 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           realtime: true,
           calculable: true,
           orient: 'horizontal',
-          left: 'right',
-          bottom: 10,
+          right: 16,
+          top: 12,
           inRange: { color: colorScale },
           textStyle: { fontSize: 10, color: '#64748B' }
         },
