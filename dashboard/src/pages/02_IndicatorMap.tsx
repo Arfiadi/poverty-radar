@@ -10,9 +10,10 @@ import { Map, BarChart3, Split, ChevronDown, Layers } from 'lucide-react';
 
 interface PageProps {
   districts: District[];
+  allDistricts?: District[];
 }
 
-export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
+export const IndicatorMap: React.FC<PageProps> = ({ districts, allDistricts }) => {
   const [activeSubTab, setActiveSubTab] = useState<'spatial' | 'paradox'>('spatial');
   const [selectedIndicator, setSelectedIndicator] = useState<keyof District>('poverty_rate_p0');
   const [viewMode, setViewMode] = useState<'map' | 'ranking'>('map');
@@ -305,6 +306,7 @@ export const IndicatorMap: React.FC<PageProps> = ({ districts }) => {
             {viewMode === 'map' ? (
               <IndonesiaChoroplethMap
                 districts={districts}
+                allDistricts={allDistricts}
                 indicator={selectedIndicator}
                 indicatorLabel={activeOption.label}
                 unit={activeOption.unit}

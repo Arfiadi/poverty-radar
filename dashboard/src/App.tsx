@@ -80,7 +80,7 @@ export const App: React.FC = () => {
         pageComponent = <PovertyLandscape districts={filteredDistricts} benchmarks={benchmarks} />;
         break;
       case 1:
-        pageComponent = <IndicatorMap districts={filteredDistricts} />;
+        pageComponent = <IndicatorMap districts={filteredDistricts} allDistricts={districts} />;
         break;
       case 2:
         pageComponent = (

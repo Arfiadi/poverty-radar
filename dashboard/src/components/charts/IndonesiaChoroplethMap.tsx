@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { District } from '../../types';
+import { useFilterStore } from '../../store/useFilterStore';
 import { ClusterBadge, QuadrantBadge } from '../common/Badge';
 import { 
   MapPin, 
@@ -17,6 +18,7 @@ import {
 
 interface IndonesiaMapProps {
   districts: District[];
+  allDistricts?: District[];
   indicator: keyof District;
   indicatorLabel: string;
   unit: string;
@@ -43,12 +45,27 @@ const PROV_NAME_MAPPING: Record<string, string> = {
   'KEP. BANGKA BELITUNG': 'Bangka Belitung',
 };
 
-// Normalize district names to guarantee 100% key matching between GeoJSON and CSV
-const normalizeDistrictName = (typeStr?: string, nameStr?: string): string => {
-  const t = (typeStr || '').trim();
-  let n = (nameStr || '').trim();
-  n = n.replace(/^(kota|kabupaten|kab\.)\s+/i, '').trim();
-  return t ? `${t} ${n}` : n;
+// Known phonetic / truncation aliases between GADM GeoJSON and BPS naming
+const KNOWN_DISTRICT_ALIASES: Record<string, string> = {
+  'tanjung jabung b': 'tanjung jabung barat',
+  'tanjung jabung t': 'tanjung jabung timur',
+  'pakpak barat': 'pakpak bharat',
+  'bolaang mongondow u': 'bolaang mongondow utara',
+  'bolaang mongondow s': 'bolaang mongondow selatan',
+  'bolaang mongondow t': 'bolaang mongondow timur',
+  'penajam paser u': 'penajam paser utara',
+  'memparwah': 'mempawah',
+  'bagan siapi-api': 'rokan hilir',
+  'kepulauan siau tagulandang biaro': 'siau tagulandang biaro',
+};
+
+// Strip prefixes and whitespace/punctuation for canonical matching key
+const cleanMatchKey = (str?: string): string => {
+  return (str || '')
+    .toLowerCase()
+    .replace(/^(kabupaten|kota|kab\.)\s+/i, '')
+    .replace(/[\s\-_]+/g, '')
+    .trim();
 };
 
 // Centroid calculator for any set of GeoJSON features to center province map precisely
@@ -85,10 +102,12 @@ const getFeatureCentroid = (features: any[]): [number, number] => {
 
 export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
   districts,
+  allDistricts,
   indicator,
   indicatorLabel,
   unit,
 }) => {
+  const { selectedIsland, setSelectedIsland } = useFilterStore();
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<boolean>(false);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
@@ -270,6 +289,11 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
   const drillDownToProvince = async (provName: string) => {
     setIsDrilling(true);
     try {
+      // If province is outside current island filter, reset island filter so all its districts load
+      if (selectedIsland !== 'Semua Wilayah' && !provinceStatsMap[provName]) {
+        setSelectedIsland('Semua Wilayah');
+      }
+
       let geo = allDistrictsGeoJson;
       if (!geo) {
         // Fetch on demand if not yet loaded
@@ -281,10 +305,12 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
 
       const gadmTarget = PROV_NAME_MAPPING[provName] || provName.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
       
-      // Filter district features for selected province
+      // Filter district features for selected province (exclude non-administrative water bodies)
       const features = (geo.features || []).filter((f: any) => {
         const p = f.properties?.NAME_1 || '';
-        return p.toLowerCase() === gadmTarget.toLowerCase();
+        const isTargetProv = p.toLowerCase() === gadmTarget.toLowerCase();
+        const isWaterBody = f.properties?.TYPE_2 === 'Water Body' || /^(waduk|danau|lake)\b/i.test(f.properties?.NAME_2 || '');
+        return isTargetProv && !isWaterBody;
       });
 
       if (features.length === 0) {
@@ -294,14 +320,28 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
         return;
       }
 
-      // Enrich features with normalized 'name' property for ECharts matching
+      // Build dictionary lookup from all available districts in this province
+      const provinceDistrictsPool = (allDistricts && allDistricts.length > 0 ? allDistricts : districts)
+        .filter(d => d.provinsi.toLowerCase() === provName.toLowerCase());
+
+      const districtLookup = new Map<string, District>();
+      provinceDistrictsPool.forEach(d => {
+        districtLookup.set(cleanMatchKey(d.kab_kota), d);
+        districtLookup.set(cleanMatchKey(d.kab_kota.replace(/\(.*?\)/g, '')), d);
+      });
+
+      // Enrich features with exact matched kab_kota name for 100% two-way polygon/data binding
       const enrichedFeatures = features.map((f: any) => {
-        const normName = normalizeDistrictName(f.properties?.TYPE_2, f.properties?.NAME_2);
+        const rawName = (f.properties?.NAME_2 || '').toLowerCase();
+        const aliased = KNOWN_DISTRICT_ALIASES[rawName] || rawName;
+        const key = cleanMatchKey(aliased);
+        const matchedDistrict = districtLookup.get(key);
+        const finalName = matchedDistrict ? matchedDistrict.kab_kota : (f.properties?.NAME_2 || 'Daerah');
         return {
           ...f,
           properties: {
             ...f.properties,
-            name: normName,
+            name: finalName,
           }
         };
       });
@@ -365,24 +405,31 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           padding: [10, 14],
           textStyle: { color: '#0F172A', fontSize: 12 },
           formatter: (params: any) => {
-            if (!params.data) return params.name;
+            if (!params.data) {
+              return `
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px 6px;">
+                  <div style="font-size: 12px; font-weight: 700; color: #0F172A;">${params.name || 'Wilayah'}</div>
+                  <div style="font-size: 11px; color: #94A3B8; margin-top: 2px;">Di luar filter aktif</div>
+                </div>
+              `;
+            }
             const d = params.data;
             return `
               <div style="font-family: 'Plus Jakarta Sans', sans-serif; min-width: 220px;">
                 <div style="font-size: 13px; font-weight: 700; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 6px;">
-                  ${d.name}
+                  ${d.name || 'Provinsi'}
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                   <span style="color: #64748B;">Rata-rata:</span>
-                  <span style="font-weight: 700; color: #0284C7; font-family: 'JetBrains Mono', monospace;">${d.value}${unit}</span>
+                  <span style="font-weight: 700; color: #0284C7; font-family: 'JetBrains Mono', monospace;">${d.value ?? '—'}${unit}</span>
                 </div>
                 <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
                   Disparitas Internal:
-                  <br/>• Terendah: <b>${d.minDistrict}</b> (${d.minValue}${unit})
-                  <br/>• Tertinggi: <b>${d.maxDistrict}</b> (${d.maxValue}${unit})
+                  <br/>• Terendah: <b>${d.minDistrict ?? '—'}</b> (${d.minValue ?? '—'}${unit})
+                  <br/>• Tertinggi: <b>${d.maxDistrict ?? '—'}</b> (${d.maxValue ?? '—'}${unit})
                 </div>
                 <div style="font-size: 11px; color: #64748B; border-top: 1px dashed #E2E8F0; padding-top: 4px; margin-top: 4px;">
-                  Cakupan: ${d.kabCount} Kabupaten, ${d.kotaCount} Kota
+                  Cakupan: ${d.kabCount ?? 0} Kabupaten, ${d.kotaCount ?? 0} Kota
                 </div>
                 <div style="font-size: 10px; color: #0284C7; font-weight: 600; margin-top: 6px;">
                   🔍 Klik poligon untuk zoom ke kab/kota
@@ -448,14 +495,13 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
       // PROVINCE LEVEL DRILL-DOWN VIEW
       const provDistricts = activeProvinceDetail?.districts || [];
       const districtData = provDistricts.map(d => {
-        const normName = normalizeDistrictName(d.tipe_wilayah, d.kab_kota);
         const val = Number(d[indicator]) || 0;
         return {
-          name: normName,
+          name: d.kab_kota,
           value: Number(val.toFixed(2)),
           rawDistrict: d,
           p0: d.poverty_rate_p0,
-          selected: selectedDistrictName === normName
+          selected: selectedDistrictName === d.kab_kota
         };
       });
 
@@ -473,29 +519,38 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           padding: [10, 14],
           textStyle: { color: '#0F172A', fontSize: 12 },
           formatter: (params: any) => {
-            if (!params.data) return params.name;
+            if (!params.data) {
+              return `
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px 6px;">
+                  <div style="font-size: 12px; font-weight: 700; color: #0F172A;">${params.name || 'Daerah'}</div>
+                  <div style="font-size: 11px; color: #94A3B8; margin-top: 2px;">Di luar filter aktif</div>
+                </div>
+              `;
+            }
             const d = params.data;
-            const raw: District = d.rawDistrict;
+            const raw: District | undefined = d.rawDistrict;
+            const clusterText = raw?.cluster_id != null ? `Klaster ${raw.cluster_id + 1}` : '—';
+            const quadText = raw?.vulnerability_quadrant || '—';
             return `
               <div style="font-family: 'Plus Jakarta Sans', sans-serif; min-width: 220px;">
                 <div style="font-size: 13px; font-weight: 700; color: #0F172A; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 6px;">
-                  ${d.name}
+                  ${d.name || 'Daerah'}
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                   <span style="color: #64748B;">${indicatorLabel}:</span>
                   <span style="font-weight: 700; color: #0284C7; font-family: 'JetBrains Mono', monospace;">
-                    ${d.value}${unit}
+                    ${d.value ?? '—'}${unit}
                   </span>
                 </div>
                 ${indicator !== 'poverty_rate_p0' ? `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                   <span style="color: #64748B;">Kemiskinan (P0):</span>
                   <span style="font-weight: 700; color: #D55E00; font-family: 'JetBrains Mono', monospace;">
-                    ${d.p0}%
+                    ${d.p0 ?? '—'}%
                   </span>
                 </div>` : ''}
                 <div style="font-size: 11px; color: #475569; border-top: 1px dashed #E2E8F0; padding-top: 4px; margin-top: 4px;">
-                  Klaster: <b>Klaster ${raw?.cluster_id}</b> · ${raw?.vulnerability_quadrant}
+                  Klaster: <b>${clusterText}</b> · ${quadText}
                 </div>
               </div>
             `;
@@ -574,11 +629,14 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
   const onChartClick = (params: any) => {
     if (mapLevel === 'national') {
       if (params.name) {
+        if (selectedIsland !== 'Semua Wilayah' && !provinceStatsMap[params.name]) {
+          setSelectedIsland('Semua Wilayah');
+        }
         drillDownToProvince(params.name);
       }
     } else {
       if (params.name) {
-        setSelectedDistrictName(params.name);
+        setSelectedDistrictName(selectedDistrictName === params.name ? null : params.name);
       }
     }
   };
@@ -644,7 +702,7 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
                   <span>← Kembali ke Peta Indonesia</span>
                 </button>
                 <span className="hidden sm:inline-flex items-center text-xs font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
-                  Provinsi {selectedProvince} ({activeProvinceDetail?.totalCount} Daerah)
+                  Provinsi {selectedProvince} ({activeProvinceDetail?.totalCount ?? 0} Daerah)
                 </span>
               </div>
             ) : (
@@ -784,7 +842,7 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
                 PROVINSI {activeProvinceDetail.provinceName}
               </h3>
               <p className="text-xs text-slate-500">
-                Total {activeProvinceDetail.totalCount} Daerah ({activeProvinceDetail.kabCount} Kabupaten, {activeProvinceDetail.kotaCount} Kota)
+                Total {activeProvinceDetail.totalCount ?? 0} Daerah ({activeProvinceDetail.kabCount ?? 0} Kabupaten, {activeProvinceDetail.kotaCount ?? 0} Kota)
               </p>
             </div>
 
@@ -820,12 +878,11 @@ export const IndonesiaChoroplethMap: React.FC<IndonesiaMapProps> = ({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-64 overflow-y-auto p-1">
             {activeProvinceDetail.districts.map(d => {
-              const normName = normalizeDistrictName(d.tipe_wilayah, d.kab_kota);
-              const isSelected = selectedDistrictName === normName;
+              const isSelected = selectedDistrictName === d.kab_kota;
               return (
                 <div
                   key={d.kab_kota}
-                  onClick={() => setSelectedDistrictName(isSelected ? null : normName)}
+                  onClick={() => setSelectedDistrictName(isSelected ? null : d.kab_kota)}
                   className={`p-2.5 rounded-lg border transition flex flex-col justify-between cursor-pointer ${
                     isSelected
                       ? 'bg-blue-50/90 border-okabe-blue ring-2 ring-okabe-blue/40 shadow-sm'
