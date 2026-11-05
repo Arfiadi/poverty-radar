@@ -13,6 +13,7 @@ DATA_DIR = REPO_DIR / "data"
 DATA_RAW_DIR = DATA_DIR / "raw"
 DATA_INTERIM_DIR = DATA_DIR / "interim"
 DATA_PROCESSED_DIR = DATA_DIR / "processed"
+FRONTEND_DATA_DIR = REPO_DIR / "dashboard" / "public" / "data"
 
 # Reports & figures directories
 REPORTS_DIR = REPO_DIR / "reports"
@@ -81,4 +82,3 @@ QUADRANT_PALETTE = {
     "Kuadran III (Kantong Kemiskinan Daya Beli)": "#CC79A7",
     "Kuadran IV (Wilayah Terbina/Mapan)": "#0072B2"
 }
-

@@ -6,7 +6,7 @@ PovertyRadar SDGs
 from typing import Tuple, Optional
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.ensemble import IsolationForest
 
 from poverty_radar.config import SEED, FEATURE_COLS
@@ -63,7 +63,7 @@ def clean_raw_data(df_raw: pd.DataFrame) -> pd.DataFrame:
     ]
     X_socio = df[socio_features].copy()
     X_socio['log_pdrb'] = df['log_pdrb']
-    
+
     iso_scaler = RobustScaler()
     X_iso = iso_scaler.fit_transform(X_socio)
     iso = IsolationForest(contamination=0.05, random_state=SEED)
@@ -80,7 +80,8 @@ def clean_raw_data(df_raw: pd.DataFrame) -> pd.DataFrame:
         'poverty_rate_p0', 'avg_school_years', 'expenditure_per_capita',
         'human_dev_index', 'life_expectancy', 'sanitation_access_pct',
         'clean_water_access_pct', 'unemployment_rate_tpt', 'labor_participation_tpak',
-        'grdp_constant_million_idr', 'is_multivariate_anomaly', 'anomaly_score'
+        'grdp_constant_million_idr', 'log_pdrb',
+        'is_multivariate_anomaly', 'anomaly_score'
     ]
     return df[interim_cols]
 
@@ -93,14 +94,16 @@ def get_feature_matrix(
     Extract the 7-feature matrix for distance-based clustering and scale with RobustScaler.
     Poverty rate (P0) is strictly excluded to prevent target leakage.
     """
+    df_eval = df
     for col in FEATURE_COLS:
-        if col not in df.columns:
-            if col == 'log_pdrb' and 'grdp_constant_million_idr' in df.columns:
-                df['log_pdrb'] = np.log1p(df['grdp_constant_million_idr'])
+        if col not in df_eval.columns:
+            if col == 'log_pdrb' and 'grdp_constant_million_idr' in df_eval.columns:
+                df_eval = df_eval.copy()
+                df_eval['log_pdrb'] = np.log1p(df_eval['grdp_constant_million_idr'])
             else:
                 raise KeyError(f"Required clustering feature '{col}' missing from DataFrame.")
 
-    X = df[FEATURE_COLS].values
+    X = df_eval[FEATURE_COLS].values
     if scaler is None:
         scaler = RobustScaler()
         X_scaled = scaler.fit_transform(X)

@@ -160,4 +160,3 @@ def compute_cluster_summary(df_clustered: pd.DataFrame) -> pd.DataFrame:
         records.append(rec)
 
     return pd.DataFrame(records)
-

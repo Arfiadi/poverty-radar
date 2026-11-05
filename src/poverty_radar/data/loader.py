@@ -43,7 +43,7 @@ def load_raw_data(filepath: Optional[Path] = None) -> pd.DataFrame:
     df = pd.read_csv(path)
     if len(df) != 514:
         raise ValueError(f"Expected 514 districts/cities in raw dataset, found {len(df)}")
-    
+
     return df
 
 
@@ -58,7 +58,7 @@ def load_cleaned_data(filepath: Optional[Path] = None) -> pd.DataFrame:
     df = pd.read_csv(path)
     if len(df) != 514:
         raise ValueError(f"Expected 514 rows in interim dataset, found {len(df)}")
-    
+
     return df
 
 
@@ -73,7 +73,7 @@ def load_processed_data(filepath: Optional[Path] = None) -> pd.DataFrame:
     df = pd.read_csv(path)
     if len(df) != 514:
         raise ValueError(f"Expected 514 rows in processed dataset, found {len(df)}")
-    
+
     return df
 
 
@@ -88,7 +88,7 @@ def load_cluster_summary(filepath: Optional[Path] = None) -> pd.DataFrame:
     df = pd.read_csv(path)
     if len(df) != 4:
         raise ValueError(f"Expected 4 cluster rows in summary dataset, found {len(df)}")
-    
+
     return df
 
 
@@ -105,5 +105,3 @@ def load_policy_recommendations(filepath: Optional[Path] = None) -> pd.DataFrame
         raise ValueError(f"Expected 8 rows (4 clusters + 4 quadrants), found {len(df)}")
 
     return df
-
-
