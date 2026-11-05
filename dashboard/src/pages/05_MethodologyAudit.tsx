@@ -166,15 +166,24 @@ export const MethodologyAudit: React.FC<PageProps> = ({
         />
       </div>
 
-      {/* Horizontal Stepper Tabs Strip: Mengalir ke Kanan bergaya Pipeline Bar */}
-      <div className="bg-slate-50/90 rounded-2xl border border-slate-200/90 p-2 sm:p-2.5 shadow-xs relative">
-        {/* Continuous Horizontal Rail Line: Connects nodes across columns */}
+      {/* Horizontal Stepper Tabs Strip: Tanpa card penampung, garis penyambung tajam & jelas */}
+      <div className="relative py-1">
+        {/* Continuous Horizontal Connecting Rail Line (Base Track: Sharp & High Contrast) */}
         <div 
-          className="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-1 bg-slate-200/90 rounded-full pointer-events-none hidden lg:block"
+          className="absolute left-[12.5%] right-[12.5%] top-1/2 -translate-y-1/2 h-[2.5px] bg-slate-300 pointer-events-none hidden lg:block z-0"
           aria-hidden="true" 
         />
 
-        <nav className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 relative z-10" aria-label="Tab Tahapan Metodologi" role="tablist">
+        {/* Active Progress Connector Line: Okabe Blue filling between completed & active stages */}
+        <div 
+          className="absolute left-[12.5%] top-1/2 -translate-y-1/2 h-[2.5px] bg-okabe-blue transition-all duration-300 pointer-events-none hidden lg:block z-0"
+          style={{
+            width: `${(currentStageIndex / (MACRO_STAGES.length - 1)) * 75}%`
+          }}
+          aria-hidden="true" 
+        />
+
+        <nav className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5 relative z-10" aria-label="Tab Tahapan Metodologi" role="tablist">
           {MACRO_STAGES.map((s, idx) => {
             const Icon = s.icon;
             const isActive = activeStage === s.id;
