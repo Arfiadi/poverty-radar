@@ -270,7 +270,7 @@ export const PriorityImplications: React.FC<PageProps> = ({
                         ? 'bg-amber-600 text-white'
                         : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'
                     }`}
-                    title="Kutukan SDA: 10 Enklave Tambang & Migas (PDRB Masif vs Kemiskinan di Atas Median, cth: Mimika, Morowali, Bintuni, Bojonegoro)"
+                    title="Kutukan SDA: 26 Daerah Tambang & Migas Lintas Kuadran (P0 > Median, cth: Mimika, Morowali, Bintuni, Bojonegoro, Muba)"
                   >
                     Tambang & Migas
                   </button>
